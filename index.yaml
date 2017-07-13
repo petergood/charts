@@ -17,7 +17,7 @@ entries:
       name: Michal Orzechowski
     name: cross-support-job-1p
     urls:
-    - https://groundnuty.github.io/onedata-charts/cross-support-job-1p-0.2.1.tgz
+    - https://onedata.github.io/charts/cross-support-job-1p-0.2.1.tgz
     version: 0.2.1
   cross-support-job-3p:
   - appVersion: 3.0.0-rc16
@@ -36,7 +36,7 @@ entries:
       name: Michal Orzechowski
     name: cross-support-job-3p
     urls:
-    - https://groundnuty.github.io/onedata-charts/cross-support-job-3p-0.2.2.tgz
+    - https://onedata.github.io/charts/cross-support-job-3p-0.2.2.tgz
     version: 0.2.2
   - appVersion: 3.0.0-rc16
     created: 2017-07-10T15:31:42.74326469+02:00
@@ -54,7 +54,7 @@ entries:
       name: Michal Orzechowski
     name: cross-support-job-3p
     urls:
-    - https://groundnuty.github.io/onedata-charts/cross-support-job-3p-0.2.1.tgz
+    - https://onedata.github.io/charts/cross-support-job-3p-0.2.1.tgz
     version: 0.2.1
   - appVersion: 3.0.0-rc16
     created: 2017-07-10T15:31:42.740859088+02:00
@@ -72,7 +72,7 @@ entries:
       name: Michal Orzechowski
     name: cross-support-job-3p
     urls:
-    - https://groundnuty.github.io/onedata-charts/cross-support-job-3p-0.2.0.tgz
+    - https://onedata.github.io/charts/cross-support-job-3p-0.2.0.tgz
     version: 0.2.0
   landscaper-sync:
   - appVersion: 1.0.6-rc.1
@@ -92,7 +92,7 @@ entries:
     sources:
     - https://github.com/Eneco/landscaper
     urls:
-    - https://groundnuty.github.io/onedata-charts/landscaper-sync-0.1.9.tgz
+    - https://onedata.github.io/charts/landscaper-sync-0.1.9.tgz
     version: 0.1.9
   - appVersion: 1.0.6-rc.1
     created: 2017-07-10T15:31:42.747989323+02:00
@@ -111,7 +111,7 @@ entries:
     sources:
     - https://github.com/Eneco/landscaper
     urls:
-    - https://groundnuty.github.io/onedata-charts/landscaper-sync-0.1.8.tgz
+    - https://onedata.github.io/charts/landscaper-sync-0.1.8.tgz
     version: 0.1.8
   - appVersion: 1.0.6-rc.1
     created: 2017-07-10T15:31:42.747836906+02:00
@@ -130,7 +130,7 @@ entries:
     sources:
     - https://github.com/Eneco/landscaper
     urls:
-    - https://groundnuty.github.io/onedata-charts/landscaper-sync-0.1.7.tgz
+    - https://onedata.github.io/charts/landscaper-sync-0.1.7.tgz
     version: 0.1.7
   - appVersion: 1.0.6-rc.1
     created: 2017-07-10T15:31:42.747688308+02:00
@@ -149,7 +149,7 @@ entries:
     sources:
     - https://github.com/Eneco/landscaper
     urls:
-    - https://groundnuty.github.io/onedata-charts/landscaper-sync-0.1.6.tgz
+    - https://onedata.github.io/charts/landscaper-sync-0.1.6.tgz
     version: 0.1.6
   - appVersion: 1.0.6-rc.1
     created: 2017-07-10T15:31:42.747537484+02:00
@@ -168,7 +168,7 @@ entries:
     sources:
     - https://github.com/Eneco/landscaper
     urls:
-    - https://groundnuty.github.io/onedata-charts/landscaper-sync-0.1.5.tgz
+    - https://onedata.github.io/charts/landscaper-sync-0.1.5.tgz
     version: 0.1.5
   - appVersion: 1.0.6-rc.1
     created: 2017-07-10T15:31:42.747390054+02:00
@@ -187,7 +187,7 @@ entries:
     sources:
     - https://github.com/Eneco/landscaper
     urls:
-    - https://groundnuty.github.io/onedata-charts/landscaper-sync-0.1.4.tgz
+    - https://onedata.github.io/charts/landscaper-sync-0.1.4.tgz
     version: 0.1.4
   - appVersion: 1.0.6-rc.1
     created: 2017-07-10T15:31:42.747234414+02:00
@@ -206,7 +206,7 @@ entries:
     sources:
     - https://github.com/Eneco/landscaper
     urls:
-    - https://groundnuty.github.io/onedata-charts/landscaper-sync-0.1.3.tgz
+    - https://onedata.github.io/charts/landscaper-sync-0.1.3.tgz
     version: 0.1.3
   - appVersion: 1.0.6-rc.1
     created: 2017-07-10T15:31:42.746997368+02:00
@@ -225,7 +225,7 @@ entries:
     sources:
     - https://github.com/Eneco/landscaper
     urls:
-    - https://groundnuty.github.io/onedata-charts/landscaper-sync-0.1.2.tgz
+    - https://onedata.github.io/charts/landscaper-sync-0.1.2.tgz
     version: 0.1.2
   - appVersion: 1.0.6-rc.1
     created: 2017-07-10T15:31:42.746744063+02:00
@@ -244,7 +244,7 @@ entries:
     sources:
     - https://github.com/Eneco/landscaper
     urls:
-    - https://groundnuty.github.io/onedata-charts/landscaper-sync-0.1.1.tgz
+    - https://onedata.github.io/charts/landscaper-sync-0.1.1.tgz
     version: 0.1.1
   - appVersion: 1.0.6-rc.1
     created: 2017-07-10T15:31:42.746272713+02:00
@@ -263,7 +263,7 @@ entries:
     sources:
     - https://github.com/Eneco/landscaper
     urls:
-    - https://groundnuty.github.io/onedata-charts/landscaper-sync-0.1.0.tgz
+    - https://onedata.github.io/charts/landscaper-sync-0.1.0.tgz
     version: 0.1.0
   oneclient:
   - appVersion: 3.0.0-rc14
@@ -283,7 +283,7 @@ entries:
     sources:
     - https://github.com/onedata/oneclient
     urls:
-    - https://groundnuty.github.io/onedata-charts/oneclient-0.2.7.tgz
+    - https://onedata.github.io/charts/oneclient-0.2.7.tgz
     version: 0.2.7
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.749865392+02:00
@@ -302,7 +302,7 @@ entries:
     sources:
     - https://github.com/onedata/oneclient
     urls:
-    - https://groundnuty.github.io/onedata-charts/oneclient-0.2.6.tgz
+    - https://onedata.github.io/charts/oneclient-0.2.6.tgz
     version: 0.2.6
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.749584144+02:00
@@ -321,7 +321,7 @@ entries:
     sources:
     - https://github.com/onedata/oneclient
     urls:
-    - https://groundnuty.github.io/onedata-charts/oneclient-0.2.5.tgz
+    - https://onedata.github.io/charts/oneclient-0.2.5.tgz
     version: 0.2.5
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.749300382+02:00
@@ -340,7 +340,7 @@ entries:
     sources:
     - https://github.com/onedata/oneclient
     urls:
-    - https://groundnuty.github.io/onedata-charts/oneclient-0.2.4.tgz
+    - https://onedata.github.io/charts/oneclient-0.2.4.tgz
     version: 0.2.4
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.749014981+02:00
@@ -359,7 +359,7 @@ entries:
     sources:
     - https://github.com/onedata/oneclient
     urls:
-    - https://groundnuty.github.io/onedata-charts/oneclient-0.2.2.tgz
+    - https://onedata.github.io/charts/oneclient-0.2.2.tgz
     version: 0.2.2
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.748718178+02:00
@@ -378,7 +378,7 @@ entries:
     sources:
     - https://github.com/onedata/oneclient
     urls:
-    - https://groundnuty.github.io/onedata-charts/oneclient-0.2.1.tgz
+    - https://onedata.github.io/charts/oneclient-0.2.1.tgz
     version: 0.2.1
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.7484062+02:00
@@ -397,7 +397,7 @@ entries:
     sources:
     - https://github.com/onedata/oneclient
     urls:
-    - https://groundnuty.github.io/onedata-charts/oneclient-0.2.0.tgz
+    - https://onedata.github.io/charts/oneclient-0.2.0.tgz
     version: 0.2.0
   onedata:
   - created: 2017-07-10T15:31:42.751834137+02:00
@@ -410,7 +410,7 @@ entries:
       name: Michal Orzechowski
     name: onedata
     urls:
-    - https://groundnuty.github.io/onedata-charts/onedata-0.2.0.tgz
+    - https://onedata.github.io/charts/onedata-0.2.0.tgz
     version: 0.2.0
   onedata-1p:
   - created: 2017-07-10T15:31:42.754367183+02:00
@@ -423,7 +423,7 @@ entries:
       name: Michal Orzechowski
     name: onedata-1p
     urls:
-    - https://groundnuty.github.io/onedata-charts/onedata-1p-0.2.1.tgz
+    - https://onedata.github.io/charts/onedata-1p-0.2.1.tgz
     version: 0.2.1
   onedata-3p:
   - appVersion: 3.0.0-rc16
@@ -443,7 +443,7 @@ entries:
     sources:
     - https://github.com/onedata/onedata
     urls:
-    - https://groundnuty.github.io/onedata-charts/onedata-3p-0.2.2.tgz
+    - https://onedata.github.io/charts/onedata-3p-0.2.2.tgz
     version: 0.2.2
   - appVersion: 3.0.0-rc16
     created: 2017-07-10T15:31:42.758025631+02:00
@@ -462,7 +462,7 @@ entries:
     sources:
     - https://github.com/onedata/onedata
     urls:
-    - https://groundnuty.github.io/onedata-charts/onedata-3p-0.2.1.tgz
+    - https://onedata.github.io/charts/onedata-3p-0.2.1.tgz
     version: 0.2.1
   - appVersion: 3.0.0-rc16
     created: 2017-07-10T15:31:42.756066259+02:00
@@ -481,7 +481,7 @@ entries:
     sources:
     - https://github.com/onedata/onedata
     urls:
-    - https://groundnuty.github.io/onedata-charts/onedata-3p-0.2.0.tgz
+    - https://onedata.github.io/charts/onedata-3p-0.2.0.tgz
     version: 0.2.0
   onedata-chart-utils:
   - created: 2017-07-10T15:31:42.762005071+02:00
@@ -497,7 +497,7 @@ entries:
       name: Michal Orzechowski
     name: onedata-chart-utils
     urls:
-    - https://groundnuty.github.io/onedata-charts/onedata-chart-utils-0.2.8.tgz
+    - https://onedata.github.io/charts/onedata-chart-utils-0.2.8.tgz
     version: 0.2.8
   - created: 2017-07-10T15:31:42.761809099+02:00
     description: A set helper go templates functions for Onedata charts
@@ -512,7 +512,7 @@ entries:
       name: Michal Orzechowski
     name: onedata-chart-utils
     urls:
-    - https://groundnuty.github.io/onedata-charts/onedata-chart-utils-0.2.7.tgz
+    - https://onedata.github.io/charts/onedata-chart-utils-0.2.7.tgz
     version: 0.2.7
   - created: 2017-07-10T15:31:42.761336777+02:00
     description: A set helper go templates functions for Onedata charts
@@ -527,7 +527,7 @@ entries:
       name: Michal Orzechowski
     name: onedata-chart-utils
     urls:
-    - https://groundnuty.github.io/onedata-charts/onedata-chart-utils-0.2.6.tgz
+    - https://onedata.github.io/charts/onedata-chart-utils-0.2.6.tgz
     version: 0.2.6
   - created: 2017-07-10T15:31:42.761011323+02:00
     description: A set helper go templates functions for Onedata charts
@@ -542,7 +542,7 @@ entries:
       name: Michal Orzechowski
     name: onedata-chart-utils
     urls:
-    - https://groundnuty.github.io/onedata-charts/onedata-chart-utils-0.2.5.tgz
+    - https://onedata.github.io/charts/onedata-chart-utils-0.2.5.tgz
     version: 0.2.5
   - created: 2017-07-10T15:31:42.760840359+02:00
     description: A set helper go templates functions for Onedata charts
@@ -557,7 +557,7 @@ entries:
       name: Michal Orzechowski
     name: onedata-chart-utils
     urls:
-    - https://groundnuty.github.io/onedata-charts/onedata-chart-utils-0.2.4.tgz
+    - https://onedata.github.io/charts/onedata-chart-utils-0.2.4.tgz
     version: 0.2.4
   - created: 2017-07-10T15:31:42.760666392+02:00
     description: A set helper go templates functions for Onedata charts
@@ -572,7 +572,7 @@ entries:
       name: Michal Orzechowski
     name: onedata-chart-utils
     urls:
-    - https://groundnuty.github.io/onedata-charts/onedata-chart-utils-0.2.3.tgz
+    - https://onedata.github.io/charts/onedata-chart-utils-0.2.3.tgz
     version: 0.2.3
   - created: 2017-07-10T15:31:42.760497033+02:00
     description: A set helper go templates functions for Onedata charts
@@ -587,7 +587,7 @@ entries:
       name: Michal Orzechowski
     name: onedata-chart-utils
     urls:
-    - https://groundnuty.github.io/onedata-charts/onedata-chart-utils-0.2.2.tgz
+    - https://onedata.github.io/charts/onedata-chart-utils-0.2.2.tgz
     version: 0.2.2
   - created: 2017-07-10T15:31:42.760324948+02:00
     description: A set helper go templates functions for Onedata charts
@@ -602,7 +602,7 @@ entries:
       name: Michal Orzechowski
     name: onedata-chart-utils
     urls:
-    - https://groundnuty.github.io/onedata-charts/onedata-chart-utils-0.2.1.tgz
+    - https://onedata.github.io/charts/onedata-chart-utils-0.2.1.tgz
     version: 0.2.1
   - created: 2017-07-10T15:31:42.760170841+02:00
     description: A set helper go templates functions for Onedata charts
@@ -617,7 +617,7 @@ entries:
       name: Michal Orzechowski
     name: onedata-chart-utils
     urls:
-    - https://groundnuty.github.io/onedata-charts/onedata-chart-utils-0.2.0.tgz
+    - https://onedata.github.io/charts/onedata-chart-utils-0.2.0.tgz
     version: 0.2.0
   onedata-cli:
   - appVersion: 3.0.0-rc14
@@ -634,7 +634,7 @@ entries:
       name: Michal Orzechowski
     name: onedata-cli
     urls:
-    - https://groundnuty.github.io/onedata-charts/onedata-cli-0.2.7.tgz
+    - https://onedata.github.io/charts/onedata-cli-0.2.7.tgz
     version: 0.2.7
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.763579703+02:00
@@ -650,7 +650,7 @@ entries:
       name: Michal Orzechowski
     name: onedata-cli
     urls:
-    - https://groundnuty.github.io/onedata-charts/onedata-cli-0.2.6.tgz
+    - https://onedata.github.io/charts/onedata-cli-0.2.6.tgz
     version: 0.2.6
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.763321601+02:00
@@ -666,7 +666,7 @@ entries:
       name: Michal Orzechowski
     name: onedata-cli
     urls:
-    - https://groundnuty.github.io/onedata-charts/onedata-cli-0.2.5.tgz
+    - https://onedata.github.io/charts/onedata-cli-0.2.5.tgz
     version: 0.2.5
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.763064181+02:00
@@ -682,7 +682,7 @@ entries:
       name: Michal Orzechowski
     name: onedata-cli
     urls:
-    - https://groundnuty.github.io/onedata-charts/onedata-cli-0.2.4.tgz
+    - https://onedata.github.io/charts/onedata-cli-0.2.4.tgz
     version: 0.2.4
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.762805383+02:00
@@ -698,7 +698,7 @@ entries:
       name: Michal Orzechowski
     name: onedata-cli
     urls:
-    - https://groundnuty.github.io/onedata-charts/onedata-cli-0.2.2.tgz
+    - https://onedata.github.io/charts/onedata-cli-0.2.2.tgz
     version: 0.2.2
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.762543275+02:00
@@ -714,7 +714,7 @@ entries:
       name: Michal Orzechowski
     name: onedata-cli
     urls:
-    - https://groundnuty.github.io/onedata-charts/onedata-cli-0.2.1.tgz
+    - https://onedata.github.io/charts/onedata-cli-0.2.1.tgz
     version: 0.2.1
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.762275796+02:00
@@ -730,7 +730,7 @@ entries:
       name: Michal Orzechowski
     name: onedata-cli
     urls:
-    - https://groundnuty.github.io/onedata-charts/onedata-cli-0.2.0.tgz
+    - https://onedata.github.io/charts/onedata-cli-0.2.0.tgz
     version: 0.2.0
   oneprovider:
   - appVersion: 3.0.0-rc14
@@ -751,7 +751,7 @@ entries:
     sources:
     - https://github.com/onedata/onedata
     urls:
-    - https://groundnuty.github.io/onedata-charts/oneprovider-0.2.7.tgz
+    - https://onedata.github.io/charts/oneprovider-0.2.7.tgz
     version: 0.2.7
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.771117225+02:00
@@ -771,7 +771,7 @@ entries:
     sources:
     - https://github.com/onedata/onedata
     urls:
-    - https://groundnuty.github.io/onedata-charts/oneprovider-0.2.6.tgz
+    - https://onedata.github.io/charts/oneprovider-0.2.6.tgz
     version: 0.2.6
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.769549985+02:00
@@ -791,7 +791,7 @@ entries:
     sources:
     - https://github.com/onedata/onedata
     urls:
-    - https://groundnuty.github.io/onedata-charts/oneprovider-0.2.5.tgz
+    - https://onedata.github.io/charts/oneprovider-0.2.5.tgz
     version: 0.2.5
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.767749062+02:00
@@ -811,7 +811,7 @@ entries:
     sources:
     - https://github.com/onedata/onedata
     urls:
-    - https://groundnuty.github.io/onedata-charts/oneprovider-0.2.4.tgz
+    - https://onedata.github.io/charts/oneprovider-0.2.4.tgz
     version: 0.2.4
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.766466364+02:00
@@ -831,7 +831,7 @@ entries:
     sources:
     - https://github.com/onedata/onedata
     urls:
-    - https://groundnuty.github.io/onedata-charts/oneprovider-0.2.3.tgz
+    - https://onedata.github.io/charts/oneprovider-0.2.3.tgz
     version: 0.2.3
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.765202256+02:00
@@ -851,7 +851,7 @@ entries:
     sources:
     - https://github.com/onedata/onedata
     urls:
-    - https://groundnuty.github.io/onedata-charts/oneprovider-0.2.1.tgz
+    - https://onedata.github.io/charts/oneprovider-0.2.1.tgz
     version: 0.2.1
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.764514575+02:00
@@ -871,7 +871,7 @@ entries:
     sources:
     - https://github.com/onedata/onedata
     urls:
-    - https://groundnuty.github.io/onedata-charts/oneprovider-0.2.0.tgz
+    - https://onedata.github.io/charts/oneprovider-0.2.0.tgz
     version: 0.2.0
   onezone:
   - appVersion: 3.0.0-rc14
@@ -891,7 +891,7 @@ entries:
     sources:
     - https://github.com/onedata/onezone
     urls:
-    - https://groundnuty.github.io/onedata-charts/onezone-0.2.7.tgz
+    - https://onedata.github.io/charts/onezone-0.2.7.tgz
     version: 0.2.7
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.77450995+02:00
@@ -910,7 +910,7 @@ entries:
     sources:
     - https://github.com/onedata/onezone
     urls:
-    - https://groundnuty.github.io/onedata-charts/onezone-0.2.6.tgz
+    - https://onedata.github.io/charts/onezone-0.2.6.tgz
     version: 0.2.6
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.774164999+02:00
@@ -929,7 +929,7 @@ entries:
     sources:
     - https://github.com/onedata/onezone
     urls:
-    - https://groundnuty.github.io/onedata-charts/onezone-0.2.5.tgz
+    - https://onedata.github.io/charts/onezone-0.2.5.tgz
     version: 0.2.5
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.773874476+02:00
@@ -948,7 +948,7 @@ entries:
     sources:
     - https://github.com/onedata/onezone
     urls:
-    - https://groundnuty.github.io/onedata-charts/onezone-0.2.4.tgz
+    - https://onedata.github.io/charts/onezone-0.2.4.tgz
     version: 0.2.4
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.773584168+02:00
@@ -967,7 +967,7 @@ entries:
     sources:
     - https://github.com/onedata/onezone
     urls:
-    - https://groundnuty.github.io/onedata-charts/onezone-0.2.2.tgz
+    - https://onedata.github.io/charts/onezone-0.2.2.tgz
     version: 0.2.2
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.77328341+02:00
@@ -986,7 +986,7 @@ entries:
     sources:
     - https://github.com/onedata/onezone
     urls:
-    - https://groundnuty.github.io/onedata-charts/onezone-0.2.1.tgz
+    - https://onedata.github.io/charts/onezone-0.2.1.tgz
     version: 0.2.1
   - appVersion: 3.0.0-rc14
     created: 2017-07-10T15:31:42.772993905+02:00
@@ -1005,7 +1005,7 @@ entries:
     sources:
     - https://github.com/onedata/onezone
     urls:
-    - https://groundnuty.github.io/onedata-charts/onezone-0.2.0.tgz
+    - https://onedata.github.io/charts/onezone-0.2.0.tgz
     version: 0.2.0
   volume-ceph:
   - appVersion: latest
@@ -1022,7 +1022,7 @@ entries:
       name: Michal Orzechowski
     name: volume-ceph
     urls:
-    - https://groundnuty.github.io/onedata-charts/volume-ceph-0.2.3.tgz
+    - https://onedata.github.io/charts/volume-ceph-0.2.3.tgz
     version: 0.2.3
   - appVersion: latest
     created: 2017-07-10T15:31:42.775859502+02:00
@@ -1038,7 +1038,7 @@ entries:
       name: Michal Orzechowski
     name: volume-ceph
     urls:
-    - https://groundnuty.github.io/onedata-charts/volume-ceph-0.2.2.tgz
+    - https://onedata.github.io/charts/volume-ceph-0.2.2.tgz
     version: 0.2.2
   - appVersion: latest
     created: 2017-07-10T15:31:42.775338905+02:00
@@ -1054,7 +1054,7 @@ entries:
       name: Michal Orzechowski
     name: volume-ceph
     urls:
-    - https://groundnuty.github.io/onedata-charts/volume-ceph-0.2.1.tgz
+    - https://onedata.github.io/charts/volume-ceph-0.2.1.tgz
     version: 0.2.1
   - appVersion: latest
     created: 2017-07-10T15:31:42.775077412+02:00
@@ -1070,7 +1070,7 @@ entries:
       name: Michal Orzechowski
     name: volume-ceph
     urls:
-    - https://groundnuty.github.io/onedata-charts/volume-ceph-0.2.0.tgz
+    - https://onedata.github.io/charts/volume-ceph-0.2.0.tgz
     version: 0.2.0
   volume-gluster:
   - appVersion: latest
@@ -1087,7 +1087,7 @@ entries:
       name: Michal Orzechowski
     name: volume-gluster
     urls:
-    - https://groundnuty.github.io/onedata-charts/volume-gluster-0.2.0.tgz
+    - https://onedata.github.io/charts/volume-gluster-0.2.0.tgz
     version: 0.2.0
   volume-nfs:
   - appVersion: "1.1"
@@ -1104,7 +1104,7 @@ entries:
       name: Michal Orzechowski
     name: volume-nfs
     urls:
-    - https://groundnuty.github.io/onedata-charts/volume-nfs-0.2.4.tgz
+    - https://onedata.github.io/charts/volume-nfs-0.2.4.tgz
     version: 0.2.4
   - appVersion: "1.1"
     created: 2017-07-10T15:31:42.777387902+02:00
@@ -1120,7 +1120,7 @@ entries:
       name: Michal Orzechowski
     name: volume-nfs
     urls:
-    - https://groundnuty.github.io/onedata-charts/volume-nfs-0.2.2.tgz
+    - https://onedata.github.io/charts/volume-nfs-0.2.2.tgz
     version: 0.2.2
   - appVersion: "1.1"
     created: 2017-07-10T15:31:42.777126682+02:00
@@ -1136,7 +1136,7 @@ entries:
       name: Michal Orzechowski
     name: volume-nfs
     urls:
-    - https://groundnuty.github.io/onedata-charts/volume-nfs-0.2.1.tgz
+    - https://onedata.github.io/charts/volume-nfs-0.2.1.tgz
     version: 0.2.1
   - appVersion: "1.1"
     created: 2017-07-10T15:31:42.77685913+02:00
@@ -1152,7 +1152,7 @@ entries:
       name: Michal Orzechowski
     name: volume-nfs
     urls:
-    - https://groundnuty.github.io/onedata-charts/volume-nfs-0.2.0.tgz
+    - https://onedata.github.io/charts/volume-nfs-0.2.0.tgz
     version: 0.2.0
   volume-s3:
   - created: 2017-07-10T15:31:42.778755936+02:00
@@ -1168,7 +1168,7 @@ entries:
       name: Michal Orzechowski
     name: volume-s3
     urls:
-    - https://groundnuty.github.io/onedata-charts/volume-s3-0.2.3.tgz
+    - https://onedata.github.io/charts/volume-s3-0.2.3.tgz
     version: 0.2.3
   - created: 2017-07-10T15:31:42.778478329+02:00
     description: S3 Scality object storage service, suitable for testing purposes.
@@ -1183,7 +1183,7 @@ entries:
       name: Michal Orzechowski
     name: volume-s3
     urls:
-    - https://groundnuty.github.io/onedata-charts/volume-s3-0.2.2.tgz
+    - https://onedata.github.io/charts/volume-s3-0.2.2.tgz
     version: 0.2.2
   - created: 2017-07-10T15:31:42.778203094+02:00
     description: S3 Scality object storage service, suitable for testing purposes.
@@ -1198,7 +1198,7 @@ entries:
       name: Michal Orzechowski
     name: volume-s3
     urls:
-    - https://groundnuty.github.io/onedata-charts/volume-s3-0.2.1.tgz
+    - https://onedata.github.io/charts/volume-s3-0.2.1.tgz
     version: 0.2.1
   - created: 2017-07-10T15:31:42.777931409+02:00
     description: S3 Scality object storage service, suitable for testing purposes.
@@ -1213,6 +1213,6 @@ entries:
       name: Michal Orzechowski
     name: volume-s3
     urls:
-    - https://groundnuty.github.io/onedata-charts/volume-s3-0.2.0.tgz
+    - https://onedata.github.io/charts/volume-s3-0.2.0.tgz
     version: 0.2.0
 generated: 2017-07-10T15:31:42.735099163+02:00
