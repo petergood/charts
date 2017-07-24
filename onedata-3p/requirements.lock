@@ -4,7 +4,7 @@ dependencies:
   enabled: false
   import-values: null
   name: onezone
-  repository: https://groundnuty.github.io/onedata-charts/
+  repository: https://onedata.github.io/charts/
   tags: null
   version: 0.2.7
 - alias: ""
@@ -12,7 +12,7 @@ dependencies:
   enabled: false
   import-values: null
   name: oneprovider
-  repository: https://groundnuty.github.io/onedata-charts/
+  repository: https://onedata.github.io/charts/
   tags: null
   version: 0.2.6
 - alias: ""
@@ -20,7 +20,7 @@ dependencies:
   enabled: false
   import-values: null
   name: oneprovider
-  repository: https://groundnuty.github.io/onedata-charts/
+  repository: https://onedata.github.io/charts/
   tags: null
   version: 0.2.6
 - alias: ""
@@ -28,8 +28,8 @@ dependencies:
   enabled: false
   import-values: null
   name: oneprovider
-  repository: https://groundnuty.github.io/onedata-charts/
+  repository: https://onedata.github.io/charts/
   tags: null
   version: 0.2.6
-digest: sha256:7cdc0f1d80312f338436ceccb85e0a7be79470dafec8898ffcd9db9b868f46be
-generated: 2017-06-27T08:10:25.517825546+02:00
+digest: sha256:0b30a9b2349f07c43ff8eabdca152beeb0fdc6d3f408d53fdf13bf3b4c2889a7
+generated: 2017-07-25T01:11:44.08736611+02:00
