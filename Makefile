@@ -32,10 +32,11 @@ oneclient: build-oneclient
 test: test-onedata-chart-utils test-volume-s3 test-volume-ceph test-volume-nfs test-oneclient test-oneprovider test-onezone test-onedata-cli test-onedata test-onedata-3p test-cross-support-job-3p
 
 #volumes
-volumes: volume-s3 volume-nfs volume-ceph
+volumes: volume-s3 volume-nfs volume-ceph volume-gluster
 volume-s3: onedata-chart-utils build-volume-s3
 volume-nfs: onedata-chart-utils build-volume-nfs
 volume-ceph: onedata-chart-utils build-volume-ceph
+volume-gluster: onedata-chart-utils build-volume-gluster
 
 onedata-chart-utils: build-onedata-chart-utils
 
