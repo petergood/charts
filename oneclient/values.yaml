@@ -6,7 +6,7 @@ image: onedata/oneclient:3.0.0-rc16
 imagePullPolicy: IfNotPresent
 
 wait_for:
-  image: groundnuty/k8s-wait-for:0.1
+  image: onedata/k8s-wait-for:v1.0.1
   imagePullPolicy: IfNotPresent
 
 onedata_cli:
