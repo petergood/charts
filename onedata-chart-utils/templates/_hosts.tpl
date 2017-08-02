@@ -180,6 +180,51 @@
   {{- end -}}
 {{- end -}}
 
+{{- define "volume-swift_name" -}}
+  {{- if .Values.volume_swift_service_url -}}
+    {{- if eq .Values.volume_swift_service_url.type "auto-generate" -}}
+      {{- if .Values.volume_swift_service_url.disableSuffix -}}
+        {{- $suffix :=  "" | toString -}}
+        {{- printf "%s-%s-%s" .Release.Name "volume-swift" $suffix | trunc 63 | trimSuffix "-" -}}
+      {{- else -}}
+        {{- $suffix := default "" .Values.suffix | toString -}}
+        {{- printf "%s-%s-%s" .Release.Name "volume-swift" $suffix | trunc 63 | trimSuffix "-" -}}
+      {{- end -}}
+    {{- else if eq .Values.volume_swift_service_url.type "k8s-service" -}}
+      {{- if .Values.volume_swift_service_url.namespace -}}
+        {{/* TODO */}}
+      {{- else -}}
+        {{ .Values.volume_swift_service_url.service_name }}
+      {{- end -}}
+    {{- else if eq .Values.volume_swift_service_url.type "http" -}}
+      {{/* TODO */}}
+    {{- end -}}
+  {{- else -}}
+        {{- $suffix := default "" .Values.suffix | toString -}}
+        {{- printf "%s-%s-%s" .Release.Name "volume-swift" $suffix | trunc 63 | trimSuffix "-" -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "volume-swift_service_url" -}}
+  {{- if .Values.volume_swift_service_url -}}
+    {{- if eq .Values.volume_swift_service_url.type "auto-generate" -}}
+        {{ template "volume-swift_name" . }}.{{template "service_namespace_domain" . }}
+    {{- else if eq .Values.volume_swift_service_url.type "k8s-service" -}}
+      {{- if .Values.volume_swift_service_url.namespace -}}
+        {{ .Values.volume_swift_service_url.service_name }}.{{ .Values.volume_swift_service_url.namespace }}.{{template "service_domain" . }}
+      {{- else -}}
+        {{ .Values.volume_swift_service_url.service_name }}.{{template "service_namespace_domain" .}}
+      {{- end -}}
+    {{- else if eq .Values.volume_swift_service_url.type "http" -}}
+      {{ .Values.volume_swift_service_url.address }}
+    {{- else -}}
+      {{ template "volume-swift_name" . }}.{{template "service_namespace_domain" . }}
+    {{- end -}}
+  {{- else -}}
+      {{ template "volume-swift_name" . }}.{{template "service_namespace_domain" . }}
+  {{- end -}}
+{{- end -}}
+
 {{- define "oneprovider_name" -}}
   {{- if .Values.oneprovider_service_url -}}
     {{- if eq .Values.oneprovider_service_url.type "auto-generate" -}}
@@ -267,6 +312,96 @@
     {{- end -}}
   {{- else -}}
       {{ template "onezone_name" . }}.{{template "service_namespace_domain" . }}
+  {{- end -}}
+{{- end -}}
+
+{{- define "saml-idp_name" -}}
+  {{- if .Values.saml_idp_service_url -}}
+    {{- if eq .Values.saml_idp_service_url.type "auto-generate" -}}
+      {{- if .Values.saml_idp_service_url.disableSuffix -}}
+        {{- $suffix :=  "" | toString -}}
+        {{- printf "%s-%s-%s" .Release.Name "saml-idp" $suffix | trunc 63 | trimSuffix "-" -}}
+      {{- else -}}
+        {{- $suffix := default "" .Values.suffix | toString -}}
+        {{- printf "%s-%s-%s" .Release.Name "saml-idp" $suffix | trunc 63 | trimSuffix "-" -}}
+      {{- end -}}
+    {{- else if eq .Values.saml_idp_service_url.type "k8s-service" -}}
+      {{- if .Values.saml_idp_service_url.namespace -}}
+        {{/* TODO */}}
+      {{- else -}}
+        {{ .Values.saml_idp_service_url.service_name }}
+      {{- end -}}
+    {{- else if eq .Values.saml_idp_service_url.type "http" -}}
+      {{/* TODO */}}
+    {{- end -}}
+  {{- else -}}
+        {{- $suffix := default "" .Values.suffix | toString -}}
+        {{- printf "%s-%s-%s" .Release.Name "saml-idp" $suffix | trunc 63 | trimSuffix "-" -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "saml-idp_service_url" -}}
+  {{- if .Values.saml_idp_service_url -}}
+    {{- if eq .Values.saml_idp_service_url.type "auto-generate" -}}
+        {{ template "saml-idp_name" . }}.{{template "service_namespace_domain" . }}
+    {{- else if eq .Values.saml_idp_service_url.type "k8s-service" -}}
+      {{- if .Values.saml_idp_service_url.namespace -}}
+        {{ .Values.saml_idp_service_url.service_name }}.{{ .Values.saml_idp_service_url.namespace }}.{{template "service_domain" . }}
+      {{- else -}}
+        {{ .Values.saml_idp_service_url.service_name }}.{{template "service_namespace_domain" .}}
+      {{- end -}}
+    {{- else if eq .Values.saml_idp_service_url.type "http" -}}
+      {{ .Values.saml_idp_service_url.address }}
+    {{- else -}}
+      {{ template "saml-idp_name" . }}.{{template "service_namespace_domain" . }}
+    {{- end -}}
+  {{- else -}}
+      {{ template "saml-idp_name" . }}.{{template "service_namespace_domain" . }}
+  {{- end -}}
+{{- end -}}
+
+{{- define "luma_name" -}}
+  {{- if .Values.luma_service_url -}}
+    {{- if eq .Values.luma_service_url.type "auto-generate" -}}
+      {{- if .Values.luma_service_url.disableSuffix -}}
+        {{- $suffix :=  "" | toString -}}
+        {{- printf "%s-%s-%s" .Release.Name "luma" $suffix | trunc 63 | trimSuffix "-" -}}
+      {{- else -}}
+        {{- $suffix := default "" .Values.suffix | toString -}}
+        {{- printf "%s-%s-%s" .Release.Name "luma" $suffix | trunc 63 | trimSuffix "-" -}}
+      {{- end -}}
+    {{- else if eq .Values.luma_service_url.type "k8s-service" -}}
+      {{- if .Values.luma_service_url.namespace -}}
+        {{/* TODO */}}
+      {{- else -}}
+        {{ .Values.luma_service_url.service_name }}
+      {{- end -}}
+    {{- else if eq .Values.luma_service_url.type "http" -}}
+      {{/* TODO */}}
+    {{- end -}}
+  {{- else -}}
+        {{- $suffix := default "" .Values.suffix | toString -}}
+        {{- printf "%s-%s-%s" .Release.Name "luma" $suffix | trunc 63 | trimSuffix "-" -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "luma_service_url" -}}
+  {{- if .Values.luma_service_url -}}
+    {{- if eq .Values.luma_service_url.type "auto-generate" -}}
+        {{ template "luma_name" . }}.{{template "service_namespace_domain" . }}
+    {{- else if eq .Values.luma_service_url.type "k8s-service" -}}
+      {{- if .Values.luma_service_url.namespace -}}
+        {{ .Values.luma_service_url.service_name }}.{{ .Values.luma_service_url.namespace }}.{{template "service_domain" . }}
+      {{- else -}}
+        {{ .Values.luma_service_url.service_name }}.{{template "service_namespace_domain" .}}
+      {{- end -}}
+    {{- else if eq .Values.luma_service_url.type "http" -}}
+      {{ .Values.luma_service_url.address }}
+    {{- else -}}
+      {{ template "luma_name" . }}.{{template "service_namespace_domain" . }}
+    {{- end -}}
+  {{- else -}}
+      {{ template "luma_name" . }}.{{template "service_namespace_domain" . }}
   {{- end -}}
 {{- end -}}
 
