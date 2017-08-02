@@ -2,10 +2,10 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-oz_image: &oz_image onedata/onezone:3.0.0-rc16
-op_image: &op_image onedata/oneprovider:3.0.0-rc16
-oc_image: &oc_image onedata/oneclient:3.0.0-rc16
-cli_image: &cli_image onedata/rest-cli:3.0.0-rc16
+oz_image: &oz_image onedata/onezone:17.06.0-rc1
+op_image: &op_image onedata/oneprovider:17.06.0-rc1
+oc_image: &oc_image onedata/oneclient:17.06.0-rc1
+cli_image: &cli_image onedata/rest-cli:17.06.0-beta6
 
 log_level: &log_level "info"
 onepanel_batch_mode_enabled: &onepanel_batch_mode_enabled true

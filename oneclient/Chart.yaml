@@ -11,4 +11,4 @@ maintainers:
   - name: Michal Orzechowski
     email: orzechowski.michal@gmail.com
 engine: gotpl
-appVersion: 3.0.0-rc14
+appVersion: 17.06.0-rc1
