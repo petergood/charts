@@ -19,7 +19,6 @@ spec:
         heritage: "{{ .Release.Service }}"
       annotations:
         version: "{{ .Chart.Version }}"
-      annotations:
         pod.beta.kubernetes.io/init-containers: '[
             {
                 "name": "wait-for-onezone",
