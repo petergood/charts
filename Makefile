@@ -20,7 +20,7 @@ onedata: build-onedata
 onedata-cli: onedata-chart-utils
 onedata-cli: build-onedata-cli
 
-onezone: onedata-chart-utils
+onezone: onedata-chart-utils saml-idp
 onezone: build-onezone
 
 oneprovider: onedata-chart-utils volumes luma
@@ -30,6 +30,9 @@ oneclient: onedata-chart-utils
 oneclient: build-oneclient
 
 test: test-onedata-chart-utils test-volume-s3 test-volume-ceph test-volume-nfs test-oneclient test-oneprovider test-onezone test-onedata-cli test-onedata test-onedata-3p test-cross-support-job-3p
+
+saml-idp: onedata-chart-utils 
+saml-idp: build-saml-idp
 
 luma: onedata-chart-utils 
 luma: luma

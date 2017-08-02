@@ -26,6 +26,8 @@ swift_enabled: &swift_enabled false
 
 # Those variables are the unfortunate necessity of an issue discussed here:
 # https://github.com/kubernetes/helm/issues/2479
+saml-idp:
+  enabled: *idp_enabled
 luma:
   enabled: *luma_enabled
 oneclient:
@@ -90,8 +92,7 @@ onezone:
     workers: [ ]
     databases: [ ]
   saml-idp:
-    enabled: true
-
+    enabled: &idp_enabled true
 # What follows are the providers configurations for providers designated as:
 # krakow, paris, and lisbon
 oneprovider-krakow:
