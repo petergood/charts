@@ -1,5 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
+apiVersion: apps/v1beta1
+kind: StatefulSet
 metadata:
   name: {{ template "fullname" . }}
   labels:
@@ -11,6 +13,8 @@ metadata:
   annotations:
     version: "{{ .Chart.Version }}"
 spec:
+  serviceName: {{ template "fullname" . }}
+  replicas: {{ .Values.onezone_nodes_count }}
   template:
     metadata:
       labels:
@@ -22,8 +26,8 @@ spec:
       annotations:
         version: "{{ .Chart.Version }}"
     spec:
-      hostname: node1
       subdomain: {{ template "fullname" . }}
+      terminationGracePeriodSeconds: 0
       {{- if .Values.onedata_anti_affinity_enabled }}
       affinity:
         podAntiAffinity:
@@ -69,6 +73,16 @@ spec:
           - containerPort: 8876
           - containerPort: 8877
           - containerPort: 9443
+        command:
+          - "/bin/bash"
+          - "-c"
+          - >
+            echo {{ template "fullname" . }}-{{ sub (.Values.onezone_nodes_count) 1 }} ;
+            if [[ "$HOSTNAME" != {{ template "fullname" . }}-{{ sub (.Values.onezone_nodes_count) 1 }} ]]; then export ONEPANEL_BATCH_MODE="false" ; fi ;
+            env ;
+            /root/onezone.sh ;
+            cat /var/log/oz_panel/info.log ;
+            exit 1 ;
         lifecycle:
           preStop:
             exec:
@@ -83,15 +97,16 @@ spec:
                   echo 1 > /monitor/onezone-exit ;
                   pkill -f onezone.py ;
         readinessProbe:
+          initialDelaySeconds: 0
+          periodSeconds: 1
           exec:
             # A hack, that makes sure that a pod reports ready when onezone has really started
             command:
               - "/bin/bash"
               - "-c"
               - >
-                service=zone ;
-                user="$(curl -k -u admin:password -sS --tlsv1.2   -X GET 'https://localhost:9443/api/v3/onepanel/users/user')";
-                if [[ "$user" == "" ]] ; then exit 1; else  exit 0;  fi ;
+                onepanel_ready() { sleep 5 ; exit 0 ; } ;
+                if [[ "$HOSTNAME" == {{ template "fullname" . }}-{{ sub (.Values.onezone_nodes_count) 1 }} ]]; then exit 0 ; else onepanel_ready ; fi ;
         env:
           - name: ONEPANEL_LOG_LEVEL
             value: {{ default .Values.log_level "info" | quote }}
@@ -100,20 +115,47 @@ spec:
           - name: ONEZONE_CONFIG
             value: |
               cluster:
-                domainName: {{ template "service_url" . }}
+                domainName: "{{ template "service_url" . }}"
                 nodes:
-                  n1:
-                    hostname: node1
+                  {{- $r := . -}}
+                  {{- range $i := until (int (.Values.onezone_nodes_count)) }}
+                  n{{ $i }}: 
+                    hostname: {{ template "fullname" $r }}-{{ $i }}
+                  {{- end }}
                 managers:
-                  mainNode: n1
+                  mainNode: n{{ sub (.Values.onezone_nodes_count) 1 }} 
                   nodes:
-                    - n1
+              {{- with .Values.cluster_config.managers }}
+                  {{- range $i := . }}
+                    - n{{ $i }}
+                  {{- end }}
+              {{- else }}
+                  {{- range $i := until (int ($r.Values.onezone_nodes_count)) }}
+                    - n{{ $i }}
+                  {{- end }}
+              {{- end }}
                 workers:
                   nodes:
-                    - n1
+              {{- with .Values.cluster_config.workers }}
+                  {{- range $i := . }}
+                    - n{{ $i }}
+                  {{- end }}
+              {{- else }}
+                  {{- range $i := until (int ($r.Values.onezone_nodes_count)) }}
+                    - n{{ $i }}
+                  {{- end }}
+              {{- end }}
                 databases:
                   nodes:
-                    - n1
+              {{- with .Values.cluster_config.databases }}
+                  {{- range $i := . }}
+                    - n{{ $i }}
+                  {{- end }}
+              {{- else }}
+                  {{- range $i := until (int ($r.Values.onezone_nodes_count)) }}
+                    - n{{ $i }}
+                  {{- end }}
+              {{- end }}
               onezone:
                 {{ if .Values.name -}}
                 name: {{ .Values.name }}
@@ -134,8 +176,8 @@ spec:
                     password: {{ .password }}
                     userRole: regular
                   {{- end }}
+              {{- end }}
       volumes:
-                  {{- end }}
     {{- if (index .Values "saml-idp" "enabled") }}
       - name: saml-config
         configMap:

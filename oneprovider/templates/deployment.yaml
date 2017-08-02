@@ -1,6 +1,8 @@
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
+apiVersion: apps/v1beta1
+kind: StatefulSet
 metadata:
   name: {{ template "fullname" . }}
   labels:
@@ -12,7 +14,8 @@ metadata:
   annotations:
     version: "{{ .Chart.Version }}"
 spec:
-  replicas: {{ .Values.replicaCount }}
+  serviceName: {{ template "fullname" . }}
+  replicas: {{ .Values.oneprovider_nodes_count }}
   template:
     metadata:
       labels:
@@ -25,6 +28,7 @@ spec:
         version: "{{ .Chart.Version }}"
     spec:
       subdomain: {{ template "fullname" . }}
+      terminationGracePeriodSeconds: 0
       {{- if .Values.onedata_anti_affinity_enabled }}
       affinity:
         podAntiAffinity:
@@ -104,6 +108,16 @@ spec:
           - containerPort: 8876
           - containerPort: 8877
           - containerPort: 9443
+        command:
+          - "/bin/bash"
+          - "-c"
+          - >
+            echo {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ;
+            if [[ "$HOSTNAME" != {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ]]; then export ONEPANEL_BATCH_MODE="false" ; fi ;
+            env ;
+            /root/oneprovider.sh ;
+            cat /var/log/op_panel/info.log ;  
+            exit 1 ;
         lifecycle:
           preStop:
             exec:
@@ -122,9 +136,8 @@ spec:
               - "/bin/bash"
               - "-c"
               - >
-                service=provider ;
-                user="$(curl -k -u admin:password -sS --tlsv1.2 -X GET 'https://localhost:9443/api/v3/onepanel/users/user')";
-                if [[ "$user" == "" ]] ; then exit 1; else  exit 0;  fi ;
+                onepanel_ready() { sleep 5 ; exit 0 ; } ;
+                if [[ "$HOSTNAME" == {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ]]; then exit 0 ; else onepanel_ready ; fi ;
         env:
           - name: ONEPANEL_LOG_LEVEL
             value: {{ default .Values.log_level "info" | quote }}
@@ -135,19 +148,49 @@ spec:
               cluster:
                 domainName: "{{ template "service_url" . }}"
                 nodes:
-                  n1:
-                    hostname: node1
+                  {{- $r := . -}}
+                  {{- range $i := until (int (.Values.oneprovider_nodes_count)) }}
+                  n{{ $i }}: 
+                    hostname: {{ template "fullname" $r }}-{{ $i }}
+                  {{- end }}
                 managers:
-                  mainNode: n1
+                  mainNode: n{{ sub (.Values.oneprovider_nodes_count) 1 }} 
                   nodes:
-                    - n1
+              {{- with .Values.cluster_config.managers }}
+                  {{- range $i := . }}
+                    - n{{ $i }}
+                  {{- end }}
+              {{- else }}
+                  {{- range $i := until (int ($r.Values.oneprovider_nodes_count)) }}
+                    - n{{ $i }}
+                  {{- end }}
+              {{- end }}
                 workers:
                   nodes:
-                    - n1
+              {{- with .Values.cluster_config.workers }}
+                  {{- range $i := . }}
+                    - n{{ $i }}
+                  {{- end }}
+              {{- else }}
+                  {{- range $i := until (int ($r.Values.oneprovider_nodes_count)) }}
+                    - n{{ $i }}
+                  {{- end }}
+              {{- end }}
                 databases:
                   nodes:
-                    - n1
+              {{- with .Values.cluster_config.databases }}
+                  {{- range $i := . }}
+                    - n{{ $i }}
+                  {{- end }}
+              {{- else }}
+                  {{- range $i := until (int ($r.Values.oneprovider_nodes_count)) }}
+                    - n{{ $i }}
+                  {{- end }}
+              {{- end }}
+                {{- if or (eq (int .Values.oneprovider_nodes_count) 1) (or (index .Values "volume-s3" "enabled")) (or (index .Values "volume-ceph" "enabled") (or (index .Values "volume-gluster" "enabled") (index .Values "volume-swift" "enabled"))) }}
                 storages:
+                {{- end }}
+                {{- if and (index .Values "posix" "enabled") (eq (int .Values.oneprovider_nodes_count) 1) }}
                   posix:
                     type: posix
                     mountPoint: /volumes/storage

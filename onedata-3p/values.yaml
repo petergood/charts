@@ -12,6 +12,12 @@ onepanel_batch_mode_enabled: &onepanel_batch_mode_enabled true
 oneclients_debug_mode_enabled: &oneclients_debug_mode_enabled false
 onedata_anti_affinity_enabled: &onedata_anti_affinity_enabled false
 
+oneproviders_nodes_count: &oneproviders_nodes_count 1
+oneprovider_cluster_configs: &oneprovider_cluster_configs
+  managers: [ ]
+  workers: [ ]
+  databases: [ ]
+
 oneclients_enabled: &oneclients_enabled true
 onedata_cli_enabled: &onedata_cli_enabled true
 
@@ -41,6 +47,10 @@ onezone:
   onedata_anti_affinity_enabled: *onedata_anti_affinity_enabled
   log_level: *log_level
   onezone_nodes_count: 1
+  cluster_config:
+    managers: [ ]
+    workers: [ ]
+    databases: [ ]
   saml-idp:
     enabled: true
 
@@ -56,6 +66,9 @@ oneprovider-krakow:
   onedata_anti_affinity_enabled: *onedata_anti_affinity_enabled
   log_level: *log_level
   nameOverride: oneprovider
+
+  oneprovider_nodes_count: *oneproviders_nodes_count
+  cluster_config: *oneprovider_cluster_configs
 
   onezone_service_url:
     type: auto-generate
@@ -99,6 +112,9 @@ oneprovider-paris:
   log_level: *log_level
   nameOverride: oneprovider
 
+  oneprovider_nodes_count: *oneproviders_nodes_count
+  cluster_config: *oneprovider_cluster_configs
+
   onezone_service_url:
     type: auto-generate
     disableSuffix: true
@@ -140,6 +156,9 @@ oneprovider-lisbon:
   onedata_anti_affinity_enabled: *onedata_anti_affinity_enabled
   log_level: *log_level
   nameOverride: oneprovider
+
+  oneprovider_nodes_count: *oneproviders_nodes_count
+  cluster_config: *oneprovider_cluster_configs
 
   onezone_service_url:
     type: auto-generate

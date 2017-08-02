@@ -12,6 +12,7 @@ metadata:
     version: "{{ .Chart.Version }}"
 spec:
   type: "{{ .Values.serviceType }}"
+  clusterIP: None
   ports:
     - name: dns
       port: 53
