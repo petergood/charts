@@ -2,6 +2,8 @@
 
 PREFIX = onedata-makefile-test-release
 
+all: cross-support-job-3p cross-support-job-1p
+
 cross-support-job-1p: onedata-1p
 cross-support-job-1p: build-cross-support-job-1p
 
