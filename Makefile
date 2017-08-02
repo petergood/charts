@@ -23,13 +23,16 @@ onedata-cli: build-onedata-cli
 onezone: onedata-chart-utils
 onezone: build-onezone
 
-oneprovider: onedata-chart-utils volumes
+oneprovider: onedata-chart-utils volumes luma
 oneprovider: build-oneprovider
 
 oneclient: onedata-chart-utils
 oneclient: build-oneclient
 
 test: test-onedata-chart-utils test-volume-s3 test-volume-ceph test-volume-nfs test-oneclient test-oneprovider test-onezone test-onedata-cli test-onedata test-onedata-3p test-cross-support-job-3p
+
+luma: onedata-chart-utils 
+luma: luma
 
 #volumes
 volumes: volume-s3 volume-nfs volume-ceph volume-gluster volume-swift

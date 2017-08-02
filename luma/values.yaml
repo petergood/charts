@@ -1,0 +1,30 @@
+# Default values for luma
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image: onedata/luma:VFS-2336
+imagePullPolicy: IfNotPresent
+serviceType: ClusterIP
+
+lumaApiKey: example_api_key
+
+posix:
+  enabled: false
+  lowest_uid: 1000
+  highest_uid: 65536
+
+s3:
+  enabled: false
+  access_key: AccessKey
+  secret_key: SecretKey
+
+ceph:
+  enabled: false
+  pool_name: onedata
+  username: client.admin
+  key: key
+
+swift:
+  enabled: false
+  username: swift
+  password: swift

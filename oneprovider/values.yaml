@@ -93,17 +93,65 @@ onedata-cli:
   suffix: *providerSuffix
   onezone_service_url: *onezone_service_url
 
+# Luma configuration shared among all the storages
+luma:
+  enabled: false
+  suffix: *providerSuffix
+  lumaCacheTimeout: 5
+  lumaApiKey: example_api_key
+
+  posix:
+    enabled: &luma_enabled_posix true
+    lowest_uid: 1000
+    highest_uid: 65536
+    
+  s3:
+    enabled: &luma_enabled_s3 false
+    access_key: accessKey
+    secret_key: verySecretKey
+
+  ceph:
+    enabled: &luma_enabled_ceph false
+    pool_name: test
+    username: client.k8s
+    key: AQC1oSZZZfucFxAA34MekwoWBm7qpGd0A8u
+
+  swift:
+    enabled: &luma_enabled_swift false
+    username: swift
+    password: swift
+
+  gluster:
+    enabled: &luma_enabled_gluster false
+
+  nfs:
+    enabled: &luma_enabled_nfs false
+    lowest_uid: 1000
+    highest_uid: 65536
+
+  nfs:
+    enabled: &luma_enabled_nfs false
+    lowest_uid: 1000
+    highest_uid: 65536
+
+# Posix local storage, it will be automatically disable if you deploy multi-node oneprovider installation
+posix:
+  enabled: true
+  luma-enabled: *luma_enabled_posix
+
 # Create S3 storage server and connect with oneprovider
 volume-s3:
   enabled: false
   suffix: *providerSuffix
   insecure: true
+  luma-enabled: *luma_enabled_s3
 
 # Create CEPH storage server and connect with oneprovider
 volume-ceph:
   enabled: false
   suffix: *providerSuffix
   insecure: true
+  luma-enabled: *luma_enabled_ceph
 
 # Create NFS storage server and connect with oneprovider with tested default values
 volume-nfs:
@@ -112,9 +160,21 @@ volume-nfs:
   container_mount_path: /volumes/nfs
   storage_claim: 1T
   mount_options: "soft,intr,timeo=10"
+  luma-enabled: *luma_enabled_nfs
 
 # Create gluster storage server and connect with oneprovider with tested default values
 volume-gluster:
-  insecure: true
   enabled: false
   suffix: *providerSuffix
+  insecure: true
+  luma-enabled: *luma_enabled_gluster
+
+volume-swift:
+  enabled: false
+  suffix: *providerSuffix
+  tenantName: test
+  username: tester
+  password: testing
+  containerName: test
+  insecure: true
+  luma-enabled: *luma_enabled_swift
