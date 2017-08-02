@@ -115,4 +115,10 @@ spec:
                     password: {{ .password }}
                     userRole: regular
                   {{- end }}
+      volumes:
+                  {{- end }}
+    {{- if (index .Values "saml-idp" "enabled") }}
+      - name: saml-config
+        configMap:
+          name: {{ template "fullname" . }}-saml-config
               {{- end }}

@@ -38,6 +38,8 @@ onezone:
   image: *oz_image
   onepanel_batch_mode_enabled: *onepanel_batch_mode_enabled
   log_level: *log_level
+  saml-idp:
+    enabled: false
 
 # What follows are the providers configurations for providers designated as:
 # krakow

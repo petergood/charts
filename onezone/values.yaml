@@ -28,3 +28,6 @@ onepanel_admin_users:
 onepanel_users:
   - login: user
     password: password
+
+saml-idp:
+  enabled: false

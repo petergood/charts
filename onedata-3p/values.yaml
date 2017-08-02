@@ -38,6 +38,9 @@ onezone:
   image: *oz_image
   onepanel_batch_mode_enabled: *onepanel_batch_mode_enabled
   log_level: *log_level
+  onezone_nodes_count: 1
+  saml-idp:
+    enabled: true
 
 # What follows are the providers configurations for providers designated as:
 # krakow, paris, and lisbon
