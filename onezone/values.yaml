@@ -19,6 +19,10 @@ log_level: "info"
 # Enable loading oneozne configuration from ONEZONE_CONFIG env variable
 onepanel_batch_mode_enabled: true
 
+# If set true, onezone will not be deployed on the same node as other onezones
+# or oneproviders that are part of this deployment
+onedata_anti_affinity_enabled: false
+
 # List of onezone onepanel users with administrative privileges
 onepanel_admin_users:
   - login: admin

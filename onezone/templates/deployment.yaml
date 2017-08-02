@@ -7,6 +7,7 @@ metadata:
     chart: {{ .Chart.Name }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    onedata-service: "onezone"
   annotations:
     version: "{{ .Chart.Version }}"
 spec:
@@ -17,11 +18,29 @@ spec:
         chart: {{ .Chart.Name }}
         release: {{ .Release.Name }}
         heritage: {{ .Release.Service }}
+        onedata-service: "onezone"
       annotations:
         version: "{{ .Chart.Version }}"
     spec:
       hostname: node1
       subdomain: {{ template "fullname" . }}
+      {{- if .Values.onedata_anti_affinity_enabled }}
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: onedata-service
+                operator: In
+                values:
+                - oneprovider
+                - onezone
+              - key: release
+                operator: In
+                values:
+                - {{ .Release.Name }}
+            topologyKey: kubernetes.io/hostname
+      {{- end }}
 {{ include "imagePullSecrets" . | indent 6 }}
       containers:
       - name: {{ .Chart.Name }}

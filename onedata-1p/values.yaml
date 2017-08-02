@@ -10,6 +10,7 @@ cli_image: &cli_image onedata/rest-cli:3.0.0-rc16
 log_level: &log_level "info"
 onepanel_batch_mode_enabled: &onepanel_batch_mode_enabled true
 oneclients_debug_mode_enabled: &oneclients_debug_mode_enabled false
+onedata_anti_affinity_enabled: &onedata_anti_affinity_enabled false
 
 oneclients_enabled: &oneclients_enabled true
 onedata_cli_enabled: &onedata_cli_enabled true
@@ -37,6 +38,7 @@ volume-swift:
 onezone:
   image: *oz_image
   onepanel_batch_mode_enabled: *onepanel_batch_mode_enabled
+  onedata_anti_affinity_enabled: *onedata_anti_affinity_enabled
   log_level: *log_level
   saml-idp:
     enabled: false
@@ -50,6 +52,7 @@ oneprovider-krakow:
 
   image: *op_image
   onepanel_batch_mode_enabled: *onepanel_batch_mode_enabled
+  onedata_anti_affinity_enabled: *onedata_anti_affinity_enabled
   log_level: *log_level
   nameOverride: oneprovider
 

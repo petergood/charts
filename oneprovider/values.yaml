@@ -51,6 +51,10 @@ log_level: "info"
 # Enable loading oneprovider configuration from ONEPROVIDER_CONFIG env variable
 onepanel_batch_mode_enabled: true
 
+# If set true, oneprovider will not be deployed on the same node as other oneproviders
+# or onezones that are part of this deployment
+onedata_anti_affinity_enabled: false
+
 # List of oneprovider onepanel users with administrative privileges
 onepanel_admin_users:
   - login: admin
