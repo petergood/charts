@@ -6,7 +6,7 @@ dependencies:
   name: onezone
   repository: https://onedata.github.io/charts/
   tags: null
-  version: 0.2.7
+  version: 0.2.8
 - alias: ""
   condition: ""
   enabled: false
@@ -14,7 +14,7 @@ dependencies:
   name: oneprovider
   repository: https://onedata.github.io/charts/
   tags: null
-  version: 0.2.6
+  version: 0.2.8
 - alias: ""
   condition: ""
   enabled: false
@@ -22,7 +22,7 @@ dependencies:
   name: oneprovider
   repository: https://onedata.github.io/charts/
   tags: null
-  version: 0.2.6
+  version: 0.2.8
 - alias: ""
   condition: ""
   enabled: false
@@ -30,6 +30,6 @@ dependencies:
   name: oneprovider
   repository: https://onedata.github.io/charts/
   tags: null
-  version: 0.2.6
-digest: sha256:0b30a9b2349f07c43ff8eabdca152beeb0fdc6d3f408d53fdf13bf3b4c2889a7
-generated: 2017-07-25T01:11:44.08736611+02:00
+  version: 0.2.8
+digest: sha256:799220b0f66e1f569666c4a282e9fb2e1117e182eb8249de2ddaf3564b9cae8a
+generated: 2017-08-03T00:14:12.447925787+02:00

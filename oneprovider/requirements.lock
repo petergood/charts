@@ -6,7 +6,7 @@ dependencies:
   name: oneclient
   repository: https://onedata.github.io/charts/
   tags: null
-  version: 0.2.7
+  version: 0.2.8
 - alias: ""
   condition: ""
   enabled: false
@@ -14,7 +14,7 @@ dependencies:
   name: onedata-cli
   repository: https://onedata.github.io/charts/
   tags: null
-  version: 0.2.7
+  version: 0.2.8
 - alias: ""
   condition: ""
   enabled: false
@@ -22,7 +22,7 @@ dependencies:
   name: onedata-chart-utils
   repository: https://onedata.github.io/charts/
   tags: null
-  version: 0.2.8
+  version: 0.2.9
 - alias: ""
   condition: ""
   enabled: false
@@ -30,7 +30,7 @@ dependencies:
   name: volume-s3
   repository: https://onedata.github.io/charts/
   tags: null
-  version: 0.2.3
+  version: 0.2.4
 - alias: ""
   condition: ""
   enabled: false
@@ -38,7 +38,7 @@ dependencies:
   name: volume-ceph
   repository: https://onedata.github.io/charts/
   tags: null
-  version: 0.2.3
+  version: 0.2.4
 - alias: ""
   condition: ""
   enabled: false
@@ -46,7 +46,7 @@ dependencies:
   name: volume-nfs
   repository: https://onedata.github.io/charts/
   tags: null
-  version: 0.2.4
+  version: 0.2.5
 - alias: ""
   condition: ""
   enabled: false
@@ -54,6 +54,22 @@ dependencies:
   name: volume-gluster
   repository: https://onedata.github.io/charts/
   tags: null
-  version: 0.2.0
-digest: sha256:74e37a399b15bbf8826f149b1edd9d2648a147c51149cd1302057a75c73969f9
-generated: 2017-07-25T01:11:40.976930094+02:00
+  version: 0.2.1
+- alias: ""
+  condition: ""
+  enabled: false
+  import-values: null
+  name: volume-swift
+  repository: https://onedata.github.io/charts/
+  tags: null
+  version: 0.2.1
+- alias: ""
+  condition: ""
+  enabled: false
+  import-values: null
+  name: luma
+  repository: https://onedata.github.io/charts/
+  tags: null
+  version: 0.2.2
+digest: sha256:9512dcdb480450391fae4f2e7c4d9ba185ab43d52903bf5ab3572bf14991b8a7
+generated: 2017-08-03T00:13:56.992385627+02:00
