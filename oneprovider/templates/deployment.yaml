@@ -21,53 +21,34 @@ spec:
         heritage: {{ .Release.Service | quote }}
       annotations:
         version: "{{ .Chart.Version }}"
-      annotations:
-        pod.beta.kubernetes.io/init-containers: '[
-        {{- if (index .Values "volume-s3" "enabled") }}
-          {
-              "name": "wait-for-volume-s3-init",
-              "image": "{{ .Values.wait_for.image }}",
-              "imagePullPolicy": "{{ default .Values.wait_for.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}",
-{{ include "imagePullSecrets_json" . | indent 14 }}
-              "args": [
-                  "job", "{{ template "volume-s3_name" . }}-init"
-              ]
-          }
-        {{- end -}}
-        {{- if and (index .Values "volume-s3" "enabled") (index .Values "volume-ceph" "enabled") -}},{{- end -}}
-        {{- if (index .Values "volume-ceph" "enabled") }}
-          {
-              "name": "wait-for-volume-ceph",
-              "image": "{{ .Values.wait_for.image }}",
-              "imagePullPolicy": "{{ default .Values.wait_for.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}",
-{{ include "imagePullSecrets_json" . | indent 14 }}
-              "args": [
-                  "pod", "-lapp={{ template "volume-ceph_name" . }}"
-              ]
-          }
-        {{- end -}}
-        {{- if and (index .Values "volume-gluster" "enabled") (or (index .Values "volume-s3" "enabled") (index .Values "volume-ceph" "enabled")) -}},{{- end -}}
-        {{- if (index .Values "volume-gluster" "enabled") }}
-          {
-              "name": "wait-for-volume-gluster",
-              "image": "{{ .Values.wait_for.image }}",
-              "imagePullPolicy": "{{ default .Values.wait_for.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}",
-{{ include "imagePullSecrets_json" . | indent 14 }}
-              "args": [
-                  "pod", "-lapp={{ template "volume-gluster_name" . }}"
-              ]
-          }
-        {{- end -}}
-        ]'
     spec:
-      hostname: node1
       subdomain: {{ template "fullname" . }}
 {{ include "imagePullSecrets" . | indent 6 }}
-      {{- if (index .Values "volume-nfs" "enabled") }}
-      volumes:
-      - name: nfs
-        persistentVolumeClaim:
-          claimName: {{ template "fullname" . }}-nfs-pvc
+      initContainers:
+      {{- end }}
+      {{- if (index .Values "volume-s3" "enabled") }}
+        - name: wait-for-volume-s3-init
+          image: {{ .Values.wait_for.image }}
+          imagePullPolicy: {{ default .Values.wait_for.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
+          args:
+            - "job"
+            - "{{ template "volume-s3_name" . }}-init"
+      {{- end }}
+      {{- if (index .Values "volume-ceph" "enabled") }}
+        - name: wait-for-volume-ceph
+          image: {{ .Values.wait_for.image }}
+          imagePullPolicy: {{ default .Values.wait_for.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
+          args:
+            - "pod"
+            - "-lapp={{ template "volume-ceph_name" . }}"
+      {{- end }}
+      {{- if (index .Values "volume-gluster" "enabled") }}
+        - name: wait-for-volume-gluster
+          image: {{ .Values.wait_for.image }}
+          imagePullPolicy: {{ default .Values.wait_for.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
+          args:
+            - "pod"
+            - "-lapp={{ template "volume-gluster_name" . }}"
       {{- end }}
       {{- if (index .Values "volume-swift" "enabled") }}
         - name: wait-for-volume-swift
