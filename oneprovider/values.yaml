@@ -38,7 +38,7 @@ onezone_service_url: &onezone_service_url
 name: ''
 
 # Resources requested by oneprovider
-cpu: 2
+cpu: 1.5
 memory: 4Gi
 
 # Coordinates of a Oneprovider on a onezone map
