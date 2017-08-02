@@ -24,4 +24,4 @@ users:
 
 generate-certificates: 
   enabled: false
-  image: onedata/certificate-init-container:v0.0.2
+  image: onedata/certificate-init-container:8434eb0

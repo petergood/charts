@@ -66,6 +66,12 @@ cluster_config:
   workers: [ ]
   databases: [ ]
 
+# Generate certificates to access this onezone having trusted https connection
+# You need to add cluster root certificate to your system for this to work
+generate-certificates: 
+  enabled: false
+  image: onedata/certificate-init-container:8434eb0
+  
 # If set true, oneprovider will not be deployed on the same node as other oneproviders
 # or onezones that are part of this deployment
 onedata_anti_affinity_enabled: false

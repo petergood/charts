@@ -12,6 +12,8 @@ onepanel_batch_mode_enabled: &onepanel_batch_mode_enabled true
 oneclients_debug_mode_enabled: &oneclients_debug_mode_enabled false
 onedata_anti_affinity_enabled: &onedata_anti_affinity_enabled false
 
+oneproviders_generate_certificates: &oneproviders_generate_certificates false
+
 oneproviders_nodes_count: &oneproviders_nodes_count 1
 oneprovider_cluster_configs: &oneprovider_cluster_configs
   managers: [ ]
@@ -86,6 +88,8 @@ onezone:
   onepanel_batch_mode_enabled: *onepanel_batch_mode_enabled
   onedata_anti_affinity_enabled: *onedata_anti_affinity_enabled
   log_level: *log_level
+  generate-certificates: 
+    enabled: false
   onezone_nodes_count: 1
   cluster_config:
     managers: [ ]
@@ -93,6 +97,8 @@ onezone:
     databases: [ ]
   saml-idp:
     enabled: &idp_enabled true
+    generate-certificates: 
+      enabled: true
 # What follows are the providers configurations for providers designated as:
 # krakow, paris, and lisbon
 oneprovider-krakow:
@@ -112,6 +118,9 @@ oneprovider-krakow:
   onezone_service_url:
     type: auto-generate
     disableSuffix: true
+
+  generate-certificates: 
+    enabled: *oneproviders_generate_certificates
 
   luma:
     suffix: *op1s
@@ -170,6 +179,9 @@ oneprovider-paris:
     type: auto-generate
     disableSuffix: true
 
+  generate-certificates: 
+    enabled: *oneproviders_generate_certificates
+
   luma:
     suffix: *op2s
     << : *luma_global
@@ -226,6 +238,9 @@ oneprovider-lisbon:
   onezone_service_url:
     type: auto-generate
     disableSuffix: true
+
+  generate-certificates: 
+    enabled: *oneproviders_generate_certificates
 
   luma:
     suffix: *op3s
