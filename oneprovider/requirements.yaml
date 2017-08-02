@@ -29,6 +29,7 @@ dependencies:
   condition: volume-nfs.enabled
 
 - name: volume-gluster
+- name: volume-swift
   version: 0.2.0
-  repository: https://onedata.github.io/charts/
-  condition: volume-gluster.enabled
+  repository: file://../volume-swift
+  condition: volume-swift.enabled

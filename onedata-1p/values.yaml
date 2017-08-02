@@ -14,10 +14,7 @@ oneclients_debug_mode_enabled: &oneclients_debug_mode_enabled false
 oneclients_enabled: &oneclients_enabled true
 onedata_cli_enabled: &onedata_cli_enabled true
 
-s3_enabled: &s3_enabled true
-ceph_enabled: &ceph_enabled true
-nfs_enabled: &nfs_enabled true
-gluster_enabled: &gluster_enabled true
+swift_enabled: &swift_enabled false
 
 # Those variables are the unfortunate necessity of an issue discussed here:
 # https://github.com/kubernetes/helm/issues/2479
@@ -33,6 +30,8 @@ volume-nfs:
   enabled: *nfs_enabled
 volume-gluster:
   enabled: *gluster_enabled
+volume-swift:
+  enabled: *swift_enabled
 
 # Onezone configuration
 onezone:
@@ -78,4 +77,7 @@ oneprovider-krakow:
     suffix: *op1s
   volume-gluster:
     enabled: *gluster_enabled
+    suffix: *op1s
+  volume-swift:
+    enabled: *swift_enabled
     suffix: *op1s

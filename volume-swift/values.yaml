@@ -1,0 +1,13 @@
+# Default values for volume-swift.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image: onedata/dockswift:v1
+imagePullPolicy: IfNotPresent
+serviceType: ClusterIP
+
+# Thosre are the default, values that cannot be overridden atm.
+tenantName: service
+username: swift
+password: swift
+containerName: swift

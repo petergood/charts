@@ -69,6 +69,14 @@ spec:
         persistentVolumeClaim:
           claimName: {{ template "fullname" . }}-nfs-pvc
       {{- end }}
+      {{- if (index .Values "volume-swift" "enabled") }}
+        - name: wait-for-volume-swift
+          image: {{ .Values.wait_for.image }}
+          imagePullPolicy: {{ default .Values.wait_for.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
+          args:
+            - "pod"
+            - "-lapp={{ template "volume-swift_name" . }}"
+      {{- end }}
       containers:
       - name: {{ .Chart.Name }}
         image: {{ .Values.image }}
@@ -172,6 +180,16 @@ spec:
                     hostname: {{ template "volume-gluster_name" . }}
                     volume: {{ index .Values "volume-gluster" "volumeName" }}
                     transport: tcp
+                {{- end }}
+                {{- if (index .Values "volume-swift" "enabled") }}
+                  swift:
+                    type: swift
+                    authUrl: http://{{ template "volume-swift_name" . }}:5000/v2.0/tokens
+                    tenantName: {{ index .Values "volume-swift" "tenantName" }}
+                    containerName: {{ index .Values "volume-swift" "containerName" }}
+                    username: {{ index .Values "volume-swift" "username" }}
+                    password: {{ index .Values "volume-swift" "password" }}
+                    insecure: {{ index .Values "volume-swift" "insecure" }}
                 {{- end }}
               oneprovider:
                 register: true
