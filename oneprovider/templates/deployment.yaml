@@ -154,6 +154,7 @@ spec:
                     monitorHostname: {{ template "volume-ceph_name" . }}
                     clusterName: {{ index .Values "volume-ceph" "cluster_name" }}
                     poolName: {{ index .Values "volume-ceph" "pool_name" }}
+                    insecure: {{ index .Values "volume-ceph" "insecure" }}
                 {{- end }}
                 {{- if (index .Values "volume-gluster" "enabled") }}
                   gluster:

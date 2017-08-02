@@ -84,6 +84,7 @@ volume-s3:
 volume-ceph:
   enabled: false
   suffix: *providerSuffix
+  insecure: true
 
 # Create NFS storage server and connect with oneprovider with tested default values
 volume-nfs:
@@ -95,5 +96,6 @@ volume-nfs:
 
 # Create gluster storage server and connect with oneprovider with tested default values
 volume-gluster:
+  insecure: true
   enabled: false
   suffix: *providerSuffix
