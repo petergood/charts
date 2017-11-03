@@ -33,19 +33,14 @@ spec:
         heritage: "{{ $r.Release.Service }}"
       annotations:
         version: {{ $r.Chart.Version }}
-        pod.beta.kubernetes.io/init-containers: '[
-            {
-                "name": "wait-for-release",
-                "image": "{{ $r.Values.wait_for.image }}",
-                "imagePullPolicy": "{{ default  $r.Values.wait_for.imagePullPolicy $r.Values.global.imagePullPolicy | default "IfNotPresent" }}",
-{{ include "imagePullSecrets_json" $r | indent 16 }}
-                "command": [
-                    "sh", "-c",
-                    "wait_for.sh pod -l\"release in ({{ template "releaseName" $r }}), chart notin ({{ $r.Chart.Name }})\" ;"
-                ]
-            }
-        ]'
-    spec:
+      initContainers:
+        - name: wait-for-release
+          image: {{ $r.Values.wait_for.image }}
+          imagePullPolicy: {{ default $r.Values.wait_for.imagePullPolicy $r.Values.global.imagePullPolicy | default "IfNotPresent" }}
+          args:
+            - "pod"
+            - >
+              -l release in ({{ template "releaseName" $r }}), chart notin ({{ $r.Chart.Name }})
 {{ include "imagePullSecrets" $r | indent 6 }}
       restartPolicy: Never
       containers:
@@ -83,5 +78,7 @@ spec:
             export STORAGE_ID=$(onepanel-rest-cli getStorages | jq -r '.ids[]' | xargs -I{} onepanel-rest-cli getStorageDetails id={} |  jq -rj '.name,":",.id,"\n"' | grep "{{ .storage_name }}"  | cut -d ':' -f2) ;
             echo "Using space support token $SPACE_TOKEN with storage name={{ .storage_name }} id=$STORAGE_ID " ;
             onepanel-rest-cli supportSpace size:='{{ .size }}' storageId=="$STORAGE_ID" token==$SPACE_TOKEN | jq -r '.' ;
+            echo "$output" ; 
+            echo "$output" | grep -iv "error" > /dev/null ;
             {{- end -}}
 {{- end -}}

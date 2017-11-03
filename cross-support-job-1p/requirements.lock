@@ -1,19 +1,9 @@
 dependencies:
-- alias: ""
-  condition: ""
-  enabled: false
-  import-values: null
-  name: onedata-chart-utils
+- name: onedata-chart-utils
   repository: https://onedata.github.io/charts/
-  tags: null
   version: 0.2.9
-- alias: ""
-  condition: ""
-  enabled: false
-  import-values: null
-  name: onedata-1p
+- name: onedata-1p
   repository: https://onedata.github.io/charts/
-  tags: null
-  version: 0.2.5
-digest: sha256:d3e486d4133c2df080a7af100cadf9120fae2d065704a6de8e1aaac324751e34
-generated: 2017-08-03T00:22:06.066563791+02:00
+  version: 0.2.6
+digest: sha256:6338f0cef710abf79494af9201fb58a630149b140f5c9ae352215164c978a3df
+generated: 2017-11-03T11:28:13.380499503+01:00
