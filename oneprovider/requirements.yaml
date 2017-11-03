@@ -1,11 +1,11 @@
 dependencies:
 - name: oneclient
-  version: 0.2.8
+  version: 0.2.9
   repository: https://onedata.github.io/charts/
   condition: oneclient.enabled
 
 - name: onedata-cli
-  version: 0.2.8
+  version: 0.2.9
   repository: https://onedata.github.io/charts/
   condition: onedata-cli.enabled
 
@@ -19,7 +19,7 @@ dependencies:
   condition: volume-s3.enabled
 
 - name: volume-ceph
-  version: 0.2.4
+  version: 0.2.5
   repository: https://onedata.github.io/charts/
   condition: volume-ceph.enabled
 
@@ -29,7 +29,7 @@ dependencies:
   condition: volume-nfs.enabled
 
 - name: volume-gluster
-  version: 0.2.1
+  version: 0.2.2
   repository: https://onedata.github.io/charts/
   condition: volume-gluster.enabled
 
