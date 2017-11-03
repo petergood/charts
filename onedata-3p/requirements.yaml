@@ -5,15 +5,15 @@ dependencies:
 
 - name: oneprovider
   alias: oneprovider-krakow
-  version: 0.2.8
+  version: 0.2.9
   repository: https://onedata.github.io/charts/
 
 - name: oneprovider
   alias: oneprovider-paris
-  version: 0.2.8
+  version: 0.2.9
   repository: https://onedata.github.io/charts/
 
 - name: oneprovider
   alias: oneprovider-lisbon
-  version: 0.2.8
+  version: 0.2.9
   repository: https://onedata.github.io/charts/
