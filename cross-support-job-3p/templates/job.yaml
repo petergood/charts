@@ -32,7 +32,21 @@ spec:
         chart: "{{ $r.Chart.Name }}"
         release: "{{ $r.Release.Name }}"
         heritage: "{{ $r.Release.Service }}"
+      annotations:
+        version: "{{ $r.Chart.Version }}"
     spec:
+      {{- if .Values.affinity }}
+      affinity:
+{{ toYaml .Values.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      {{- end }}
       initContainers:
         - name: wait-for-release
           image: {{ $r.Values.wait_for.image }}
