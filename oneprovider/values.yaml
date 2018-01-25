@@ -201,3 +201,8 @@ volume-swift:
   containerName: test
   insecure: true
   luma-enabled: *luma_enabled_swift
+
+# This section will be added the end of 'storages' section in oneprovider
+# cluster configuration
+# avoid sotrage names: posix, nfs, ceph, s3, gluster, swift
+external-storages: {}
