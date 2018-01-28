@@ -35,17 +35,17 @@ spec:
       annotations:
         version: "{{ $r.Chart.Version }}"
     spec:
-      {{- if .Values.affinity }}
+      {{- if $r.Values.affinity }}
       affinity:
-{{ toYaml .Values.affinity | indent 8 }}
+{{ toYaml $r.Values.affinity | indent 8 }}
       {{- end }}
-      {{- if .Values.tolerations }}
+      {{- if $r.Values.tolerations }}
       tolerations:
-{{ toYaml .Values.tolerations | indent 8 }}
+{{ toYaml $r.Values.tolerations | indent 8 }}
       {{- end }}
-      {{- if .Values.nodeSelector }}
+      {{- if $r.Values.nodeSelector }}
       nodeSelector:
-{{ toYaml .Values.nodeSelector | indent 8 }}
+{{ toYaml $r.Values.nodeSelector | indent 8 }}
       {{- end }}
       initContainers:
         - name: wait-for-release
