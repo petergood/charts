@@ -152,7 +152,7 @@ data:
       {{- end }}
       # Depending on Onedata version, one of 2 keys below will be used
       redirectionPoint: https://{{ template "service_url" . }}
-      domain: https://{{ template "service_url" . }} # OR IP ADDRESS
+      domain: {{ template "service_url" . }} # OR IP ADDRESS
       # Subdomain feature is currently not supported in k8s
       subdomainDelegation: false
       geoLatitude: {{ .Values.geoLatitude }}
