@@ -4,6 +4,6 @@ dependencies:
   repository: https://onedata.github.io/charts/
 
 - name: saml-idp
-  version: 0.2.1
+  version: 0.2.2
   repository: https://onedata.github.io/charts/
   condition: saml-idp.enabled
