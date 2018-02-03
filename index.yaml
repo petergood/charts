@@ -2,7 +2,25 @@ apiVersion: v1
 entries:
   cross-support-job-1p:
   - appVersion: 17.06.0-rc1
-    created: 2018-02-03T20:07:28.804708425+01:00
+    created: 2018-02-03T20:07:39.754147571+01:00
+    description: Chart that populates deployment environment created with onedata/onedata-1p
+      chart with spaces
+    digest: ed7750f1d990f2377d174707c662a98b74f2153cbf50d0300cb1fd8cbeb33954
+    engine: gotpl
+    home: https://github.com/onedata/charts
+    keywords:
+    - onedata
+    - initialization
+    - spaces
+    maintainers:
+    - email: orzechowski.michal@gmail.com
+      name: Michal Orzechowski
+    name: cross-support-job-1p
+    urls:
+    - https://onedata.github.io/charts/cross-support-job-1p-0.2.7.tgz
+    version: 0.2.7
+  - appVersion: 17.06.0-rc1
+    created: 2018-02-03T20:07:39.75039775+01:00
     description: Chart that populates deployment environment created with onedata/onedata-1p
       chart with spaces
     digest: 23d75dd9bdb03b6288d268d1102893f296b863f5b5b29eb8f4085963033409d3
@@ -20,7 +38,7 @@ entries:
     - https://onedata.github.io/charts/cross-support-job-1p-0.2.6.tgz
     version: 0.2.6
   - appVersion: 17.06.0-rc1
-    created: 2018-02-03T20:07:28.800751119+01:00
+    created: 2018-02-03T20:07:39.745734412+01:00
     description: Chart that populates deployment environment created with onedata/onedata-1p
       chart with spaces
     digest: 35eebfcc22538a9f31f1e43cde0ccadfae8c0a7c1f382aebd29cf20d415047e1
@@ -38,7 +56,7 @@ entries:
     - https://onedata.github.io/charts/cross-support-job-1p-0.2.5.tgz
     version: 0.2.5
   - appVersion: 17.06.0-rc1
-    created: 2018-02-03T20:07:28.797014456+01:00
+    created: 2018-02-03T20:07:39.742097339+01:00
     description: Chart that populates deployment environment created with onedata/onedata-1p
       chart with spaces
     digest: 0f9bf3a561c7567c109af7bc7a1c00aa09dfc68e2f9a712122cbb332ad67e23f
@@ -56,7 +74,7 @@ entries:
     - https://onedata.github.io/charts/cross-support-job-1p-0.2.4.tgz
     version: 0.2.4
   - appVersion: 3.0.0-rc16
-    created: 2018-02-03T20:07:28.790125915+01:00
+    created: 2018-02-03T20:07:39.734830368+01:00
     description: Chart that populates deployment environment created with onedata/onedata-1p
       chart with spaces
     digest: 1a89524b19bb508cf83158ab63d480a51b409f1931616ca526b9dc1f11bab578
@@ -74,7 +92,7 @@ entries:
     - https://onedata.github.io/charts/cross-support-job-1p-0.2.3.tgz
     version: 0.2.3
   - appVersion: 3.0.0-rc16
-    created: 2018-02-03T20:07:28.785635487+01:00
+    created: 2018-02-03T20:07:39.729283183+01:00
     description: Chart that populates deployment environment created with onedata/onedata-1p
       chart with spaces
     digest: ae42ec75cfe26aa2c1644f20a3e5dbb43e46e384276daea902829c043b41adf6
@@ -93,7 +111,7 @@ entries:
     version: 0.2.1
   cross-support-job-3p:
   - appVersion: 17.06.0-rc1
-    created: 2018-02-03T20:07:28.828154772+01:00
+    created: 2018-02-03T20:07:39.777390044+01:00
     description: Chart that populates deployment environment created with onedata/onedata-3p
       chart with spaces
     digest: c4ddd3a4f3681d3755cd4428ffb059425d380c6ef7d92b6c9f2cac70ed2f996d
@@ -111,7 +129,7 @@ entries:
     - https://onedata.github.io/charts/cross-support-job-3p-0.2.6.tgz
     version: 0.2.6
   - appVersion: 17.06.0-rc1
-    created: 2018-02-03T20:07:28.824476221+01:00
+    created: 2018-02-03T20:07:39.773616025+01:00
     description: Chart that populates deployment environment created with onedata/onedata-3p
       chart with spaces
     digest: b72f07d5dde27e82eceb4afafadf7dc2a779b780fc2f2a3fff9bf52fca168566
@@ -129,7 +147,7 @@ entries:
     - https://onedata.github.io/charts/cross-support-job-3p-0.2.5.tgz
     version: 0.2.5
   - appVersion: 17.06.0-rc1
-    created: 2018-02-03T20:07:28.82006279+01:00
+    created: 2018-02-03T20:07:39.770132643+01:00
     description: Chart that populates deployment environment created with onedata/onedata-3p
       chart with spaces
     digest: 8c4c5b260f07cd9c151f2e0cab2f9958cf89d724633f51843e2207f007fc730c
@@ -147,7 +165,7 @@ entries:
     - https://onedata.github.io/charts/cross-support-job-3p-0.2.4.tgz
     version: 0.2.4
   - appVersion: 17.06.0-rc1
-    created: 2018-02-03T20:07:28.816382385+01:00
+    created: 2018-02-03T20:07:39.765193875+01:00
     description: Chart that populates deployment environment created with onedata/onedata-3p
       chart with spaces
     digest: 53b0a9ceb556567be232758197f99633e0a7923deea4f72698dafb4a33a5e226
@@ -165,7 +183,7 @@ entries:
     - https://onedata.github.io/charts/cross-support-job-3p-0.2.3.tgz
     version: 0.2.3
   - appVersion: 3.0.0-rc16
-    created: 2018-02-03T20:07:28.813051111+01:00
+    created: 2018-02-03T20:07:39.76217684+01:00
     description: Chart that populates deployment environment created with onedata/onedata-3p
       chart with spaces
     digest: c09a9ba359eebc4d1e4e4fdc6a5d323bb92f4794feea531a558221993dc0e1b8
@@ -183,7 +201,7 @@ entries:
     - https://onedata.github.io/charts/cross-support-job-3p-0.2.2.tgz
     version: 0.2.2
   - appVersion: 3.0.0-rc16
-    created: 2018-02-03T20:07:28.810341308+01:00
+    created: 2018-02-03T20:07:39.759087698+01:00
     description: Chart that populates deployment environment created with onedata/onedata-3p
       chart with spaces
     digest: c8a728f736f1f8b387efd089c2235042a6c52e77fb1c8bc88e56aaef93d6d30b
@@ -201,7 +219,7 @@ entries:
     - https://onedata.github.io/charts/cross-support-job-3p-0.2.1.tgz
     version: 0.2.1
   - appVersion: 3.0.0-rc16
-    created: 2018-02-03T20:07:28.807723292+01:00
+    created: 2018-02-03T20:07:39.756314034+01:00
     description: Chart that populates deployment environment created with onedata/onedata-3p
       chart with spaces
     digest: 97a3bebbce0d96aac101bf72d1c2467b8cb968c322b3a289f156c29d1da170e4
@@ -220,7 +238,7 @@ entries:
     version: 0.2.0
   landscaper-sync:
   - appVersion: 1.0.6-rc.1
-    created: 2018-02-03T20:07:28.829704568+01:00
+    created: 2018-02-03T20:07:39.779886186+01:00
     description: Landscaper in loop mode with git repository sync
     digest: 234c94337e8cbfc27acfab24444cf492dc77b76472a6fd4c315faed4cd700b51
     engine: gotpl
@@ -239,7 +257,7 @@ entries:
     - https://onedata.github.io/charts/landscaper-sync-0.1.9.tgz
     version: 0.1.9
   - appVersion: 1.0.6-rc.1
-    created: 2018-02-03T20:07:28.829548574+01:00
+    created: 2018-02-03T20:07:39.77973226+01:00
     description: Landscaper in loop mode with git repository sync
     digest: af2905d11b6d29298dd655c923d995ce17d7699ed0bc328f12b52325318fdab5
     engine: gotpl
@@ -258,7 +276,7 @@ entries:
     - https://onedata.github.io/charts/landscaper-sync-0.1.8.tgz
     version: 0.1.8
   - appVersion: 1.0.6-rc.1
-    created: 2018-02-03T20:07:28.829397812+01:00
+    created: 2018-02-03T20:07:39.779580377+01:00
     description: Landscaper in loop mode with git repository sync
     digest: 6787f95b788ad1c7430a9841494a569e47e5ad82bbf04861dab99b98570ccd70
     engine: gotpl
@@ -277,7 +295,7 @@ entries:
     - https://onedata.github.io/charts/landscaper-sync-0.1.7.tgz
     version: 0.1.7
   - appVersion: 1.0.6-rc.1
-    created: 2018-02-03T20:07:28.829246417+01:00
+    created: 2018-02-03T20:07:39.779427782+01:00
     description: Landscaper in loop mode with git repository sync
     digest: 9d1a417d3540c4605a347bea0d7dae8a701055e311cc62ed700ae0d7f4b3fd1f
     engine: gotpl
@@ -296,7 +314,7 @@ entries:
     - https://onedata.github.io/charts/landscaper-sync-0.1.6.tgz
     version: 0.1.6
   - appVersion: 1.0.6-rc.1
-    created: 2018-02-03T20:07:28.829088134+01:00
+    created: 2018-02-03T20:07:39.779261578+01:00
     description: Landscaper in loop mode with git repository sync
     digest: a71e870b7ef8afe600e49cfc5eba510b58071c127eee99c0da6818f9f1dfe1bc
     engine: gotpl
@@ -315,7 +333,7 @@ entries:
     - https://onedata.github.io/charts/landscaper-sync-0.1.5.tgz
     version: 0.1.5
   - appVersion: 1.0.6-rc.1
-    created: 2018-02-03T20:07:28.828934513+01:00
+    created: 2018-02-03T20:07:39.77910865+01:00
     description: Landscaper in loop mode with git repository sync
     digest: bb5dfc8c054a27aa8e969e1872f9b6d8352332d5ee891bdb286daaf48dcc7451
     engine: gotpl
@@ -334,7 +352,7 @@ entries:
     - https://onedata.github.io/charts/landscaper-sync-0.1.4.tgz
     version: 0.1.4
   - appVersion: 1.0.6-rc.1
-    created: 2018-02-03T20:07:28.828776138+01:00
+    created: 2018-02-03T20:07:39.778946168+01:00
     description: Landscaper in loop mode with git repository sync
     digest: c0808bb30eecb2cb5e8e0646c1c1e30e5708eb54c73ed0d1a27656cc6d896e14
     engine: gotpl
@@ -353,7 +371,7 @@ entries:
     - https://onedata.github.io/charts/landscaper-sync-0.1.3.tgz
     version: 0.1.3
   - appVersion: 1.0.6-rc.1
-    created: 2018-02-03T20:07:28.828625441+01:00
+    created: 2018-02-03T20:07:39.778779368+01:00
     description: Landscaper in loop mode with git repository sync
     digest: 3b684424ad59fbb4566724c3316dd6961fb1082cb1f913a320d255019dac1dd4
     engine: gotpl
@@ -372,7 +390,7 @@ entries:
     - https://onedata.github.io/charts/landscaper-sync-0.1.2.tgz
     version: 0.1.2
   - appVersion: 1.0.6-rc.1
-    created: 2018-02-03T20:07:28.828472864+01:00
+    created: 2018-02-03T20:07:39.778597644+01:00
     description: Landscaper in loop mode with git repository sync
     digest: 65e6328145eaa6a827ba3796897c89c1aabe5fa3953438e5ba2a77da18bfcb94
     engine: gotpl
@@ -391,7 +409,7 @@ entries:
     - https://onedata.github.io/charts/landscaper-sync-0.1.1.tgz
     version: 0.1.1
   - appVersion: 1.0.6-rc.1
-    created: 2018-02-03T20:07:28.828310626+01:00
+    created: 2018-02-03T20:07:39.778169369+01:00
     description: Landscaper in loop mode with git repository sync
     digest: fb156881d1ce583a7e3725cb3908b3fe4c0f06f1c39c9aa1c2bb7a999ad6e448
     engine: gotpl
@@ -411,7 +429,7 @@ entries:
     version: 0.1.0
   luma:
   - appVersion: 0.2.0
-    created: 2018-02-03T20:07:28.830405862+01:00
+    created: 2018-02-03T20:07:39.780638647+01:00
     description: LUMA is a REST server that exposes simple REST API that can be used
       to map users (of any system/kind) to storage specific users, in the process
       authorizing them with the storage.
@@ -433,7 +451,7 @@ entries:
     - https://onedata.github.io/charts/luma-0.2.3.tgz
     version: 0.2.3
   - appVersion: 0.2.0
-    created: 2018-02-03T20:07:28.830021412+01:00
+    created: 2018-02-03T20:07:39.780260465+01:00
     description: LUMA is a REST server that exposes simple REST API that can be used
       to map users (of any system/kind) to storage specific users, in the process
       authorizing them with the storage.
@@ -456,7 +474,7 @@ entries:
     version: 0.2.2
   oneclient:
   - appVersion: 17.06.0-rc1
-    created: 2018-02-03T20:07:28.831460603+01:00
+    created: 2018-02-03T20:07:39.781605425+01:00
     description: Oneclient is the Onedata command line interface for mounting distributed
       virtual filesystem on local machines
     digest: 9b2eb8448f7800415cf114c89661b8376942a86f64aca01425a764b14146ebd9
@@ -475,7 +493,7 @@ entries:
     - https://onedata.github.io/charts/oneclient-0.2.10.tgz
     version: 0.2.10
   - appVersion: 17.06.0-rc1
-    created: 2018-02-03T20:07:28.835691772+01:00
+    created: 2018-02-03T20:07:39.784187205+01:00
     description: Oneclient is the Onedata command line interface for mounting distributed
       virtual filesystem on local machines
     digest: 6c7bcd31be4b86e85bf36c2843a14adf31b30b186c69a79493486cc74fb42028
@@ -494,7 +512,7 @@ entries:
     - https://onedata.github.io/charts/oneclient-0.2.9.tgz
     version: 0.2.9
   - appVersion: 17.06.0-rc1
-    created: 2018-02-03T20:07:28.835250329+01:00
+    created: 2018-02-03T20:07:39.783870076+01:00
     description: Oneclient is the Onedata command line interface for mounting distributed
       virtual filesystem on local machines
     digest: 34c632d0560958c245553db445c38be65191667a98e2e54ef94679466447a737
@@ -513,7 +531,7 @@ entries:
     - https://onedata.github.io/charts/oneclient-0.2.8.tgz
     version: 0.2.8
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.834756722+01:00
+    created: 2018-02-03T20:07:39.783552631+01:00
     description: Oneclient is the Onedata command line interface for mounting distributed
       virtual filesystem on local machines
     digest: 58a6f24baa5ec4b0eb9ce412e49abb9cb5a6eb58d9926284ef150a32acc7c8eb
@@ -532,7 +550,7 @@ entries:
     - https://onedata.github.io/charts/oneclient-0.2.7.tgz
     version: 0.2.7
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.834306884+01:00
+    created: 2018-02-03T20:07:39.783196958+01:00
     description: Oneclient is the Onedata command line interface for mounting distributed
       virtual filesystem on local machines
     digest: 8ee89b831fcd2b901bb718a6c67e70d27cdd321f61dc0b084fa90b1cfdb4f526
@@ -551,7 +569,7 @@ entries:
     - https://onedata.github.io/charts/oneclient-0.2.6.tgz
     version: 0.2.6
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.8337624+01:00
+    created: 2018-02-03T20:07:39.782889533+01:00
     description: Oneclient is the Onedata command line interface for mounting distributed
       virtual filesystem on local machines
     digest: 5a5d6113ccd87a1722bfaacf07bae601d7950ecd9795d6ca1b669db1793c413c
@@ -570,7 +588,7 @@ entries:
     - https://onedata.github.io/charts/oneclient-0.2.5.tgz
     version: 0.2.5
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.833077525+01:00
+    created: 2018-02-03T20:07:39.782548604+01:00
     description: Oneclient is the Onedata command line interface for mounting distributed
       virtual filesystem on local machines
     digest: eac08f0996a20e3b8a03ac10a84e981c3c436c38794f2c537d973b8a6d7a44c4
@@ -589,7 +607,7 @@ entries:
     - https://onedata.github.io/charts/oneclient-0.2.4.tgz
     version: 0.2.4
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.831978725+01:00
+    created: 2018-02-03T20:07:39.782090442+01:00
     description: Oneclient is the Onedata command line interface for mounting distributed
       virtual filesystem on local machines
     digest: 32a3cde545e137f1115a89a3ed49c384dc7b6ab741d23a0ed3efc8ddb4de0855
@@ -608,7 +626,7 @@ entries:
     - https://onedata.github.io/charts/oneclient-0.2.2.tgz
     version: 0.2.2
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.831093318+01:00
+    created: 2018-02-03T20:07:39.781272416+01:00
     description: Oneclient is the Onedata command line interface for mounting distributed
       virtual filesystem on local machines
     digest: 2e22bedb5cb33ec8fe7df6f5fb3fd10119316ed2761b723e4ee91a9f1e0f0a45
@@ -627,7 +645,7 @@ entries:
     - https://onedata.github.io/charts/oneclient-0.2.1.tgz
     version: 0.2.1
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.830746261+01:00
+    created: 2018-02-03T20:07:39.780937791+01:00
     description: Oneclient is the Onedata command line interface for mounting distributed
       virtual filesystem on local machines
     digest: b83710f6cbb1050d672e21d355244024214fdb00dec8652084295807d0c03f36
@@ -646,7 +664,7 @@ entries:
     - https://onedata.github.io/charts/oneclient-0.2.0.tgz
     version: 0.2.0
   onedata:
-  - created: 2018-02-03T20:07:28.837783911+01:00
+  - created: 2018-02-03T20:07:39.786042817+01:00
     description: Onedata is a distributed data management platform providing eventually
       consistent, POSIX-compliant virtual filesystem
     digest: 8485682e2bafa5f7d017c4a6957066219d8e15770c8fcfe1910c2195cd2a93f9
@@ -660,7 +678,7 @@ entries:
     version: 0.2.0
   onedata-1p:
   - appVersion: 17.06.0-beta6
-    created: 2018-02-03T20:07:28.860461466+01:00
+    created: 2018-02-03T20:07:39.804787675+01:00
     description: Complex Onedata deployment with one Onezone, one Oneprovider and
       S3, CEPH, NFS, POSIX backends.
     digest: f51afff39a450ab607f14f9fc8e72c827c22e2c9918fd9a6dac3ebcd1b0ac055
@@ -679,7 +697,7 @@ entries:
     - https://onedata.github.io/charts/onedata-1p-0.2.7.tgz
     version: 0.2.7
   - appVersion: 17.06.0-beta6
-    created: 2018-02-03T20:07:28.856646121+01:00
+    created: 2018-02-03T20:07:39.800960583+01:00
     description: Complex Onedata deployment with one Onezone, one Oneprovider and
       S3, CEPH, NFS, POSIX backends.
     digest: 119ba0152392c203ef1ece2f62083b5c2c8175295883a9443b053a1d45555e2b
@@ -698,7 +716,7 @@ entries:
     - https://onedata.github.io/charts/onedata-1p-0.2.6.tgz
     version: 0.2.6
   - appVersion: 17.06.0-beta6
-    created: 2018-02-03T20:07:28.85269178+01:00
+    created: 2018-02-03T20:07:39.797399573+01:00
     description: Complex Onedata deployment with one Onezone, one Oneprovider and
       S3, CEPH, NFS, POSIX backends.
     digest: 95c9ae0a9984dd2c59c8aa5d3daf5b8854ad65f09ccaaf01d55c7991155d53de
@@ -717,7 +735,7 @@ entries:
     - https://onedata.github.io/charts/onedata-1p-0.2.5.tgz
     version: 0.2.5
   - appVersion: 17.06.0-beta6
-    created: 2018-02-03T20:07:28.849537268+01:00
+    created: 2018-02-03T20:07:39.793766963+01:00
     description: Complex Onedata deployment with one Onezone, one Oneprovider and
       S3, CEPH, NFS, POSIX backends.
     digest: 3d48b9c3718f9e39fcd848aa8411e446d7bc246fb79fd37eca4fbc4a0d63d308
@@ -736,7 +754,7 @@ entries:
     - https://onedata.github.io/charts/onedata-1p-0.2.4.tgz
     version: 0.2.4
   - appVersion: 17.06.0-beta6
-    created: 2018-02-03T20:07:28.843625687+01:00
+    created: 2018-02-03T20:07:39.790903942+01:00
     description: Complex Onedata deployment with one Onezone, one Oneprovider and
       S3, CEPH, NFS, POSIX backends.
     digest: 7a64362d46a01978c059c3c4635b13c2ef71ca8e72f305fd3f46dc42cd71449b
@@ -754,7 +772,7 @@ entries:
     urls:
     - https://onedata.github.io/charts/onedata-1p-0.2.3.tgz
     version: 0.2.3
-  - created: 2018-02-03T20:07:28.840088056+01:00
+  - created: 2018-02-03T20:07:39.788373601+01:00
     description: Onedata is a distributed data management platform providing eventually
       consistent, POSIX-compliant virtual filesystem
     digest: 7d662ee1188c2bfbd9d16ee432d78bd667741aac38080026a6789e3fcdb9e247
@@ -768,7 +786,7 @@ entries:
     version: 0.2.1
   onedata-3p:
   - appVersion: 17.06.0-beta6
-    created: 2018-02-03T20:07:28.879651473+01:00
+    created: 2018-02-03T20:07:39.820098357+01:00
     description: Complex Onedata deployment with one Onezone, three Oneproviders and
       S3, CEPH, NFS, POSIX backends.
     digest: 166c7f00a210dd9b0de9c24b03c3f2bd9e63b15bead19a3e485a326edf403bda
@@ -787,7 +805,7 @@ entries:
     - https://onedata.github.io/charts/onedata-3p-0.2.6.tgz
     version: 0.2.6
   - appVersion: 17.06.0-beta6
-    created: 2018-02-03T20:07:28.87584453+01:00
+    created: 2018-02-03T20:07:39.817024281+01:00
     description: Complex Onedata deployment with one Onezone, three Oneproviders and
       S3, CEPH, NFS, POSIX backends.
     digest: e049fe928a838a476612120b18979a05741b08e87ada7c5637997ab3e1cebafb
@@ -806,7 +824,7 @@ entries:
     - https://onedata.github.io/charts/onedata-3p-0.2.5.tgz
     version: 0.2.5
   - appVersion: 17.06.0-beta6
-    created: 2018-02-03T20:07:28.871385176+01:00
+    created: 2018-02-03T20:07:39.814082712+01:00
     description: Complex Onedata deployment with one Onezone, three Oneproviders and
       S3, CEPH, NFS, POSIX backends.
     digest: c4e8ddfcac573614f7bdfd581c47830d6207113695d8781328dc341634169ed1
@@ -825,7 +843,7 @@ entries:
     - https://onedata.github.io/charts/onedata-3p-0.2.4.tgz
     version: 0.2.4
   - appVersion: 3.0.0-rc16
-    created: 2018-02-03T20:07:28.867958449+01:00
+    created: 2018-02-03T20:07:39.810248+01:00
     description: Complex Onedata deployment with one Onezone, three Oneproviders and
       S3, CEPH, NFS, POSIX backends.
     digest: 1c8e12d5596b45d0d08569156695d1ec57639dfc2bffaf9f76ecd6cac0d9142e
@@ -844,7 +862,7 @@ entries:
     - https://onedata.github.io/charts/onedata-3p-0.2.2.tgz
     version: 0.2.2
   - appVersion: 3.0.0-rc16
-    created: 2018-02-03T20:07:28.865069474+01:00
+    created: 2018-02-03T20:07:39.80828175+01:00
     description: Complex Onedata deployment with one Onezone, three Oneproviders and
       S3, CEPH, NFS, POSIX backends.
     digest: 09defc4935c11895d796bec2642aab0f0dfff9a196cb3df98bbb3d531c8a3905
@@ -863,7 +881,7 @@ entries:
     - https://onedata.github.io/charts/onedata-3p-0.2.1.tgz
     version: 0.2.1
   - appVersion: 3.0.0-rc16
-    created: 2018-02-03T20:07:28.862961116+01:00
+    created: 2018-02-03T20:07:39.806396019+01:00
     description: Complex Onedata deployment with one Onezone, three Oneproviders and
       S3, CEPH, NFS, POSIX backends.
     digest: 01a9d69ea707248b38817472588a55487b11682d585ec24574ffed2bee824318
@@ -882,7 +900,7 @@ entries:
     - https://onedata.github.io/charts/onedata-3p-0.2.0.tgz
     version: 0.2.0
   onedata-chart-utils:
-  - created: 2018-02-03T20:07:28.881580333+01:00
+  - created: 2018-02-03T20:07:39.822651411+01:00
     description: A set helper go templates functions for Onedata charts
     digest: a7f305f55e766f1be49ec085f965ccd31e2c8cdfb2c03f828a8414f1e92c8e9d
     engine: gotpl
@@ -897,7 +915,7 @@ entries:
     urls:
     - https://onedata.github.io/charts/onedata-chart-utils-0.2.9.tgz
     version: 0.2.9
-  - created: 2018-02-03T20:07:28.88133207+01:00
+  - created: 2018-02-03T20:07:39.822330167+01:00
     description: A set helper go templates functions for Onedata charts
     digest: f73ec4a2dadd48abb5f9af5c1a81eb4c8fa70eb1f65abacc473bd016fe8524a8
     engine: gotpl
@@ -912,7 +930,7 @@ entries:
     urls:
     - https://onedata.github.io/charts/onedata-chart-utils-0.2.8.tgz
     version: 0.2.8
-  - created: 2018-02-03T20:07:28.881111953+01:00
+  - created: 2018-02-03T20:07:39.822155992+01:00
     description: A set helper go templates functions for Onedata charts
     digest: af7b4cc5b7bec3f74673b22a96e37b036b33b79dd9daf5e3130feafd17a094bc
     engine: gotpl
@@ -927,7 +945,7 @@ entries:
     urls:
     - https://onedata.github.io/charts/onedata-chart-utils-0.2.7.tgz
     version: 0.2.7
-  - created: 2018-02-03T20:07:28.880891037+01:00
+  - created: 2018-02-03T20:07:39.821977265+01:00
     description: A set helper go templates functions for Onedata charts
     digest: 4958bbdaf7144850105632358767340471e64794f0258d0ff80f4b7aeadf6a70
     engine: gotpl
@@ -942,7 +960,7 @@ entries:
     urls:
     - https://onedata.github.io/charts/onedata-chart-utils-0.2.6.tgz
     version: 0.2.6
-  - created: 2018-02-03T20:07:28.880712363+01:00
+  - created: 2018-02-03T20:07:39.821755367+01:00
     description: A set helper go templates functions for Onedata charts
     digest: 8206a0cec901b16bb0e179eb59fb5351e44e74df6bd50ee573c59a2c096268a8
     engine: gotpl
@@ -957,7 +975,7 @@ entries:
     urls:
     - https://onedata.github.io/charts/onedata-chart-utils-0.2.5.tgz
     version: 0.2.5
-  - created: 2018-02-03T20:07:28.880527098+01:00
+  - created: 2018-02-03T20:07:39.821326069+01:00
     description: A set helper go templates functions for Onedata charts
     digest: a8562f61aba759f8853a520154923eeb46dae7db54f5ad5471e097e207475ff7
     engine: gotpl
@@ -972,7 +990,7 @@ entries:
     urls:
     - https://onedata.github.io/charts/onedata-chart-utils-0.2.4.tgz
     version: 0.2.4
-  - created: 2018-02-03T20:07:28.880336636+01:00
+  - created: 2018-02-03T20:07:39.820810953+01:00
     description: A set helper go templates functions for Onedata charts
     digest: 41030a161aa9f32df838864a68258c617f4c53426c6d3d542e8a4ed5a679f55f
     engine: gotpl
@@ -987,7 +1005,7 @@ entries:
     urls:
     - https://onedata.github.io/charts/onedata-chart-utils-0.2.3.tgz
     version: 0.2.3
-  - created: 2018-02-03T20:07:28.880158845+01:00
+  - created: 2018-02-03T20:07:39.820628923+01:00
     description: A set helper go templates functions for Onedata charts
     digest: 913de1b3b748c9a2c58624e80aec58d3e6b464b2abff4fdbc235121093c8c6b1
     engine: gotpl
@@ -1002,7 +1020,7 @@ entries:
     urls:
     - https://onedata.github.io/charts/onedata-chart-utils-0.2.2.tgz
     version: 0.2.2
-  - created: 2018-02-03T20:07:28.879986559+01:00
+  - created: 2018-02-03T20:07:39.820446922+01:00
     description: A set helper go templates functions for Onedata charts
     digest: 1c2f5119a82b9e5f9cf0e350eab4af242e1277c3ee338564ebd2365d85a2eb2a
     engine: gotpl
@@ -1017,7 +1035,7 @@ entries:
     urls:
     - https://onedata.github.io/charts/onedata-chart-utils-0.2.1.tgz
     version: 0.2.1
-  - created: 2018-02-03T20:07:28.879830628+01:00
+  - created: 2018-02-03T20:07:39.820253564+01:00
     description: A set helper go templates functions for Onedata charts
     digest: 27b83894c5dbc82c88b5e3865e512f551b7d9193633cf1a4c36b5a4c5973fd7d
     engine: gotpl
@@ -1034,7 +1052,7 @@ entries:
     version: 0.2.0
   onedata-cli:
   - appVersion: 17.06.0-beta6
-    created: 2018-02-03T20:07:28.882424077+01:00
+    created: 2018-02-03T20:07:39.823537864+01:00
     description: A set of CLI commands to interact with Onedata REST API.
     digest: 60918aa627e4a3c4d02f5d5932d0e268e40f4c06e6b69c70d852b0615c216537
     engine: gotpl
@@ -1050,7 +1068,7 @@ entries:
     - https://onedata.github.io/charts/onedata-cli-0.2.10.tgz
     version: 0.2.10
   - appVersion: 17.06.0-beta6
-    created: 2018-02-03T20:07:28.885310676+01:00
+    created: 2018-02-03T20:07:39.825606265+01:00
     description: A set of CLI commands to interact with Onedata REST API.
     digest: b33daf41fc869debd7abc34c7e661f735ceaf8994e3c4b8362a0122e61330dbf
     engine: gotpl
@@ -1066,7 +1084,7 @@ entries:
     - https://onedata.github.io/charts/onedata-cli-0.2.9.tgz
     version: 0.2.9
   - appVersion: 17.06.0-beta6
-    created: 2018-02-03T20:07:28.884683542+01:00
+    created: 2018-02-03T20:07:39.825296214+01:00
     description: A set of CLI commands to interact with Onedata REST API.
     digest: 098efb6b2b57c5338d35ffa6cdd40c8be7c5dae4b737913cdcafea205d9c6140
     engine: gotpl
@@ -1082,7 +1100,7 @@ entries:
     - https://onedata.github.io/charts/onedata-cli-0.2.8.tgz
     version: 0.2.8
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.883901026+01:00
+    created: 2018-02-03T20:07:39.825003358+01:00
     description: A set of CLI commands to interact with Onedata REST API.
     digest: 0fd58200524dbe7a0d77275b42dbc4f75311c158ab5c8759ea015b312558633d
     engine: gotpl
@@ -1098,7 +1116,7 @@ entries:
     - https://onedata.github.io/charts/onedata-cli-0.2.7.tgz
     version: 0.2.7
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.88363024+01:00
+    created: 2018-02-03T20:07:39.824684498+01:00
     description: A set of CLI commands to interact with Onedata REST API.
     digest: a7bd70494fc3bc6793b9f788d64e5e1f5597a3bea6c4a95714d633927891d97e
     engine: gotpl
@@ -1114,7 +1132,7 @@ entries:
     - https://onedata.github.io/charts/onedata-cli-0.2.6.tgz
     version: 0.2.6
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.883357382+01:00
+    created: 2018-02-03T20:07:39.824414835+01:00
     description: A set of CLI commands to interact with Onedata REST API.
     digest: b2ee53d462c0e8cb04d4fec23f5031634c45f2efe2d2f8586c4236e1b99687ad
     engine: gotpl
@@ -1130,7 +1148,7 @@ entries:
     - https://onedata.github.io/charts/onedata-cli-0.2.5.tgz
     version: 0.2.5
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.883049802+01:00
+    created: 2018-02-03T20:07:39.824128396+01:00
     description: A set of CLI commands to interact with Onedata REST API.
     digest: 3d50ebdbc5940fb4925ccae2cdaa7515d09843f901f4ebbeeab356bc20287b8f
     engine: gotpl
@@ -1146,7 +1164,7 @@ entries:
     - https://onedata.github.io/charts/onedata-cli-0.2.4.tgz
     version: 0.2.4
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.882740209+01:00
+    created: 2018-02-03T20:07:39.823838435+01:00
     description: A set of CLI commands to interact with Onedata REST API.
     digest: d78ea956f4d965e04b02e8bd8de9c9d62cb23a341dd2c9f663f2f6f0f32da297
     engine: gotpl
@@ -1162,7 +1180,7 @@ entries:
     - https://onedata.github.io/charts/onedata-cli-0.2.2.tgz
     version: 0.2.2
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.882114306+01:00
+    created: 2018-02-03T20:07:39.82321899+01:00
     description: A set of CLI commands to interact with Onedata REST API.
     digest: 69e1bbc623e11464257ca30044318e0c67bc1284719efda9839dbc75c0e810d6
     engine: gotpl
@@ -1178,7 +1196,7 @@ entries:
     - https://onedata.github.io/charts/onedata-cli-0.2.1.tgz
     version: 0.2.1
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.881834065+01:00
+    created: 2018-02-03T20:07:39.822917+01:00
     description: A set of CLI commands to interact with Onedata REST API.
     digest: 164a5e25f0d29a6e628d2ce1c63a12cfefdd2053a60f175254dcf3fe52114d97
     engine: gotpl
@@ -1195,7 +1213,7 @@ entries:
     version: 0.2.0
   oneprovider:
   - appVersion: 17.06.0-rc1
-    created: 2018-02-03T20:07:28.889102645+01:00
+    created: 2018-02-03T20:07:39.830486574+01:00
     description: The main data management component of Onedata, deployed at each storage
       provider site, responsible for unifying and controlling access to data over
       low level storage resources of the provider.
@@ -1215,7 +1233,7 @@ entries:
     - https://onedata.github.io/charts/oneprovider-0.2.10.tgz
     version: 0.2.10
   - appVersion: 17.06.0-rc1
-    created: 2018-02-03T20:07:28.903069049+01:00
+    created: 2018-02-03T20:07:39.845950326+01:00
     description: The main data management component of Onedata, deployed at each storage
       provider site, responsible for unifying and controlling access to data over
       low level storage resources of the provider.
@@ -1235,7 +1253,7 @@ entries:
     - https://onedata.github.io/charts/oneprovider-0.2.9.tgz
     version: 0.2.9
   - appVersion: 17.06.0-rc1
-    created: 2018-02-03T20:07:28.900128744+01:00
+    created: 2018-02-03T20:07:39.843292297+01:00
     description: The main data management component of Onedata, deployed at each storage
       provider site, responsible for unifying and controlling access to data over
       low level storage resources of the provider.
@@ -1255,7 +1273,7 @@ entries:
     - https://onedata.github.io/charts/oneprovider-0.2.8.tgz
     version: 0.2.8
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.897596629+01:00
+    created: 2018-02-03T20:07:39.839957766+01:00
     description: The main data management component of Onedata, deployed at each storage
       provider site, responsible for unifying and controlling access to data over
       low level storage resources of the provider.
@@ -1275,7 +1293,7 @@ entries:
     - https://onedata.github.io/charts/oneprovider-0.2.7.tgz
     version: 0.2.7
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.895475429+01:00
+    created: 2018-02-03T20:07:39.83775324+01:00
     description: The main data management component of Onedata, deployed at each storage
       provider site, responsible for unifying and controlling access to data over
       low level storage resources of the provider.
@@ -1295,7 +1313,7 @@ entries:
     - https://onedata.github.io/charts/oneprovider-0.2.6.tgz
     version: 0.2.6
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.893747252+01:00
+    created: 2018-02-03T20:07:39.835303398+01:00
     description: The main data management component of Onedata, deployed at each storage
       provider site, responsible for unifying and controlling access to data over
       low level storage resources of the provider.
@@ -1315,7 +1333,7 @@ entries:
     - https://onedata.github.io/charts/oneprovider-0.2.5.tgz
     version: 0.2.5
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.891805811+01:00
+    created: 2018-02-03T20:07:39.83361346+01:00
     description: The main data management component of Onedata, deployed at each storage
       provider site, responsible for unifying and controlling access to data over
       low level storage resources of the provider.
@@ -1335,7 +1353,7 @@ entries:
     - https://onedata.github.io/charts/oneprovider-0.2.4.tgz
     version: 0.2.4
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.890473872+01:00
+    created: 2018-02-03T20:07:39.832129995+01:00
     description: The main data management component of Onedata, deployed at each storage
       provider site, responsible for unifying and controlling access to data over
       low level storage resources of the provider.
@@ -1355,7 +1373,7 @@ entries:
     - https://onedata.github.io/charts/oneprovider-0.2.3.tgz
     version: 0.2.3
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.886802689+01:00
+    created: 2018-02-03T20:07:39.827036218+01:00
     description: The main data management component of Onedata, deployed at each storage
       provider site, responsible for unifying and controlling access to data over
       low level storage resources of the provider.
@@ -1375,7 +1393,7 @@ entries:
     - https://onedata.github.io/charts/oneprovider-0.2.1.tgz
     version: 0.2.1
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.886049767+01:00
+    created: 2018-02-03T20:07:39.826295099+01:00
     description: The main data management component of Onedata, deployed at each storage
       provider site, responsible for unifying and controlling access to data over
       low level storage resources of the provider.
@@ -1396,7 +1414,7 @@ entries:
     version: 0.2.0
   onezone:
   - appVersion: 17.06.0-rc1
-    created: 2018-02-03T20:07:28.906604479+01:00
+    created: 2018-02-03T20:07:39.84997596+01:00
     description: Onezone is a Onedata service enabling federation of storage providers
       and user authentication.
     digest: a4cf241497709141b4b662dabfef286c1a3b86d68ee8913312f50bba861b810f
@@ -1415,7 +1433,7 @@ entries:
     - https://onedata.github.io/charts/onezone-0.2.9.tgz
     version: 0.2.9
   - appVersion: 17.06.0-rc1
-    created: 2018-02-03T20:07:28.905939731+01:00
+    created: 2018-02-03T20:07:39.849214832+01:00
     description: Onezone is a Onedata service enabling federation of storage providers
       and user authentication.
     digest: fcbf7a22d4ee79bdbd8010acb0029f2553aee01c9877e90e29bc4ab77c70848e
@@ -1434,7 +1452,7 @@ entries:
     - https://onedata.github.io/charts/onezone-0.2.8.tgz
     version: 0.2.8
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.905258909+01:00
+    created: 2018-02-03T20:07:39.848460852+01:00
     description: Onezone is a Onedata service enabling federation of storage providers
       and user authentication.
     digest: 37d3575b4719ecbea310aeaa2ddc42164fbda4886bb3a56b030aa195fa35a778
@@ -1453,7 +1471,7 @@ entries:
     - https://onedata.github.io/charts/onezone-0.2.7.tgz
     version: 0.2.7
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.904943307+01:00
+    created: 2018-02-03T20:07:39.847996965+01:00
     description: Onezone is a Onedata service enabling federation of storage providers
       and user authentication.
     digest: 23ff6155ee5a45d7614f8930ad9c1c67a7d14fe8721416f634c6603cde8fe2a6
@@ -1472,7 +1490,7 @@ entries:
     - https://onedata.github.io/charts/onezone-0.2.6.tgz
     version: 0.2.6
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.904629287+01:00
+    created: 2018-02-03T20:07:39.847697233+01:00
     description: Onezone is a Onedata service enabling federation of storage providers
       and user authentication.
     digest: 1fad19d7a6cfa59cf2e86f1fdc09fc25b47f9d59a7dbf617c8e3fd18f2013c11
@@ -1491,7 +1509,7 @@ entries:
     - https://onedata.github.io/charts/onezone-0.2.5.tgz
     version: 0.2.5
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.904276381+01:00
+    created: 2018-02-03T20:07:39.84736924+01:00
     description: Onezone is a Onedata service enabling federation of storage providers
       and user authentication.
     digest: 9f06f93ec4655120008d3dedccbd9b805ebb7cbbbe37962dfcf18abf986d633c
@@ -1510,7 +1528,7 @@ entries:
     - https://onedata.github.io/charts/onezone-0.2.4.tgz
     version: 0.2.4
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.903971376+01:00
+    created: 2018-02-03T20:07:39.84698192+01:00
     description: Onezone is a Onedata service enabling federation of storage providers
       and user authentication.
     digest: 4e92c297892e1b5f3c1a6e82b153350ce15f3ee60458963bc9a024e6e5611f13
@@ -1529,7 +1547,7 @@ entries:
     - https://onedata.github.io/charts/onezone-0.2.2.tgz
     version: 0.2.2
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.903652051+01:00
+    created: 2018-02-03T20:07:39.846637138+01:00
     description: Onezone is a Onedata service enabling federation of storage providers
       and user authentication.
     digest: efd011b4c95ad13f1f7229207ad94a7ec1b2309c013fac1f87dd779948054264
@@ -1548,7 +1566,7 @@ entries:
     - https://onedata.github.io/charts/onezone-0.2.1.tgz
     version: 0.2.1
   - appVersion: 3.0.0-rc14
-    created: 2018-02-03T20:07:28.903342612+01:00
+    created: 2018-02-03T20:07:39.846284915+01:00
     description: Onezone is a Onedata service enabling federation of storage providers
       and user authentication.
     digest: 3e41d2be9ac659bccd2abff4cd4ccb80149ae40b8540832069a5ca9dd97caa16
@@ -1568,7 +1586,7 @@ entries:
     version: 0.2.0
   saml-idp:
   - appVersion: "2"
-    created: 2018-02-03T20:07:28.90725173+01:00
+    created: 2018-02-03T20:07:39.851575075+01:00
     description: Chart with a plug and play SAML 2.0 IdP for development and testing.
     digest: e1812dba37449cf5c1e880b63d542a5e73e1306df166fe07faa6569183569495
     engine: gotpl
@@ -1586,7 +1604,7 @@ entries:
     - https://onedata.github.io/charts/saml-idp-0.2.2.tgz
     version: 0.2.2
   - appVersion: "2"
-    created: 2018-02-03T20:07:28.906923795+01:00
+    created: 2018-02-03T20:07:39.851178607+01:00
     description: Chart with a plug and play SAML 2.0 IdP for development and testing.
     digest: 7cb861c621ce9ce8d915340c7ac827b172ac9749dccdd90a30c5914df582aa4e
     engine: gotpl
@@ -1605,7 +1623,7 @@ entries:
     version: 0.2.1
   volume-ceph:
   - appVersion: latest
-    created: 2018-02-03T20:07:28.909301269+01:00
+    created: 2018-02-03T20:07:39.853731133+01:00
     description: A single container CEPH setup, suitable for testing purposes.
     digest: 605b9f414d5ff8cdbb2cdb8d22e72aa811189e14636e0a3f2729d5dbfb37720e
     engine: gotpl
@@ -1621,7 +1639,7 @@ entries:
     - https://onedata.github.io/charts/volume-ceph-0.2.6.tgz
     version: 0.2.6
   - appVersion: latest
-    created: 2018-02-03T20:07:28.908993064+01:00
+    created: 2018-02-03T20:07:39.853385401+01:00
     description: A single container CEPH setup, suitable for testing purposes.
     digest: cded1446fe762e8e868991a3c3d56d1a5bcad916fb3fdb31b0fb9f809a6bcd6c
     engine: gotpl
@@ -1637,7 +1655,7 @@ entries:
     - https://onedata.github.io/charts/volume-ceph-0.2.5.tgz
     version: 0.2.5
   - appVersion: latest
-    created: 2018-02-03T20:07:28.908654937+01:00
+    created: 2018-02-03T20:07:39.853056418+01:00
     description: A single container CEPH setup, suitable for testing purposes.
     digest: fffc481a8f84f2cef438f5ef18264073568c2b567d411a9c289be0e6c2512185
     engine: gotpl
@@ -1653,7 +1671,7 @@ entries:
     - https://onedata.github.io/charts/volume-ceph-0.2.4.tgz
     version: 0.2.4
   - appVersion: latest
-    created: 2018-02-03T20:07:28.908348293+01:00
+    created: 2018-02-03T20:07:39.852747358+01:00
     description: A single container CEPH setup, suitable for testing purposes.
     digest: 13ed68356a41ab4e10722d67f8e2b553cf0fd84907f1ea4b83b08093e0c34711
     engine: gotpl
@@ -1669,7 +1687,7 @@ entries:
     - https://onedata.github.io/charts/volume-ceph-0.2.3.tgz
     version: 0.2.3
   - appVersion: latest
-    created: 2018-02-03T20:07:28.908067949+01:00
+    created: 2018-02-03T20:07:39.852450533+01:00
     description: A single container CEPH setup, suitable for testing purposes.
     digest: 4de5052857f33eb399cded35eb986eb60bef094d9d12b41099404a276a8c6cd2
     engine: gotpl
@@ -1685,7 +1703,7 @@ entries:
     - https://onedata.github.io/charts/volume-ceph-0.2.2.tgz
     version: 0.2.2
   - appVersion: latest
-    created: 2018-02-03T20:07:28.907797476+01:00
+    created: 2018-02-03T20:07:39.852134447+01:00
     description: A single container CEPH setup, suitable for testing purposes.
     digest: 5f5b926426dc861f3e6efab2a12a8c09647826aeccc520ebb8508c5d72a9091d
     engine: gotpl
@@ -1701,7 +1719,7 @@ entries:
     - https://onedata.github.io/charts/volume-ceph-0.2.1.tgz
     version: 0.2.1
   - appVersion: latest
-    created: 2018-02-03T20:07:28.90752837+01:00
+    created: 2018-02-03T20:07:39.851846043+01:00
     description: A single container CEPH setup, suitable for testing purposes.
     digest: 86aa9fa002e86d1a46b6031aa6fe6f38e16a6a64c14d22339405536e0f9b6e88
     engine: gotpl
@@ -1718,7 +1736,7 @@ entries:
     version: 0.2.0
   volume-gluster:
   - appVersion: latest
-    created: 2018-02-03T20:07:28.911719747+01:00
+    created: 2018-02-03T20:07:39.855128651+01:00
     description: A single container gluster setup, suitable for testing purposes.
     digest: 8196b77a64595a2e32d20e53291b83f60dffea4f6fb6bd2278d498d078bc1484
     engine: gotpl
@@ -1734,7 +1752,7 @@ entries:
     - https://onedata.github.io/charts/volume-gluster-0.2.3.tgz
     version: 0.2.3
   - appVersion: latest
-    created: 2018-02-03T20:07:28.91127982+01:00
+    created: 2018-02-03T20:07:39.854761678+01:00
     description: A single container gluster setup, suitable for testing purposes.
     digest: aeb4ecc0702bc2a45baac22e9c740b9ae6abf4b6ea8258bcc6aec398f6098e8a
     engine: gotpl
@@ -1750,7 +1768,7 @@ entries:
     - https://onedata.github.io/charts/volume-gluster-0.2.2.tgz
     version: 0.2.2
   - appVersion: latest
-    created: 2018-02-03T20:07:28.910163803+01:00
+    created: 2018-02-03T20:07:39.854411559+01:00
     description: A single container gluster setup, suitable for testing purposes.
     digest: 2089969bff21571390c6d26bc9174bf7538866310ac893e0bb6d90a61d17acc6
     engine: gotpl
@@ -1766,7 +1784,7 @@ entries:
     - https://onedata.github.io/charts/volume-gluster-0.2.1.tgz
     version: 0.2.1
   - appVersion: latest
-    created: 2018-02-03T20:07:28.909655178+01:00
+    created: 2018-02-03T20:07:39.854038009+01:00
     description: A single container gluster setup, suitable for testing purposes.
     digest: 5bbfe611a8a1d387abbd71e2efe2f99616fa4745656fc4dbefc4ab3d42b97dda
     engine: gotpl
@@ -1783,7 +1801,7 @@ entries:
     version: 0.2.0
   volume-nfs:
   - appVersion: "1.1"
-    created: 2018-02-03T20:07:28.913479718+01:00
+    created: 2018-02-03T20:07:39.857056382+01:00
     description: A basic NFS server, suitable for testing.
     digest: f3e04a41c2fb686525793fe9e3e91f080e44fe4c1134e9a6d38e7bbaf5b55a4a
     engine: gotpl
@@ -1799,7 +1817,7 @@ entries:
     - https://onedata.github.io/charts/volume-nfs-0.2.6.tgz
     version: 0.2.6
   - appVersion: "1.1"
-    created: 2018-02-03T20:07:28.913174348+01:00
+    created: 2018-02-03T20:07:39.856740249+01:00
     description: A basic NFS server, suitable for testing.
     digest: f50f811891ea5dcb5abf47931c89a28db06f8ca0960ee7b68e68bb842e8686cb
     engine: gotpl
@@ -1815,7 +1833,7 @@ entries:
     - https://onedata.github.io/charts/volume-nfs-0.2.5.tgz
     version: 0.2.5
   - appVersion: "1.1"
-    created: 2018-02-03T20:07:28.91288601+01:00
+    created: 2018-02-03T20:07:39.856372604+01:00
     description: A basic NFS server, suitable for testing.
     digest: b204b72e5275cbaabaaf6115a55baaf1a2f8a6ac7256f769b4f2380279afa80a
     engine: gotpl
@@ -1831,7 +1849,7 @@ entries:
     - https://onedata.github.io/charts/volume-nfs-0.2.4.tgz
     version: 0.2.4
   - appVersion: "1.1"
-    created: 2018-02-03T20:07:28.912616896+01:00
+    created: 2018-02-03T20:07:39.856083275+01:00
     description: A basic NFS server, suitable for testing.
     digest: 988fb2d1b2b815e387dfbe72c1a3e2cf94c45d0f7e82a67b7d89d8e695596893
     engine: gotpl
@@ -1847,7 +1865,7 @@ entries:
     - https://onedata.github.io/charts/volume-nfs-0.2.2.tgz
     version: 0.2.2
   - appVersion: "1.1"
-    created: 2018-02-03T20:07:28.912313287+01:00
+    created: 2018-02-03T20:07:39.855806022+01:00
     description: A basic NFS server, suitable for testing.
     digest: d99bb60520d852c9dae32b6ad78cf46133b556be9ebd394c4e4c9d1e7ceb57ce
     engine: gotpl
@@ -1863,7 +1881,7 @@ entries:
     - https://onedata.github.io/charts/volume-nfs-0.2.1.tgz
     version: 0.2.1
   - appVersion: "1.1"
-    created: 2018-02-03T20:07:28.912043559+01:00
+    created: 2018-02-03T20:07:39.855466686+01:00
     description: A basic NFS server, suitable for testing.
     digest: 3a3cb9efffe369e0c30ed0953e37dee803ccfc3cbbe26a141c87f6ce79c0c82e
     engine: gotpl
@@ -1879,7 +1897,7 @@ entries:
     - https://onedata.github.io/charts/volume-nfs-0.2.0.tgz
     version: 0.2.0
   volume-s3:
-  - created: 2018-02-03T20:07:28.915265556+01:00
+  - created: 2018-02-03T20:07:39.859439469+01:00
     description: S3 Scality object storage service, suitable for testing purposes.
     digest: 1b7209a8b02314ed922a58e6bfa841ee1194ac4265f9f78ba253ca3792725ab5
     engine: gotpl
@@ -1894,7 +1912,7 @@ entries:
     urls:
     - https://onedata.github.io/charts/volume-s3-0.2.5.tgz
     version: 0.2.5
-  - created: 2018-02-03T20:07:28.914927374+01:00
+  - created: 2018-02-03T20:07:39.859126297+01:00
     description: S3 Scality object storage service, suitable for testing purposes.
     digest: 367e5e665227bbb1dbdfb11576786733ad11691d1e633e30391c257afcdc3f6a
     engine: gotpl
@@ -1909,7 +1927,7 @@ entries:
     urls:
     - https://onedata.github.io/charts/volume-s3-0.2.4.tgz
     version: 0.2.4
-  - created: 2018-02-03T20:07:28.914627989+01:00
+  - created: 2018-02-03T20:07:39.858630684+01:00
     description: S3 Scality object storage service, suitable for testing purposes.
     digest: 21c36c887cb2917e4901390447d7506a4561a4e6f32aa21f9cc8d92a4810e492
     engine: gotpl
@@ -1924,7 +1942,7 @@ entries:
     urls:
     - https://onedata.github.io/charts/volume-s3-0.2.3.tgz
     version: 0.2.3
-  - created: 2018-02-03T20:07:28.914309939+01:00
+  - created: 2018-02-03T20:07:39.857895779+01:00
     description: S3 Scality object storage service, suitable for testing purposes.
     digest: efcbee0ee5fbfba3572ad9b5cd55556abdec7b98effbf906c41c17a32e07df7b
     engine: gotpl
@@ -1939,7 +1957,7 @@ entries:
     urls:
     - https://onedata.github.io/charts/volume-s3-0.2.2.tgz
     version: 0.2.2
-  - created: 2018-02-03T20:07:28.914030728+01:00
+  - created: 2018-02-03T20:07:39.857614051+01:00
     description: S3 Scality object storage service, suitable for testing purposes.
     digest: de6af7be6ddebf2490f1a54a1e2bde18e3a436d09b7b74c1b901be0921845fa6
     engine: gotpl
@@ -1954,7 +1972,7 @@ entries:
     urls:
     - https://onedata.github.io/charts/volume-s3-0.2.1.tgz
     version: 0.2.1
-  - created: 2018-02-03T20:07:28.913755051+01:00
+  - created: 2018-02-03T20:07:39.857334593+01:00
     description: S3 Scality object storage service, suitable for testing purposes.
     digest: 7567c1dc923dbc6a5dc4f568ac8dae0a4c5390bb42cd1474f00bb244b3c8b314
     engine: gotpl
@@ -1971,7 +1989,7 @@ entries:
     version: 0.2.0
   volume-swift:
   - appVersion: 2.14.0
-    created: 2018-02-03T20:07:28.9158828+01:00
+    created: 2018-02-03T20:07:39.860128494+01:00
     description: A single container swift setup, suitable for testing purposes.
     digest: bc14a65920400f67aa7a71f720879b90d29e7d4a9db04b126e24968934ef75f0
     engine: gotpl
@@ -1988,7 +2006,7 @@ entries:
     - https://onedata.github.io/charts/volume-swift-0.2.2.tgz
     version: 0.2.2
   - appVersion: 2.14.0
-    created: 2018-02-03T20:07:28.915578896+01:00
+    created: 2018-02-03T20:07:39.859751795+01:00
     description: A single container swift setup, suitable for testing purposes.
     digest: 8304cda1f0fa59f346c2f196fbcd45efa18f4cd2b92e638be5aa47d2f3f8992d
     engine: gotpl
@@ -2004,4 +2022,4 @@ entries:
     urls:
     - https://onedata.github.io/charts/volume-swift-0.2.1.tgz
     version: 0.2.1
-generated: 2018-02-03T20:07:28.782520524+01:00
+generated: 2018-02-03T20:07:39.725838915+01:00
