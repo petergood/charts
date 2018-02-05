@@ -4,6 +4,6 @@ dependencies:
   version: 0.2.9
 - name: onedata-1p
   repository: https://onedata.github.io/charts/
-  version: 0.2.7
-digest: sha256:c24bd860df62b3e6d2fe71fb789bca7786134b72ea566acb4e33a5335e929087
-generated: 2018-02-03T20:07:35.717050565+01:00
+  version: 0.2.6
+digest: sha256:6338f0cef710abf79494af9201fb58a630149b140f5c9ae352215164c978a3df
+generated: 2017-11-03T11:28:13.380499503+01:00

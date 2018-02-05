@@ -4,6 +4,6 @@ dependencies:
   version: 0.2.9
 - name: saml-idp
   repository: https://onedata.github.io/charts/
-  version: 0.2.2
-digest: sha256:8cab1c5472f51ad6e332e4869334d7fbe856c68e9f53bbfbeda268f348aa7aa6
-generated: 2018-02-03T20:05:07.883571207+01:00
+  version: 0.2.1
+digest: sha256:911811e4f6bbcdf397ac06967b85ff28d9d02e7570cdaadb5ba74f3b956d2593
+generated: 2018-01-21T08:20:00.156432756+01:00

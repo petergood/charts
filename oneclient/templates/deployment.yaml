@@ -10,6 +10,7 @@ metadata:
   annotations:
     version: "{{ .Chart.Version }}"
 spec:
+  replicas: {{ .Values.number_of_oneclients }}
   template:
     metadata:
       labels:
@@ -20,31 +21,13 @@ spec:
       annotations:
         version: "{{ .Chart.Version }}"
     spec:
-      hostname: {{ .Chart.Name }}
-      subdomain: {{ template "fullname" . }}
-    {{- if .Values.affinity }}
-      affinity:
-{{ toYaml .Values.affinity | indent 8 }}
-      {{- end }}
-    {{- if .Values.tolerations }}
-      tolerations:
-{{ toYaml .Values.tolerations | indent 8 }}
-      {{- end }}
-    {{- if .Values.nodeSelector }}
-      nodeSelector:
-{{ toYaml .Values.nodeSelector | indent 8 }}
-      {{- end }}
-{{ include "imagePullSecrets" . | indent 6 }}
-      volumes:
-      - name: shared
-        emptyDir: {}
       initContainers:
-        - name: wait-for-onezone
-          image: {{ .Values.wait_for.image }}
-          imagePullPolicy: {{ default .Values.wait_for.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
-          args:
-            - "job"
-            - "{{ template "onezone_name" . }}-ready-check"
+        # - name: wait-for-onezone
+        #   image: {{ .Values.wait_for.image }}
+        #   imagePullPolicy: {{ default .Values.wait_for.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
+        #   args:
+        #     - "pod"
+        #     - "-lapp={{ template "onezone_name" . }}"
         - name: get-client-token
           image: {{ .Values.onedata_cli.image }}
           imagePullPolicy: {{ default .Values.wait_for.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
@@ -53,20 +36,48 @@ spec:
               value: https://{{ template "onezone_name" . }}
             - name: ONEZONE_BASIC_AUTH
               value: admin:password
+            - name: SPEC
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
           command:
             - "sh"
             - "-c"
             - >
-              curl -k -u $ONEZONE_BASIC_AUTH -X POST -d "" -H "content-type: application/json" $ONEZONE_HOST/api/v3/onezone/user/client_tokens | jq -r ".token" > /shared/token
+              R=`dd if=/dev/urandom bs=1 count=1 2>/dev/null| od -An -i`;
+              RR=`expr $R % 100`;
+              sleep $RR;
+              TOKEN=`curl -k -u $ONEZONE_BASIC_AUTH -X POST -d "" -H "content-type: application/json" $ONEZONE_HOST/api/v3/onezone/user/client_tokens | tee /shared/token.fullout | jq -r ".token"`;
+              until echo $TOKEN | grep -E "^[A-Za-z0-9]{80,}";
+              do echo Waiting for token... ;
+              cat /shared/token.fullout ;
+              sleep 11 ;
+              TOKEN=`curl -k -u $ONEZONE_BASIC_AUTH -X POST -d "" -H "content-type: application/json" $ONEZONE_HOST/api/v3/onezone/user/client_tokens | tee /shared/token.fullout | jq -r ".token"`;
+              done ;
+              echo $TOKEN > /shared/token
           volumeMounts:
           - mountPath: /shared
             name: shared
-        - name: wait-for-oneprovider
-          image: {{ .Values.wait_for.image }}
-          imagePullPolicy: {{ default .Values.wait_for.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
-          args:
-            - "job"
-            - "{{ template "oneprovider_name" . }}-ready-check"
+        # - name: wait-for-oneprovider
+        #   image: {{ .Values.wait_for.image }}
+        #   imagePullPolicy: {{ default .Values.wait_for.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
+        #   args:
+        #     - "pod"
+        #     - "-lapp={{ template "oneprovider_name" . }}"
+      hostname: {{ .Chart.Name }}
+      subdomain: {{ template "fullname" . }}
+{{ include "imagePullSecrets" . | indent 6 }}
+      volumes:
+      - name: shared
+        emptyDir: {}
+      - name: cephfs
+        cephfs:
+          monitors:
+          - dark5-ceph-mon.darosys.eu
+          user: admin
+          secretFile: "/home/ubuntu/ceph-secret"
+          # secretRef:
+          #   name: ceph-secret
       containers:
       - name: {{ .Chart.Name }}
         image: {{ .Values.image }}
@@ -78,15 +89,36 @@ spec:
             value: "supplied_at_runtime"
           - name: ONECLIENT_PROVIDER_HOST
             value: "{{ template "oneprovider_name" . }}"
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
         command:
          - "sh"
          - "-c"
          - >
+           echo Hello 1;
            export ONECLIENT_ACCESS_TOKEN=$(cat /shared/token) ;
            cat /shared/token ;
+           cat /shared/token.fullout ;
+           LOG=/mnt/cephfs/logs/${POD_NAME}.out ;
            {{ if .Values.debug_mode }}
-           oneclient "/mnt/oneclient" ;
-           sleep infinity ;
+           until oneclient "/mnt/oneclient" --force-direct-io ;
+           do echo "Waiting for oneprovider (i.e. successful mount)";
+           sleep 30;
+           done;
+           echo Hello 2;
+           until dd if=/dev/zero of=/mnt/oneclient/krk-c/a count=1;
+           do echo Waiting for space krk-c to become supported;
+           sleep 30;
+           done;
+           R=`dd if=/dev/urandom bs=2 count=1 2>/dev/null| od -An -i| awk '{print $1}'`;
+           echo Writing to f.${R};
+           if dd if=/dev/zero of=/mnt/oneclient/krk-c/f.${POD_NAME} count=1;
+           then echo OK >> $LOG;
+           else echo FAILED >> $LOG ;
+           fi;
+           sleep infinity;
            {{ else }}
            oneclient -f "/mnt/oneclient" ;
            {{ end }}
@@ -102,3 +134,5 @@ spec:
         volumeMounts:
         - mountPath: /shared
           name: shared
+        - mountPath: /mnt/cephfs
+          name: cephfs

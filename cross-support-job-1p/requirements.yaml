@@ -1,9 +1,9 @@
 dependencies:
 - name: onedata-chart-utils
   version: 0.2.9
-  repository: https://onedata.github.io/charts/
+#  repository: file://../
 
 - name: onedata-1p
-  version: 0.2.7
-  repository: https://onedata.github.io/charts/
+  version: 0.2.6
+#  repository: file://../
   condition: onedata-1p.enabled

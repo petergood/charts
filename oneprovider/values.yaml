@@ -66,23 +66,6 @@ cluster_config:
   workers: [ ]
   databases: [ ]
 
-# The gneralization of nodeSelector.
-# Allows for moe fine grained controll over which
-# nodes are selected by a kubernetes scheduler
-# https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
-affinity: {}
-
-# List of taints which are tolerated by the pods 
-# when nodes are selected by a kubernetes scheduler
-# https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-tolerations: {}
-
-# Specify a map of key-value pairs. For the pod 
-# to be eligible to run on a node, the node 
-# must have each of the indicated key-value pairs as labels
-# https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
-nodeSelector: {}
-
 # Generate certificates to access this onezone having trusted https connection
 # You need to add cluster root certificate to your system for this to work
 generate-certificates: 
@@ -138,6 +121,7 @@ luma:
     pool_name: test
     username: client.k8s
     key: AQC1oSZZZfucFxAA34MekwoWBm7qpGd0A8u
+    monitor_ip: UNSET
 
   swift:
     enabled: &luma_enabled_swift false
@@ -201,8 +185,3 @@ volume-swift:
   containerName: test
   insecure: true
   luma-enabled: *luma_enabled_swift
-
-# This section will be added the end of 'storages' section in oneprovider
-# cluster configuration
-# avoid sotrage names: posix, nfs, ceph, s3, gluster, swift
-external-storages: {}
