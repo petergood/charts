@@ -107,7 +107,12 @@ spec:
             - "-lapp={{ template "volume-swift_name" . }}"
       {{- end }}
       nodeSelector:
-        nodetype: provider 
+        nodetype: provider
+      tolerations:
+      - key: "nodetype"
+        operator: "Equal"
+        value: "provider"
+        effect: "NoSchedule"
       containers:
       - name: {{ .Chart.Name }}
         image: {{ .Values.image }}
@@ -142,6 +147,9 @@ spec:
             echo {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ;
             if [[ "$HOSTNAME" != {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ]]; then export ONEPANEL_BATCH_MODE="false" ; fi ;
             env ;
+            sed -i 's/{integrate_with_graphite,.*}/{integrate_with_graphite,true}/' /etc/op_worker/app.config ;
+            sed -i 's/{graphite_host,.*}/{graphite_host,"go-carbon.mon.svc.{{.Values.global.region}}.{{.Values.global.tld}}"}/' /etc/op_worker/app.config ;
+            grep graphite /etc/op_worker/app.config ;
             /root/oneprovider.sh ;
             cat /var/log/op_panel/info.log ;  
             exit 1 ;
@@ -331,6 +339,8 @@ spec:
               # instead of FQDN
                 subdomainDelegation: false
                 domain: {{ template "service_url" . }}
+                integrate_with_graphite: true
+                graphite_host: 
               onezone:
                 domainName: {{ template "onezone_service_url" . }}
               {{- if or .Values.onepanel_admin_users .Values.onepanel_users }}
