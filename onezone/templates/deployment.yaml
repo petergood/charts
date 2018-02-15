@@ -149,6 +149,12 @@ spec:
         env:
           - name: ONEPANEL_LOG_LEVEL
             value: {{ default .Values.log_level "info" | quote }}
+          - name: ONEPANEL_GENERATE_TEST_WEB_CERT
+            value: {{ default .Values.onepanel_generate_test_web_cert false }}
+          - name: ONEPANEL_GENERATED_CERT_DOMAIN
+            value: {{ default .Values.onepanel_generated_cert_domain "" | quote }}
+          - name: ONEPANEL_TRUST_TEST_CA
+            value: {{ default .Values.onepanel_trust_test_ca false }}
           - name: ONEPANEL_BATCH_MODE
             value: {{ .Values.onepanel_batch_mode_enabled | quote }}
           - name: ONEZONE_CONFIG
@@ -160,22 +166,24 @@ spec:
         volumeMounts:
       {{- end }}
       {{- if (index .Values "generate-certificates" "enabled") }}
-          - mountPath: /etc/oz_panel/certs/key.pem
+          - mountPath: /etc/oz_panel/certs/web_key.pem
             subPath: tls.key
             name: tls
             readOnly: true
-          - mountPath: /etc/oz_panel/certs/cert.pem
+          - mountPath: /etc/oz_panel/certs/web_cert.pem
             subPath: tls.crt
             name: tls
             readOnly: true
-          - mountPath: /etc/oz_panel/cacerts/cacert.pem
+          - mountPath: /etc/oz_panel/certs/web_chain.pem
             subPath: k8s.crt
             name: tls
             readOnly: true
-          - mountPath: /etc/oz_worker/cacerts/cacert.pem
+          # Make onepanel trust k8s cert
+          - mountPath: /etc/oz_worker/cacerts/kubernetes.crt
             subPath: k8s.crt
             name: tls
             readOnly: true
+          # Make system trust k8s cert
           - mountPath: /etc/ssl/certs/kubernetes.crt
             subPath: k8s.crt
             name: tls

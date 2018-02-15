@@ -45,11 +45,31 @@ memory: 4Gi
 geoLatitude: 55.333
 geoLongitude: 55.333
 
+# TODO: add comment
+adminEmail: "getting-started@onedata.org"
+
 # Log level of the processes in the container
 log_level: "info"
 
 # Enable loading oneprovider configuration from ONEPROVIDER_CONFIG env variable
 onepanel_batch_mode_enabled: true
+
+# If enabled, a new web cert will be generated with CN matching the
+#   ONEPANEL_GENERATED_CERT_DOMAIN and signed by OnedataTestWebServerCa
+# NOTE: The generation will be performed upon every startup, any
+#   existing certs will be backed up and placed in the same directory.
+# WARNING: This functionality is devised for test purposes and must not
+#   be used in production.
+onepanel_generate_test_web_cert: false
+
+# The generated test web cert will be issued for below domain.
+onepanel_generated_cert_domain: ""
+
+# If enabled, onepanel will trust any server that has a cert signed by
+#   the OnedataTestWebServerCa.
+# WARNING: This functionality is devised for test purposes and must not
+#   be used in production.
+onepanel_trust_test_ca: false
 
 # Number of nodes (pod replicas) for of this provider
 # their indexes will be assigned FROM 0 (ZERO!)

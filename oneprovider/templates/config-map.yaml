@@ -155,6 +155,7 @@ data:
       domain: {{ template "service_url" . }} # OR IP ADDRESS
       # Subdomain feature is currently not supported in k8s
       subdomainDelegation: false
+      adminEmail: {{ .Values.adminEmail }}
       geoLatitude: {{ .Values.geoLatitude }}
       geoLongitude: {{ .Values.geoLongitude }}
     # TODO: make it possible for onedata services to communicate using 
