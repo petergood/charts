@@ -150,11 +150,11 @@ spec:
           - name: ONEPANEL_LOG_LEVEL
             value: {{ default .Values.log_level "info" | quote }}
           - name: ONEPANEL_GENERATE_TEST_WEB_CERT
-            value: {{ default .Values.onepanel_generate_test_web_cert false }}
+            value: {{ default .Values.onepanel_generate_test_web_cert "false" | quote  }}
           - name: ONEPANEL_GENERATED_CERT_DOMAIN
             value: {{ default .Values.onepanel_generated_cert_domain "" | quote }}
           - name: ONEPANEL_TRUST_TEST_CA
-            value: {{ default .Values.onepanel_trust_test_ca false }}
+            value: {{ default .Values.onepanel_trust_test_ca "false" | quote }}
           - name: ONEPANEL_BATCH_MODE
             value: {{ .Values.onepanel_batch_mode_enabled | quote }}
           - name: ONEZONE_CONFIG
