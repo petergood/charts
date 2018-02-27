@@ -179,7 +179,7 @@ spec:
             name: tls
             readOnly: true
           # Make onepanel trust k8s cert
-          - mountPath: /etc/oz_worker/cacerts/kubernetes.crt
+          - mountPath: /etc/oz_panel/cacerts/kubernetes.crt
             subPath: k8s.crt
             name: tls
             readOnly: true
