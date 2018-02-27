@@ -1,9 +1,9 @@
 dependencies:
 - name: onedata-chart-utils
-  repository: file://../onedata-chart-utils
+  repository: https://onedata.github.io/charts/
   version: 0.2.9
 - name: saml-idp
-  repository: file://../saml-idp
+  repository: https://onedata.github.io/charts/
   version: 0.2.2
-digest: sha256:2dfb64aee13448d6478324d65337bc4c387891f25d6f48268dd42e8bed6e743e
-generated: 2018-02-15T13:52:02.003495+01:00
+digest: sha256:8cab1c5472f51ad6e332e4869334d7fbe856c68e9f53bbfbeda268f348aa7aa6
+generated: 2018-02-27T10:00:46.681594661+01:00

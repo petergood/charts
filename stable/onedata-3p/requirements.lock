@@ -1,15 +1,15 @@
 dependencies:
 - name: onezone
-  repository: file://../onezone
-  version: 0.2.10
-- name: oneprovider
-  repository: file://../oneprovider
+  repository: https://onedata.github.io/charts/
   version: 0.2.11
 - name: oneprovider
-  repository: file://../oneprovider
+  repository: https://onedata.github.io/charts/
   version: 0.2.11
 - name: oneprovider
-  repository: file://../oneprovider
+  repository: https://onedata.github.io/charts/
   version: 0.2.11
-digest: sha256:c4239777bc4612d7c068cfbb8f9bc348b568bf1702657cf83b3ddace2d7c17f7
-generated: 2018-02-15T13:52:07.179507+01:00
+- name: oneprovider
+  repository: https://onedata.github.io/charts/
+  version: 0.2.11
+digest: sha256:74e5d0ded89afb627aabf14e351ad7db9727e59389c6558a5ec5c321340de852
+generated: 2018-02-27T10:01:21.047875464+01:00
