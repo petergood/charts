@@ -188,10 +188,31 @@ luma:
     lowest_uid: 1000
     highest_uid: 65536
 
+# Create a extra containers in the same pod as Oneprovider with a dataset
+# that can be imported using data sync space support option.
+# Will be added to the Oneprovider as POSIX storage
+# the mount points are created in /volumes/<storage_name>
+# eg. /volumes/volume-data-sync-rw
+volume-data-sync:
+  enabled: false
+  volume-data-sync-rw:
+    luma-enabled: *luma_enabled_posix
+    image: onedata/eo-data-mock:Landsat-5-sample-latest
+    imagePullPolicy: IfNotPresent
+    dataPath: /data
+    readOnly: false
+  volume-data-sync-ro:
+    luma-enabled: *luma_enabled_posix
+    image: onedata/eo-data-mock:Landsat-5-sample-latest
+    imagePullPolicy: IfNotPresent
+    dataPath: /data
+    readOnly: true
+
 # Posix local storage, it will be automatically disable if you deploy multi-node oneprovider installation
 posix:
   enabled: true
   luma-enabled: *luma_enabled_posix
+  readOnly: false
 
 # Create S3 storage server and connect with oneprovider
 volume-s3:
@@ -199,11 +220,13 @@ volume-s3:
   suffix: *providerSuffix
   insecure: true
   luma-enabled: *luma_enabled_s3
+  readOnly: false
 
 # Create CEPH storage server and connect with oneprovider
 volume-ceph:
   enabled: false
   suffix: *providerSuffix
+  readOnly: false
   insecure: true
   luma-enabled: *luma_enabled_ceph
 
@@ -215,11 +238,13 @@ volume-nfs:
   storage_claim: 1T
   mount_options: "soft,intr,timeo=10"
   luma-enabled: *luma_enabled_nfs
+  readOnly: false
 
 # Create gluster storage server and connect with oneprovider with tested default values
 volume-gluster:
   enabled: false
   suffix: *providerSuffix
+  readOnly: false
   insecure: true
   luma-enabled: *luma_enabled_gluster
 
@@ -230,6 +255,7 @@ volume-swift:
   username: tester
   password: testing
   containerName: test
+  readOnly: false
   insecure: true
   luma-enabled: *luma_enabled_swift
 

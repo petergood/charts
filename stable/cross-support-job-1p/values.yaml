@@ -42,6 +42,25 @@ spaces:
       - provider: "krakow"
         storage_name: "gluster"
         size: '1000000000'
+  - name: "krk-irw"
+    supports:
+      - provider: "krakow"
+        storage_name: "volume-data-sync-rw"
+        size: '1000000000'
+        mountInRoot: true
+        import:
+          strategy: "simple_scan"
+        update:
+          strategy: "simple_scan"
+          deleteEnable: true
+  - name: "krk-iro"
+    supports:
+      - provider: "krakow"
+        storage_name: "volume-data-sync-ro"
+        size: '1000000000'
+        mountInRoot: true
+        import:
+          strategy: "simple_scan"
 
 # The gneralization of nodeSelector.
 # Allows for moe fine grained controll over which

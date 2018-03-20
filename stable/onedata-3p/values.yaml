@@ -37,6 +37,8 @@ nfs_enabled: &nfs_enabled false
 gluster_enabled: &gluster_enabled false
 swift_enabled: &swift_enabled false
 
+volume_data_sync_enabled: &volume_data_sync_enabled false
+
 # Those variables are the unfortunate necessity of an issue discussed here:
 # https://github.com/kubernetes/helm/issues/2479
 saml-idp:
@@ -57,6 +59,8 @@ volume-gluster:
   enabled: *gluster_enabled
 volume-swift:
   enabled: *swift_enabled
+volume-data-sync:
+  enabled: *volume_data_sync_enabled
 
 # Global luma configuration shared among providers
 luma: &luma_global
@@ -145,6 +149,9 @@ oneprovider-krakow:
     suffix: *op1s
     << : *luma_global
 
+  volume-data-sync:
+    enabled: *volume_data_sync_enabled
+
   oneclient:
     image: *oc_image
     debug_mode: *oneclients_debug_mode_enabled
@@ -208,6 +215,9 @@ oneprovider-paris:
     suffix: *op2s
     << : *luma_global
 
+  volume-data-sync:
+    enabled: *volume_data_sync_enabled
+    
   oneclient:
     image: *oc_image
     debug_mode: *oneclients_debug_mode_enabled
@@ -270,6 +280,9 @@ oneprovider-lisbon:
   luma:
     suffix: *op3s
     << : *luma_global
+
+  volume-data-sync:
+    enabled: *volume_data_sync_enabled
 
   oneclient:
     image: *oc_image
