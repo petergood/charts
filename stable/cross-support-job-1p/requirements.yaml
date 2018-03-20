@@ -4,6 +4,6 @@ dependencies:
   repository: https://onedata.github.io/charts/
 
 - name: onedata-1p
-  version: 0.2.9
+  version: 0.2.10
   repository: https://onedata.github.io/charts/
   condition: onedata-1p.enabled
