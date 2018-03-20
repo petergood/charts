@@ -86,6 +86,17 @@ cluster_config:
   workers: [ ]
   databases: [ ]
 
+# Erlang configuration file, which values will overide
+# respected default values in the app.conf of Onepanel
+# The idea is to overite as needed small parts when needed
+# the app.conf evolve on it's own.
+panelOverlayConfig: |-
+  [].
+
+# Same stroy as above, just for worker service.
+workerOverlayConfig: |-
+  [].
+
 # The gneralization of nodeSelector.
 # Allows for moe fine grained controll over which
 # nodes are selected by a kubernetes scheduler

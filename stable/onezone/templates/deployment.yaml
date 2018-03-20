@@ -162,9 +162,13 @@ spec:
               configMapKeyRef:
                 name: {{ template "fullname" . }}-config
                 key: ONEZONE_CONFIG
-      {{- if or (index .Values "generate-certificates" "enabled") (index .Values "saml-idp" "enabled")}}
         volumeMounts:
-      {{- end }}
+          - name: config-map
+            mountPath: /etc/oz_panel/overlay.config
+            subPath: panel-overlay.config
+          - name: config-map
+            mountPath: /etc/oz_worker/overlay.config
+            subPath:  worker-overlay.config
       {{- if (index .Values "generate-certificates" "enabled") }}
           - mountPath: /etc/oz_panel/certs/web_key.pem
             subPath: tls.key
@@ -195,9 +199,10 @@ spec:
             name: saml-config
             readOnly: false
     {{- end }}
-    {{- if or (index .Values "generate-certificates" "enabled") (index .Values "saml-idp" "enabled")}}
       volumes:
-    {{- end }}
+      - name: config-map
+        configMap:
+          name: {{ template "fullname" . }}-config
     {{- if (index .Values "generate-certificates" "enabled") }}
       - name: tls
         secret:

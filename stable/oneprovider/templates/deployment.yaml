@@ -192,9 +192,13 @@ spec:
               configMapKeyRef:
                 name: {{ template "fullname" . }}-config
                 key: ONEPROVIDER_CONFIG
-      {{- if or (index .Values "generate-certificates" "enabled") (index .Values "volume-nfs" "enabled") }}
         volumeMounts:
-      {{- end }}
+          - name: config-map
+            mountPath: /etc/op_panel/overlay.config
+            subPath: panel-overlay.config
+          - name: config-map
+            mountPath: /etc/op_worker/overlay.config
+            subPath:  worker-overlay.config
       {{- if (index .Values "generate-certificates" "enabled") }}
           - mountPath: /etc/op_panel/certs/web_key.pem
             subPath: tls.key
@@ -225,7 +229,9 @@ spec:
       {{- end }}
     {{- if or (index .Values "generate-certificates" "enabled") (index .Values "volume-nfs" "enabled") }}
       volumes:
-    {{- end }}
+      - name: config-map
+        configMap:
+          name: {{ template "fullname" . }}-config
     {{- if (index .Values "generate-certificates" "enabled") }}
       - name: tls
         secret:
