@@ -194,7 +194,7 @@ spec:
             readOnly: true
     {{- end }}
     {{- if (index .Values "saml-idp" "enabled") }}
-          - mountPath: /var/lib/oz_worker/saml.config
+          - mountPath: /etc/oz_worker/saml.config
             subPath: saml.config
             name: saml-config
             readOnly: false
