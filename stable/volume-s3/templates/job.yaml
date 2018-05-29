@@ -5,18 +5,18 @@ metadata:
   labels:
     app: {{ template "fullname" . }}
     chart: {{ .Chart.Name }}
-    release: {{ .Release.Name }}
+    release: {{ template "releaseName" . }}
     heritage: {{ .Release.Service }}
   annotations:
     version: "{{ .Chart.Version }}"
 spec:
   template:
     metadata:
-      name: {{ .Release.Name }}
+      name: {{ template "releaseName" . }}
       labels:
         app: {{ template "fullname" . }}-init
         chart: {{ .Chart.Name }}
-        release: {{ .Release.Name  }}
+        release: {{ template "releaseName" .  }}
         heritage: {{ .Release.Service }}
       annotations:
         version: "{{ .Chart.Version }}"
