@@ -6,7 +6,7 @@ metadata:
   labels:
     app: {{ template "fullname" . }}
     chart: {{ .Chart.Name }}
-    release: {{ .Release.Name }}
+    release: {{ template "releaseName" . }}
     heritage: {{ .Release.Service }}
   annotations:
     version: "{{ .Chart.Version }}"
@@ -16,7 +16,7 @@ spec:
       labels:
         app: {{ template "fullname" . }}
         chart: {{ .Chart.Name }}
-        release: {{ .Release.Name  }}
+        release: {{ template "releaseName" .  }}
         heritage: {{ .Release.Service }}
       annotations:
         version: "{{ .Chart.Version }}"
