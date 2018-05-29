@@ -196,8 +196,8 @@ spec:
     {{- if (index .Values "saml-idp" "enabled") }}
           - mountPath: /etc/oz_worker/saml.config
             subPath: saml.config
-            name: saml-config
-            readOnly: false
+            name: config-map
+            readOnly: true
     {{- end }}
       volumes:
       - name: config-map
@@ -209,7 +209,11 @@ spec:
           secretName: {{ template "fullname" . }}-secret-tls
     {{- end }}
     {{- if (index .Values "saml-idp" "enabled") }}
+    # This is handled diffetently because of https://github.com/kubernetes/kubernetes/issues/50345
       - name: saml-config
         configMap:
           name: {{ template "fullname" . }}-saml-config
+          items:
+          - key: saml.config
+            path: saml.config
     {{- end }}

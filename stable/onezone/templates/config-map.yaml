@@ -76,4 +76,8 @@ data:
           password: {{ .password }}
           userRole: regular
         {{- end }}
-    {{- end }}
+    {{- end }}{{- end }}    #{}.
+{{- if (index .Values "saml-idp" "enabled") }}
+  saml.config: |-
+    #{}.
+{{- end }}
