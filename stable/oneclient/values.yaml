@@ -10,7 +10,7 @@ wait_for:
   imagePullPolicy: IfNotPresent
 
 onedata_cli:
-  image: onedata/rest-cli:17.06.0-beta6
+  image: onedata/rest-cli:18.02.0-rc2
   imagePullPolicy: IfNotPresent
 
 # by default the main process in a oneclient container is
