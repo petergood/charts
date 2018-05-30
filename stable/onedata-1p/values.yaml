@@ -5,7 +5,7 @@
 oz_image: &oz_image onedata/onezone:17.06.0-rc1
 op_image: &op_image onedata/oneprovider:17.06.0-rc1
 oc_image: &oc_image onedata/oneclient:17.06.0-rc1
-cli_image: &cli_image onedata/rest-cli:17.06.0-beta6
+cli_image: &cli_image onedata/rest-cli:18.02.0-rc2
 
 log_level: &log_level "info"
 onepanel_batch_mode_enabled: &onepanel_batch_mode_enabled true
