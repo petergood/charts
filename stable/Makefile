@@ -22,7 +22,7 @@ onedata: build-onedata
 onedata-cli: onedata-chart-utils
 onedata-cli: build-onedata-cli
 
-onezone: onedata-chart-utils saml-idp
+onezone: onedata-chart-utils keycloak
 onezone: build-onezone
 
 oneprovider: onedata-chart-utils volumes luma

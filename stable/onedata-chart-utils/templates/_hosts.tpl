@@ -368,6 +368,52 @@
   {{- end -}}
 {{- end -}}
 
+{{- define "keycloak_name" -}}
+  {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+  {{- if .Values.keycloak_service_url -}}
+    {{- if eq .Values.keycloak_service_url.type "auto-generate" -}}
+      {{- if .Values.keycloak_service_url.disableSuffix -}}
+        {{- $suffix :=  "" | toString -}}
+        {{- printf "%s-%s-%s" $releaseName "keycloak" $suffix | trunc 63 | trimSuffix "-" -}}
+      {{- else -}}
+        {{- $suffix := default "" .Values.suffix | toString -}}
+        {{- printf "%s-%s-%s" $releaseName "keycloak" $suffix | trunc 63 | trimSuffix "-" -}}
+      {{- end -}}
+    {{- else if eq .Values.keycloak_service_url.type "k8s-service" -}}
+      {{- if .Values.keycloak_service_url.namespace -}}
+        {{/* TODO */}}
+      {{- else -}}
+        {{ .Values.keycloak_service_url.service_name }}
+      {{- end -}}
+    {{- else if eq .Values.keycloak_service_url.type "http" -}}
+      {{/* TODO */}}
+    {{- end -}}
+  {{- else -}}
+        {{- $suffix := default "" .Values.suffix | toString -}}
+        {{- printf "%s-%s-%s" $releaseName "keycloak" $suffix | trunc 63 | trimSuffix "-" -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "keycloak_service_url" -}}
+  {{- if .Values.keycloak_service_url -}}
+    {{- if eq .Values.keycloak_service_url.type "auto-generate" -}}
+        {{ template "keycloak_name" . }}.{{template "service_namespace_domain" . }}
+    {{- else if eq .Values.keycloak_service_url.type "k8s-service" -}}
+      {{- if .Values.keycloak_service_url.namespace -}}
+        {{ .Values.keycloak_service_url.service_name }}.{{ .Values.keycloak_service_url.namespace }}.{{template "service_domain" . }}
+      {{- else -}}
+        {{ .Values.keycloak_service_url.service_name }}.{{template "service_namespace_domain" .}}
+      {{- end -}}
+    {{- else if eq .Values.keycloak_service_url.type "http" -}}
+      {{ .Values.keycloak_service_url.address }}
+    {{- else -}}
+      {{ template "keycloak_name" . }}.{{template "service_namespace_domain" . }}
+    {{- end -}}
+  {{- else -}}
+      {{ template "keycloak_name" . }}.{{template "service_namespace_domain" . }}
+  {{- end -}}
+{{- end -}}
+
 {{- define "luma_name" -}}
   {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
   {{- if .Values.luma_service_url -}}
