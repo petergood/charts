@@ -7,7 +7,7 @@ imagePullPolicy: IfNotPresent
 serviceType: ClusterIP
 
 wait_for:
-  image: onedata/k8s-wait-for:v1.0.1
+  image: onedata/k8s-wait-for:v1.1
   imagePullPolicy: IfNotPresent
 
 # When running multiple copies of oneprovider as a part of a helm release
