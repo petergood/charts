@@ -6,7 +6,7 @@ image: onedata/rest-cli:17.06.0-beta6
 imagePullPolicy: IfNotPresent
 
 wait_for:
-  image: onedata/k8s-wait-for:v1.0.1
+  image: onedata/k8s-wait-for:v1.1
   imagePullPolicy: IfNotPresent
 
 # The gneralization of nodeSelector.
