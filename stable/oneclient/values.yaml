@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-image: onedata/oneclient:17.06.0-rc1
+image: onedata/oneclient:18.02.0-rc4
 imagePullPolicy: IfNotPresent
 
 wait_for:
