@@ -1,0 +1,13 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ template "fullname" . }}-config
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+  annotations:
+    version: "{{ .Chart.Version }}"
+data:
+  date: {{ now | date "2006-01-02_15:04:05" }}
