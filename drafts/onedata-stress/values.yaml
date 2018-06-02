@@ -43,7 +43,7 @@ compute:
   # Chose the folder where spaces are mounted
   dataMountPoint: /mnt/oneclient
 
-  # As the entrypoint of this container will be frequently  modified
+  # As the entrypoint of this container will be frequently modified
   # it's code is placed here.
   # The framework of the test requirers to just edit the bodies of functions: prepare, compute, clean.
   # The example below uses sysbench to perform simple preperation and then tests.
@@ -53,7 +53,7 @@ compute:
     - >
       work_dir="$dataMountPoint/$spaceName" ;
       prepare() {
-        echo "Changing working directo  ry to: $work_dir" ;
+        echo "Changing working directory to: $work_dir" ;
         cd "$work_dir" ;
         pwd ;
         printf "$(date) " ; echo "Starting sysbench prep." ;
@@ -134,7 +134,7 @@ oneclient:
   accessToken: "MDAxNWxvY2F00aW9uIG9uZXpvbmUKMDAzMGlkZW500aWZpZXIgYWRhMmJlNzUxNDUxMjJlZmRkMzU2NjgwZGExNzJkMTgKMDAxYWNpZCB00aW1lIDwgMTU1MDYwOTI2MQowMDJmc2lnbmF00dXJlIEH49m3Oj4ZIRaPTRRSCI01QcO575Lqt8MswQhL1CVmdPCg"
 
   # Oneclient will connect to this provider.
-  provider_host: release18020-beta1-oneprovider-krakow.release18020-beta1.svc.dev.onedata.uk.to
+  provider_host: develop-oneprovider-krakow.develop.svc.dev.onedata.uk.to
 
   # Where spaces should be mounted
   mountPoint: /mnt/oneclient
