@@ -113,5 +113,14 @@ onepanel_users:
 
 saml-idp:
   enabled: false
+
+keycloak: &keycloak
+  idpName: rhea
+  tokenPrefix: onedata
+  appId: onedata
+  voGroupId: Onedata-Keycloak-1
+  superGroup: vo:HNSciCloud-RHEA/rl:one-data-special-role
+  enabled: true
+  
 token-dispenser:
   enabled: true

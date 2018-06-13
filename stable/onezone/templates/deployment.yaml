@@ -84,6 +84,32 @@ spec:
               if [[ $POD_NAME != {{ template "fullname" . }}-0 ]] ; then echo "Not generating certificates" ; exit 0 ; fi ;
               mkdir $(CERT_DIR) ;
               /certificate-init-container -secret-name={{ template "fullname" . }}-secret-tls -labels=app={{ template "fullname" . }},chart={{ .Chart.Name }},release={{ template "releaseName" . }},heritage={{ .Release.Service }} -additional-dnsnames={{ template "fullname" . }},{{ template "fullname" . }}.$(NAMESPACE),{{ template "fullname" . }}.$(NAMESPACE).svc -cert-dir=$(CERT_DIR) -namespace=$(NAMESPACE) -pod-ip=$(POD_IP) -pod-name=$(POD_NAME) -service-names={{ template "fullname" . }} -cluster-domain={{ template "cluster_domain" . }} ;
+     {{- end }}
+     {{- if (index .Values "keycloak" "enabled") }}
+        - name: keycloak-secret-init
+          image: {{ index .Values "wait_for" "image" }}
+          imagePullPolicy: {{ default .Values.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
+          volumeMounts:
+            - mountPath: /mnt
+              name: config-map
+              readOnly: true
+          command:
+            - "/bin/sh"
+            - "-c"
+            - >
+              echo "Mounted whole config" ;
+              ls -lR /mnt ;
+              while [ "$(kubectl get cm {{ template "keycloak_name" . }}-config -o jsonpath='{.data.clientSecret}')" = "KEYCLOAK_APP_CELINT_SECRET_SUPPLIED_AT_RUNTIME" ]; do echo "$(date) Waiting for keycloak client secret..." ; sleep 2 ; done ;
+              keycloak_client_secret="$(kubectl get cm {{ template "keycloak_name" . }}-config -o jsonpath='{.data.clientSecret}')" ;
+              echo "Keycloak client secret is keycloak_client_secret=<${keycloak_client_secret}>" ;
+              echo "Config before" ;
+              kubectl get cm {{ template "fullname" . }}-config -o yaml ;
+              kubectl get cm {{ template "fullname" . }}-config -o yaml | sed "s/KEYCLOAK_APP_SECRET_SUPPLIED_AT_RUNTIME/$keycloak_client_secret/" | kubectl apply -f - ;
+              echo "Waiting for changes to get propegated" ;
+              while cat /mnt/auth.config | grep -q KEYCLOAK_APP_SECRET_SUPPLIED_AT_RUNTIME ; do sleep 2 ; done ;
+              echo "Changes has been propegated. Mounted config after:" ;
+              cat /mnt/auth.config ;
+              exit 0 ;
       {{- end }}
         - name: wait-token-dispenser
           image: {{ .Values.wait_for.image }}
@@ -205,6 +231,10 @@ spec:
             name: config-map
             readOnly: true
     {{- end }}
+          - mountPath: /etc/oz_worker/auth.config
+            subPath: auth.config
+            name: config-map
+            readOnly: true
       volumes:
       - name: config-map
         configMap:
@@ -218,7 +248,7 @@ spec:
     # This is handled diffetently because of https://github.com/kubernetes/kubernetes/issues/50345
       - name: saml-config
         configMap:
-          name: {{ template "fullname" . }}-saml-config
+          name: {{ template "fullname" . }}-config
           items:
           - key: saml.config
             path: saml.config
