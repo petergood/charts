@@ -57,6 +57,8 @@ spec:
             value: "https://{{ template "oneprovider_name" . }}"
           - name: ONEPANEL_HOST
             value: "https://{{ template "oneprovider_name" . }}:9443"
+          - name: LUMA_HOST
+            value: "http://{{ template "luma_name" . }}"
           - name: TERM # otherwise zsh and bash autocompletion used in this container tends to go crazy
             value: "xterm-256color"
         command:
