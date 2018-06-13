@@ -33,8 +33,8 @@ oneclient: build-oneclient
 
 test: test-onedata-chart-utils test-volume-s3 test-volume-ceph test-volume-nfs test-oneclient test-oneprovider test-onezone test-onedata-cli test-onedata test-onedata-3p test-cross-support-job-3p
 
-saml-idp: onedata-chart-utils 
-saml-idp: build-saml-idp
+keycloak: onedata-chart-utils
+keycloak: build-keycloak
 
 luma: onedata-chart-utils 
 luma: build-luma
