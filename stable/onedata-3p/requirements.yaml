@@ -7,13 +7,16 @@ dependencies:
   alias: oneprovider-krakow
   version: 0.2.12
   repository: https://onedata.github.io/charts/
+  condition: oneprovider-krakow.enabled
 
 - name: oneprovider
   alias: oneprovider-paris
   version: 0.2.12
   repository: https://onedata.github.io/charts/
+  condition: oneprovider-paris.enabled
 
 - name: oneprovider
   alias: oneprovider-lisbon
   version: 0.2.12
   repository: https://onedata.github.io/charts/
+  condition: oneprovider-lisbon.enabled
