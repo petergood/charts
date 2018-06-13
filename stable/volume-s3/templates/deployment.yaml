@@ -58,11 +58,17 @@ spec:
          - >
            /usr/src/app/docker-entrypoint.sh npm start ;
         ports:
-          - containerPort: 8000
+          - containerPort: {{ .Values.scality_port }}
         readinessProbe:
           exec:
             command:
-              - "sh"
+              - "bash"
               - "-c"
               - >
-                curl --output /dev/null --silent --connect-timeout 2 localhost:{{ .Values.scality_port }} ;
+                set -e;
+                echo "" > /dev/tcp/127.0.0.1/8000;
+                echo "" > /dev/tcp/127.0.0.1/9990;
+                echo "" > /dev/tcp/127.0.0.1/9991;
+        livenessProbe:
+          tcpSocket:
+            port: {{ .Values.scality_port }}
