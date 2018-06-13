@@ -63,20 +63,26 @@ data:
       name: {{ template "fullname" . }}
       {{- end }}
       domainName: {{ template "service_url" . }}
-    {{- if or .Values.onepanel_admin_users .Values.onepanel_users }}
+    {{- if or .Values.onepanelAdminUsers .Values.onepanel_users }}
     onepanel:
       users:
-        {{- range .Values.onepanel_admin_users }}
-        {{ .login }}:
+        {{ .Values.onezone_main_admin.name }}:
+          password: {{ .Values.onezone_main_admin.password }}
+          userRole: admin
+        {{- range .Values.onepanelAdminUsers }}
+        {{ .name }}:
           password: {{ .password }}
           userRole: admin
         {{- end }}
         {{- range .Values.onepanel_users }}
-        {{ .login }}:
+        {{- if and (hasKey .idps "onepanel") }} {{- if .idps.onepanel.enabled }}
+        {{ .name }}:
           password: {{ .password }}
-          userRole: regular
+          userRole: {{ if .idps.onepanel.type -}}{{- .idps.onepanel.type -}}{{- else -}}regular{{- end -}}
+        {{- end }}{{- end }}
         {{- end }}
-    {{- end }}{{- end }}    #{}.
+    {{- end }}
+
 {{- if (index .Values "saml-idp" "enabled") }}
   saml.config: |-
     #{}.

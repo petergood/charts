@@ -96,15 +96,20 @@ generate-certificates:
 # or oneproviders that are part of this deployment
 onedata_anti_affinity_enabled: false
 
+onezone_main_admin: 
+  name: admin
+  password: password
+
 # List of onezone onepanel users with administrative privileges
-onepanel_admin_users:
-  - login: admin
-    password: password
+onepanelAdminUsers: []
 
 # List of onezone onepanel regular users
 onepanel_users:
-  - login: user
+  - name: user
     password: password
+    idps:
+      onepanel:
+        enabled: true
 
 saml-idp:
   enabled: false
