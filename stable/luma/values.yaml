@@ -2,32 +2,21 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-image: onedata/luma:VFS-2336
+image: onedata/luma:18.02.0-rc4
 imagePullPolicy: IfNotPresent
 serviceType: ClusterIP
 
-lumaApiKey: example_api_key
+wait_for:
+  image: onedata/k8s-wait-for:v1.1
+  imagePullPolicy: IfNotPresent
+  
+onedata_cli:
+  image: onedata/rest-cli:18.02.0-rc7
+  imagePullPolicy: IfNotPresent
 
-posix:
-  enabled: false
-  lowest_uid: 1000
-  highest_uid: 65536
-
-s3:
-  enabled: false
-  access_key: AccessKey
-  secret_key: SecretKey
-
-ceph:
-  enabled: false
-  pool_name: onedata
-  username: client.admin
-  key: key
-
-swift:
-  enabled: false
-  username: swift
-  password: swift
+# The initial content of lumas config
+# blank by default
+config: ""
 
 # The gneralization of nodeSelector.
 # Allows for moe fine grained controll over which

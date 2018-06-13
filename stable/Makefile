@@ -37,7 +37,7 @@ saml-idp: onedata-chart-utils
 saml-idp: build-saml-idp
 
 luma: onedata-chart-utils 
-luma: luma
+luma: build-luma
 
 #volumes
 volumes: volume-s3 volume-nfs volume-ceph volume-gluster volume-swift
