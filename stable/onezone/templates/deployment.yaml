@@ -57,8 +57,8 @@ spec:
 {{ toYaml .Values.nodeSelector | indent 8 }}
       {{- end }}
 {{ include "imagePullSecrets" . | indent 6 }}
-      {{- if (index .Values "generate-certificates" "enabled") }}
       initContainers:
+      {{- if (index .Values "generate-certificates" "enabled") }}
         - name: certificate-init-container
           image: {{ index .Values "generate-certificates" "image" }}
           imagePullPolicy: {{ default .Values.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
@@ -85,6 +85,12 @@ spec:
               mkdir $(CERT_DIR) ;
               /certificate-init-container -secret-name={{ template "fullname" . }}-secret-tls -labels=app={{ template "fullname" . }},chart={{ .Chart.Name }},release={{ template "releaseName" . }},heritage={{ .Release.Service }} -additional-dnsnames={{ template "fullname" . }},{{ template "fullname" . }}.$(NAMESPACE),{{ template "fullname" . }}.$(NAMESPACE).svc -cert-dir=$(CERT_DIR) -namespace=$(NAMESPACE) -pod-ip=$(POD_IP) -pod-name=$(POD_NAME) -service-names={{ template "fullname" . }} -cluster-domain={{ template "cluster_domain" . }} ;
       {{- end }}
+        - name: wait-token-dispenser
+          image: {{ .Values.wait_for.image }}
+          imagePullPolicy: {{ default .Values.wait_for.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
+          args:
+            - "pod"
+            - "-lapp={{ template "token-dispenser_name" . }}"
       containers:
       - name: {{ .Chart.Name }}
         image: {{ .Values.image }}
