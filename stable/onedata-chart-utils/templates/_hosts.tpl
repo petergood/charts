@@ -460,6 +460,52 @@
   {{- end -}}
 {{- end -}}
 
+{{- define "token-dispenser_name" -}}
+  {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+  {{- if .Values.token_dispenser_service_url -}}
+    {{- if eq .Values.token_dispenser_service_url.type "auto-generate" -}}
+      {{- if .Values.token_dispenser_service_url.disableSuffix -}}
+        {{- $suffix :=  "" | toString -}}
+        {{- printf "%s-%s-%s" $releaseName "token-dispenser" $suffix | trunc 63 | trimSuffix "-" -}}
+      {{- else -}}
+        {{- $suffix := default "" .Values.suffix | toString -}}
+        {{- printf "%s-%s-%s" $releaseName "token-dispenser" $suffix | trunc 63 | trimSuffix "-" -}}
+      {{- end -}}
+    {{- else if eq .Values.token_dispenser_service_url.type "k8s-service" -}}
+      {{- if .Values.token_dispenser_service_url.namespace -}}
+        {{/* TODO */}}
+      {{- else -}}
+        {{ .Values.token_dispenser_service_url.service_name }}
+      {{- end -}}
+    {{- else if eq .Values.token_dispenser_service_url.type "http" -}}
+      {{/* TODO */}}
+    {{- end -}}
+  {{- else -}}
+        {{- $suffix := default "" .Values.suffix | toString -}}
+        {{- printf "%s-%s-%s" $releaseName "token-dispenser" $suffix | trunc 63 | trimSuffix "-" -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "token-dispenser_service_url" -}}
+  {{- if .Values.token_dispenser_service_url -}}
+    {{- if eq .Values.token_dispenser_service_url.type "auto-generate" -}}
+        {{ template "token-dispenser_name" . }}.{{template "service_namespace_domain" . }}
+    {{- else if eq .Values.token_dispenser_service_url.type "k8s-service" -}}
+      {{- if .Values.token_dispenser_service_url.namespace -}}
+        {{ .Values.token_dispenser_service_url.service_name }}.{{ .Values.token_dispenser_service_url.namespace }}.{{template "service_domain" . }}
+      {{- else -}}
+        {{ .Values.token_dispenser_service_url.service_name }}.{{template "service_namespace_domain" .}}
+      {{- end -}}
+    {{- else if eq .Values.token_dispenser_service_url.type "http" -}}
+      {{ .Values.token_dispenser_service_url.address }}
+    {{- else -}}
+      {{ template "token-dispenser_name" . }}.{{template "service_namespace_domain" . }}
+    {{- end -}}
+  {{- else -}}
+      {{ template "token-dispenser_name" . }}.{{template "service_namespace_domain" . }}
+  {{- end -}}
+{{- end -}}
+
 {{- define "_name" -}}
   {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
   {{- if .Values._service_url -}}
