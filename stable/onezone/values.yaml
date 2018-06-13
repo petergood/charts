@@ -6,6 +6,14 @@ image: onedata/onezone:18.02.0-rc4
 imagePullPolicy: IfNotPresent
 serviceType: ClusterIP
 
+onedata_cli:
+  image: onedata/rest-cli:18.02.0-rc2
+  imagePullPolicy: IfNotPresent
+
+wait_for:
+  image: onedata/k8s-wait-for:v1.1
+  imagePullPolicy: IfNotPresent
+
 # onezone name, if empty defaults to a chart name
 name: ''
 
