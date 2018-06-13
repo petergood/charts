@@ -195,13 +195,26 @@ luma:
 # eg. /volumes/volume-data-sync-rw
 volume-data-sync:
   enabled: false
-  volume-data-sync-rw:
+  volumes:
+  - name: volume-data-sync-rw
     luma-enabled: *luma_enabled_posix
     image: onedata/eo-data-mock:Landsat-5-sample-latest
     imagePullPolicy: IfNotPresent
     dataPath: /data
     readOnly: false
-  volume-data-sync-ro:
+    chowns: 
+    # chown -R command parameters
+    # the root of the path is dataPath
+      - path: Landsat-5
+        user: 30000 #admin
+        group: 50001 #alpha
+      - path: Landsat-5/TM/L1T/2010/06/13
+        user: 30001 #user
+        group: 50002 #beta
+      - path: Landsat-5/TM/L1T/2010/06/21
+        user: 40001 #user
+        group: 50003 #gamma
+  - name: volume-data-sync-ro
     luma-enabled: *luma_enabled_posix
     image: onedata/eo-data-mock:Landsat-5-sample-latest
     imagePullPolicy: IfNotPresent
