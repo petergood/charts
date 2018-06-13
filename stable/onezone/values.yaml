@@ -107,6 +107,6 @@ onepanel_users:
     password: password
 
 saml-idp:
-  enabled: falsetoken-dispenser:
+  enabled: false
 token-dispenser:
   enabled: true
