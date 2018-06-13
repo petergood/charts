@@ -3,4 +3,12 @@ dependencies:
   version: 0.2.9
   repository: https://onedata.github.io/charts/
 
-  condition: saml-idp.enabled
+- name: keycloak
+  version: 0.1.0
+  repository: https://onedata.github.io/charts/
+  condition: keycloak.enabled
+  
+- name: token-dispenser
+  version: 0.1.0
+  repository: https://onedata.github.io/charts/
+  condition: token-dispenser.enabled
