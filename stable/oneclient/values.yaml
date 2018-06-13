@@ -13,11 +13,9 @@ onedata_cli:
   image: onedata/rest-cli:18.02.0-rc2
   imagePullPolicy: IfNotPresent
 
-# by default the main process in a oneclient container is
-# a oneclient command running in foreground
-# this flag takes oneclient to background and launches
-# while sleep loop as primary container process
-debug_mode: false
+# Number of oneclients to launch
+# each oneclient pod will be identical 
+replicas: 1
 
 # The gneralization of nodeSelector.
 # Allows for moe fine grained controll over which
@@ -35,3 +33,25 @@ tolerations: {}
 # must have each of the indicated key-value pairs as labels
 # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
 nodeSelector: {}
+
+# If token dispenser is used it's url should not have
+# the oneprovider suffix prepended
+token_dispenser_service_url:
+  type: auto-generate
+  disableSuffix: true
+
+# The oneclient connects to all the users on this list
+# this minimal user info for oneclient to get api token
+# and connect to a oneprovider
+users:
+  - name: admin
+    idps:
+      onepanel:
+        enabled: true
+    password: password
+    # This list should contain a suffix of this oneclient
+    # when deploying standalone oneclient or with provider
+    # without suffix (eg. krakow). Please use the list with
+    # an empty element as an temporary solution    
+    oneclient:
+      - ""
