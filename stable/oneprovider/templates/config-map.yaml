@@ -149,11 +149,11 @@ data:
         {{- end }}
       {{- end }}
       {{- if and (index .Values "volume-data-sync" "enabled") (eq (int .Values.oneprovider_nodes_count) 1) }}
-        {{- range $key, $val := (omit (index .Values "volume-data-sync") "enabled") }}
-        {{ $key }}:
+        {{- range $volume := (index .Values "volume-data-sync" "volumes") }}
+        {{ $volume.name }}:
           type: posix
-          mountPoint: /volumes/{{ $key }}
-          readonly: {{ $val.readOnly }}
+          mountPoint: /volumes/{{ $volume.name }}
+          readonly: {{ $volume.readOnly }}
         {{- if (index . "luma-enabled") }}
           lumaEnabled: {{ $.Values.luma.enabled }}
           lumaUrl: {{ template "luma_name" $ }}:5000

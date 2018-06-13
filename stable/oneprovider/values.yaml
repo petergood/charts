@@ -139,6 +139,9 @@ oneclient:
   enabled: false
   onezone_service_url: *onezone_service_url
   suffix: *providerSuffix
+  token_dispenser_service_url:
+    type: auto-generate
+    disableSuffix: true
 
 # Create onedata-cli instance that will have a context of this oneprovider
 # and this provider onezone
