@@ -178,13 +178,13 @@ spec:
                 if [[ "$HOSTNAME" == {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ]]; then exit 0 ; else onepanel_ready ; fi ;
         env:
           - name: ONEPANEL_LOG_LEVEL
-            value: {{ default .Values.log_level "info" | quote }}
+            value: {{ default "info" .Values.log_level | quote }}
           - name: ONEPANEL_GENERATE_TEST_WEB_CERT
-            value: {{ default .Values.onepanel_generate_test_web_cert "false" | quote }}
+            value: {{ default "false" .Values.onepanel_generate_test_web_cert | quote }}
           - name: ONEPANEL_GENERATED_CERT_DOMAIN
             value: "{{ template "service_url" . | default .Values.onepanel_generated_cert_domain }}"
           - name: ONEPANEL_TRUST_TEST_CA
-            value: {{ default .Values.onepanel_trust_test_ca "false" | quote }}
+            value: {{ default "false" .Values.onepanel_trust_test_ca | quote }}
           - name: ONEPANEL_BATCH_MODE
             value: {{ .Values.onepanel_batch_mode_enabled | quote }}
           - name: ONEPROVIDER_CONFIG
