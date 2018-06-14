@@ -6,4 +6,9 @@ dependencies:
 - name: onedata-3p
   version: 0.2.9
   repository: https://onedata.github.io/charts/
-  condition: onedata-3p.enabled
+  condition: onedata-3p.enabled  
+  import-values:
+    - child: onezone.onezone_main_admin
+      parent: onedata-3p.onezone.onezoneAdmin
+    - child: onezone.keycloak
+      parent: keycloakInstance
