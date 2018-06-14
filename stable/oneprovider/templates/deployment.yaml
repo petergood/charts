@@ -182,7 +182,7 @@ spec:
           - name: ONEPANEL_GENERATE_TEST_WEB_CERT
             value: {{ default .Values.onepanel_generate_test_web_cert "false" | quote }}
           - name: ONEPANEL_GENERATED_CERT_DOMAIN
-            value: {{ default .Values.onepanel_generated_cert_domain "" | quote }}
+            value: "{{ template "service_url" . | default .Values.onepanel_generated_cert_domain }}"
           - name: ONEPANEL_TRUST_TEST_CA
             value: {{ default .Values.onepanel_trust_test_ca "false" | quote }}
           - name: ONEPANEL_BATCH_MODE
