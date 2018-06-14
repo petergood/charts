@@ -4,14 +4,8 @@ PREFIX = onedata-makefile-test-release
 
 all: cross-support-job-3p cross-support-job-1p
 
-cross-support-job-1p: onedata-1p
-cross-support-job-1p: build-cross-support-job-1p
-
 cross-support-job-3p: onedata-3p
 cross-support-job-3p: build-cross-support-job-3p
-
-onedata-1p: onedata-chart-utils oneprovider onezone onedata-cli oneclient
-onedata-1p: build-onedata-1p
 
 onedata-3p: onedata-chart-utils oneprovider onezone onedata-cli oneclient
 onedata-3p: build-onedata-3p
