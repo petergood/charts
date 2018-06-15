@@ -9,10 +9,6 @@ serviceType: ClusterIP
 wait_for:
   image: onedata/k8s-wait-for:v1.1
   imagePullPolicy: IfNotPresent
-  
-onedata_cli:
-  image: onedata/rest-cli:18.02.0-rc7
-  imagePullPolicy: IfNotPresent
 
 # The initial content of lumas config
 # blank by default
