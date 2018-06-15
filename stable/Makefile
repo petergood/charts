@@ -47,14 +47,15 @@ volumes-test: test-volume-s3 test-volume-ceph test-volume-nfs
 helm-test-volumes: helm-test-volume-s3 helm-test-volume-ceph helm-test-volume-nfs
 
 build-%:
-	helm package -u $*
+	if [ -f $*/requirements.yaml ]; then helm dependency update --skip-refresh $*; fi
+	helm package $*
 
 install-%:
 	if [ -f $*/requirements.yaml ]; then helm dependency update $*; fi
 	helm install $*
 
 test-%: build-onedata-chart-utils
-	helm dependency update $*
+	helm dependency build $*
 	helm lint --strict --debug $*
 	helm install --dry-run  --debug $*
 
