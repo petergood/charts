@@ -9,10 +9,6 @@ wait_for:
   image: onedata/k8s-wait-for:v1.1
   imagePullPolicy: IfNotPresent
 
-onedata_cli:
-  image: onedata/rest-cli:18.02.0-rc2
-  imagePullPolicy: IfNotPresent
-
 # Number of oneclients to launch
 # each oneclient pod will be identical 
 replicas: 1
