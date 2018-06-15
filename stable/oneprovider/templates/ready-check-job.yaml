@@ -26,7 +26,7 @@ spec:
       initContainers:
       - name: wait-for-{{ .Chart.Name }}
         image: byrnedo/alpine-curl
-        imagePullPolicy: {{ default .Values.wait_for.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
         command:
           - "/bin/sh"
           - "-c"
@@ -36,7 +36,7 @@ spec:
       containers:
       - name: oneprovider-ready-check
         image: alpine:3.6
-        imagePullPolicy: {{ default .Values.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
         command:
           - "sh"
           - "-c"

@@ -53,8 +53,8 @@ spec:
         #     - >
         #       -l app in ({{ template "fullname" $ }}), job-name notin ({{ template "fullname" $ }}-init)
         - name: wait-for-spaces
-          image: {{ $.Values.wait_for.image }}
-          imagePullPolicy: {{ default $.Values.wait_for.imagePullPolicy $.Values.global.imagePullPolicy | default "IfNotPresent" }}
+          image: {{ .Values.wait_for.image }}
+          imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
           args:
             - "job"
             - >
@@ -62,9 +62,9 @@ spec:
 {{ include "imagePullSecrets" $ | indent 6 }}
       restartPolicy: Never
       containers:
-      - name: {{ $.Chart.Name }}
-        image: {{ $.Values.image }}
-        imagePullPolicy: {{ $.Values.imagePullPolicy }}
+      - name: {{ .Chart.Name }}
+        image: {{ .Values.image }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
         env:
           - name: ONEZONE_HOST
             value: "https://{{ template "onezone_name" $ }}"

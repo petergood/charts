@@ -88,3 +88,33 @@ ImagePullSecrets template for json format
     {{- "\"imagePullSecrets\": []," -}}
   {{- end -}}
 {{- end -}}
+
+{{/*
+ImagePullPolicy template 
+*/}}
+{{- define "_imagePullPolicy" -}}
+  {{- if .root.Values.global -}}
+      {{- if .root.Values.global.imagePullPolicy -}}
+        {{- .root.Values.global.imagePullPolicy -}}
+      {{- else if .context -}}
+          {{- if .context.imagePullPolicy  }}
+           {{- .context.imagePullPolicy  }}
+          {{- else if .root.Values.imagePullPolicy -}}
+              {{- .root.Values.imagePullPolicy -}}
+          {{- end -}}
+      {{- else if .root.Values.imagePullPolicy -}}
+          {{- .root.Values.imagePullPolicy -}}
+      {{- end -}}
+  {{- else if .context.imagePullPolicy -}}
+      {{- .context.imagePullPolicy  }}
+  {{- else if .root.Values.imagePullPolicy -}}
+      {{- .root.Values.imagePullPolicy -}}
+  {{- end -}}
+{{- end -}}
+{{- define "imagePullPolicy" -}}
+  {{- if .context -}} 
+    {{- template "_imagePullPolicy" dict "root" .root "context" .context | default "IfNotPresent" }}
+  {{- else -}}
+    {{- template "_imagePullPolicy" dict "root" .root "context" (dict) | default "IfNotPresent" }}
+  {{- end -}}
+{{- end -}}

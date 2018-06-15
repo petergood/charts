@@ -63,7 +63,7 @@ spec:
       {{- if (index .Values "generate-certificates" "enabled") }}
         - name: certificate-init-container
           image: {{ index .Values "generate-certificates" "image" }}
-          imagePullPolicy: {{ default .Values.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
+          imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" (index .Values "generate-certificates") }}
           env:
             - name: NAMESPACE
               valueFrom:
@@ -90,7 +90,7 @@ spec:
       {{- if (index .Values "volume-s3" "enabled") }}
         - name: wait-for-volume-s3-init
           image: {{ .Values.wait_for.image }}
-          imagePullPolicy: {{ default .Values.wait_for.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
+          imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
           args:
             - "job"
             - "{{ template "volume-s3_name" . }}-init"
@@ -98,7 +98,7 @@ spec:
       {{- if (index .Values "volume-ceph" "enabled") }}
         - name: wait-for-volume-ceph
           image: {{ .Values.wait_for.image }}
-          imagePullPolicy: {{ default .Values.wait_for.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
+          imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
           args:
             - "pod"
             - "-lapp={{ template "volume-ceph_name" . }}"
@@ -106,7 +106,7 @@ spec:
       {{- if (index .Values "volume-gluster" "enabled") }}
         - name: wait-for-volume-gluster
           image: {{ .Values.wait_for.image }}
-          imagePullPolicy: {{ default .Values.wait_for.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
+          imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
           args:
             - "pod"
             - "-lapp={{ template "volume-gluster_name" . }}"
@@ -114,7 +114,7 @@ spec:
       {{- if (index .Values "volume-swift" "enabled") }}
         - name: wait-for-volume-swift
           image: {{ .Values.wait_for.image }}
-          imagePullPolicy: {{ default .Values.wait_for.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
+          imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
           args:
             - "pod"
             - "-lapp={{ template "volume-swift_name" . }}"
@@ -122,7 +122,7 @@ spec:
       containers:
       - name: {{ .Chart.Name }}
         image: {{ .Values.image }}
-        imagePullPolicy: {{ default .Values.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
         {{- if or .Values.cpu .Values.memory }}
         resources:
           requests:
@@ -237,7 +237,7 @@ spec:
         {{- range $volume := (index .Values "volume-data-sync" "volumes") }}
       - name: {{ $volume.name }}
         image: {{ $volume.image }}
-        imagePullPolicy: {{ default $volume.imagePullPolicy $.Values.global.imagePullPolicy | default "IfNotPresent" }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" $ "context" $volume }}
         command:
           - "/bin/sh"
           - "-c"
