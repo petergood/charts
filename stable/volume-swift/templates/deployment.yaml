@@ -38,7 +38,7 @@ spec:
       containers:
       - name: swift
         image: {{ .Values.image }}
-        imagePullPolicy: {{ default .Values.imagePullPolicy }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
         env:
           - name: INITIALIZE
             value: 'yes'

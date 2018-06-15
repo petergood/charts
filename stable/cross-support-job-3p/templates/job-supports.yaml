@@ -40,7 +40,7 @@ spec:
       initContainers:
         - name: wait-for-luma
           image: {{ .Values.wait_for.image }}
-          imagePullPolicy: {{ default .Values.wait_for.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
+          imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
           args:
             - "job"
             - "{{ template "fullname" . }}-luma"
@@ -49,7 +49,7 @@ spec:
       containers:
       - name: {{ .Chart.Name }}
         image: {{ .Values.image }}
-        imagePullPolicy: {{ .Values.imagePullPolicy }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
         env:
           - name: ONEZONE_HOST
             value: "https://{{ template "releaseName" . }}-onezone.{{ template "service_namespace_domain" . }}"

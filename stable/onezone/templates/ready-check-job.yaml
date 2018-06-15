@@ -28,7 +28,7 @@ spec:
       initContainers:
       - name: wait-for-{{ .Chart.Name }}
         image: byrnedo/alpine-curl
-        imagePullPolicy: {{ default .Values.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
         command:
           - "/bin/sh"
           - "-c"
@@ -38,7 +38,7 @@ spec:
       containers:
       - name: onezone-ready-check
         image: {{ .Values.onedata_cli.image }}
-        imagePullPolicy: {{ default .Values.onedata_cli.imagePullPolicy .Values.global.imagePullPolicy | default "IfNotPresent" }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
         env:
           - name: ONEZONE_API_KEY
             value: "supplied_at_runtime"
