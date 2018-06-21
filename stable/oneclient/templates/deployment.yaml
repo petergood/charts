@@ -22,6 +22,7 @@ spec:
     spec:
       hostname: {{ .Chart.Name }}
       subdomain: {{ template "fullname" . }}
+      hostNetwork: {{ template "hostNetwork" . }}
       replicas: {{ .Values.replicas }}
     {{- if .Values.affinity }}
       affinity:

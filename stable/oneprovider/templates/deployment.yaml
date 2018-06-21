@@ -25,6 +25,7 @@ spec:
         version: "{{ .Chart.Version }}"
     spec:
       subdomain: {{ template "fullname" . }}
+      hostNetwork: {{ template "hostNetwork" . }}
       terminationGracePeriodSeconds: 0
       {{- if or .Values.affinity .Values.onedata_anti_affinity_enabled }}
       affinity:

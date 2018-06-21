@@ -24,6 +24,7 @@ spec:
         version: "{{ .Chart.Version }}"
     spec:
       restartPolicy: Never
+      hostNetwork: {{ template "hostNetwork" . }}
 {{ include "imagePullSecrets" . | indent 6 }}
       initContainers:
       - name: wait-for-{{ .Chart.Name }}
