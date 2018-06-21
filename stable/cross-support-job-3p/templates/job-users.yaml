@@ -31,6 +31,7 @@ spec:
       annotations:
         version: "{{ .Chart.Version }}"
     spec:
+      hostNetwork: {{ template "hostNetwork" . }}
       {{- if .Values.affinity }}
       affinity:
 {{ toYaml .Values.affinity | indent 8 }}

@@ -118,3 +118,21 @@ ImagePullPolicy template
     {{- template "_imagePullPolicy" dict "root" .root "context" (dict) | default "IfNotPresent" }}
   {{- end -}}
 {{- end -}}
+
+{{/*  
+HostNetwork template 
+*/}}
+{{- define "_hostNetwork" -}}
+  {{- if .Values.global -}}
+      {{- if .Values.global.hostNetwork -}}
+        {{- .Values.global.hostNetwork -}}
+      {{- else if .Values.hostNetwork -}}
+          {{- .Values.hostNetwork -}}
+      {{- end -}}
+  {{- else if .Values.hostNetwork -}}
+      {{- .Values.hostNetwork -}}
+  {{- end -}}
+{{- end -}}
+{{- define "hostNetwork" -}}
+  {{- include "_hostNetwork" . | default false }}
+{{- end -}}
