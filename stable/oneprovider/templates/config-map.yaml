@@ -12,7 +12,7 @@ metadata:
     version: "{{ .Chart.Version }}"
 data:
   panel-overlay.config: {{ toYaml .Values.panelOverlayConfig }}
-  worker-overlay.config: {{ toYaml .Values.panelOverlayConfig }}
+  worker-overlay.config: {{ toYaml .Values.workerOverlayConfig }}
   ONEPROVIDER_CONFIG: |-
     cluster:
       domainName: "{{ template "service_url" . }}"
