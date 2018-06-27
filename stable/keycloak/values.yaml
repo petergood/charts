@@ -76,6 +76,9 @@ keycloak:
     password: password
     persistence:
       deployPostgres: false
+    extraEnv: |-
+        - name: HOSTNAME
+          value: keycloak
   service:
     type: ClusterIP
     port: 80
