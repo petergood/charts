@@ -71,7 +71,7 @@ groups:
 keycloak:
   keycloak:
     image:
-      tag: 4.0.0.Beta2
+      tag: 4.0.0.Final
     username: admin
     password: password
     persistence:
@@ -81,7 +81,5 @@ keycloak:
     port: 80
   persistence:
     deployPostgres: false
-  serviceAccount:
-    create: false
   rbac:
     create: false
