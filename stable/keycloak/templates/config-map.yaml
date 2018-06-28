@@ -1,3 +1,4 @@
+{{- if .Values.init.enabled }}
 {{- if .Values.init.publishClientSecret }}
 apiVersion: v1
 kind: ConfigMap
@@ -12,4 +13,5 @@ metadata:
     version: "{{ .Chart.Version }}"
 data:
   clientSecret: "KEYCLOAK_APP_CELINT_SECRET_SUPPLIED_AT_RUNTIME"
+{{- end }}
 {{- end }}

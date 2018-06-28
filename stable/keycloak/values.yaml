@@ -13,7 +13,7 @@ wait_for:
 # of idps that can create a suer.
 init:
   # Disable initialization job
-  enable: true
+  enabled: true
   # Keycloak admin credentials
   adminUsername: admin
   adminPassword: password
