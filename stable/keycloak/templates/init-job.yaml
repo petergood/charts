@@ -35,7 +35,7 @@ spec:
             while ! curl --output /dev/null --silent --connect-timeout 3 http://{{ template "keycloak_name" . }}; do echo "$(date) Trying keycloak http://{{ template "keycloak_name" . }} port 80...." ; done;
             echo "Keycloak http://{{ template "keycloak_name" . }} port 80 open!"
       containers:
-      - name: onezone-ready-check
+      - name: keycloak-init
         image: {{ .Values.wait_for.image }}
         imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
         command:
