@@ -1,3 +1,4 @@
+{{- if .Values.init.enabled }}
 ---
 apiVersion: batch/v1
 kind: Job
@@ -213,5 +214,4 @@ spec:
             {{ template "keycloakGroup" dict "root" . "parentId" "root" }}
             {{- end }}{{- end }}{{- end }}{{- end }}
             exit 0 ;
-
-
+{{- end }}
