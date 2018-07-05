@@ -79,6 +79,7 @@ keycloak:
     extraEnv: |-
         - name: HOSTNAME
           value: keycloak
+    affinity: ""
   service:
     type: ClusterIP
     port: 80

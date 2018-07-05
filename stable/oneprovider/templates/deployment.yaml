@@ -154,6 +154,8 @@ spec:
             echo {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ;
             if [[ "$HOSTNAME" != {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ]]; then export ONEPANEL_BATCH_MODE="false" ; fi ;
             env ;
+            while [ ! -f /tmp/sources_ready.txt ]; do   sleep 1; done ;
+            export ONEPANEL_OVERRIDE=$(cat /tmp/sources_ready.txt) ;
             /root/oneprovider.sh ;
             cat /var/log/op_panel/info.log ;
             exit 1 ;
@@ -178,6 +180,20 @@ spec:
                 onepanel_ready() { sleep 5 ; exit 0 ; } ;
                 if [[ "$HOSTNAME" == {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ]]; then exit 0 ; else onepanel_ready ; fi ;
         env:
+          - name: ONEPANEL_DEBUG_MODE
+            value: "true"
+          # The reason why we need this variable is that HOSTNAME is not
+          # available in pod specification
+          - name: SERVICE_NAME
+            {{ if $.Values.batchConfig -}}
+              {{ if $.Values.batchConfig.name }}
+            value: {{ $.Values.batchConfig.name }}
+              {{- else -}}
+            value: {{ template "fullname" $ }}
+              {{- end }}
+            {{- else -}}
+            value: {{ template "fullname" $ }}
+            {{- end }}
           - name: ONEPANEL_LOG_LEVEL
             value: {{ default "info" .Values.log_level | quote }}
           - name: ONEPANEL_GENERATE_TEST_WEB_CERT
