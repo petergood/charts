@@ -194,6 +194,10 @@ spec:
             {{- else -}}
             value: {{ template "fullname" $ }}
             {{- end }}
+          - name: HOSTNAME
+            value: {{ template "fullname" $ }}-{{ $nodeName }}-0
+          - name: SERVICE_DOMAIN
+            value: {{ template "service_url" $ }}
           - name: ONEPANEL_LOG_LEVEL
             value: {{ default "info" .Values.log_level | quote }}
           - name: ONEPANEL_GENERATE_TEST_WEB_CERT
