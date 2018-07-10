@@ -195,7 +195,7 @@ spec:
             value: {{ template "fullname" $ }}
             {{- end }}
           - name: HOSTNAME
-            value: {{ template "fullname" $ }}-{{ $nodeName }}-0
+            value: {{ template "fullname" $ }}
           - name: SERVICE_DOMAIN
             value: {{ template "service_url" $ }}
           - name: ONEPANEL_LOG_LEVEL
