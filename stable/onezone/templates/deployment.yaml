@@ -185,7 +185,7 @@ spec:
                 if [[ "$HOSTNAME" == {{ template "fullname" . }}-{{ sub (.Values.onezone_nodes_count) 1 }} ]]; then exit 0 ; else onepanel_ready ; fi ;
         env:
           - name: ONEPANEL_DEBUG_MODE
-            value: "true"
+            value: {{ default "false" .Values.onepanel_debug_mode | quote }}
           - name: ONEPANEL_LOG_LEVEL
             value: {{ default "info" .Values.log_level | quote }}
           - name: ONEPANEL_GENERATE_TEST_WEB_CERT
