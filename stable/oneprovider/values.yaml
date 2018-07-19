@@ -71,6 +71,9 @@ onepanel_generated_cert_domain: ""
 #   be used in production.
 onepanel_trust_test_ca: false
 
+# If enabled entrypoint enters infinite log loop on error instead of exiting.
+onepanel_debug_mode: false
+
 # Number of nodes (pod replicas) for of this provider
 # their indexes will be assigned FROM 0 (ZERO!)
 # up to, but not including the count value
@@ -85,6 +88,20 @@ cluster_config:
   managers: [ ]
   workers: [ ]
   databases: [ ]
+
+# NOTE: below configuration is mainly used by one-env tool.
+# Determines which onedata components should be started from pre-compiled sources
+# or pre-installed packages inside dockers. When enabled sources should be
+# copied to pod and after that appropriate /tmp/sources_ready.txt file
+# should be created.
+sources_cfg:
+  enabled: false
+  nodes:
+    n0:
+      sources:
+        - name: op-panel
+        - name: op-worker
+        - name: cluster-manager
 
 # Erlang configuration file, which values will overide
 # respected default values in the app.conf of Onepanel
