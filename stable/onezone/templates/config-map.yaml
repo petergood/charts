@@ -7,7 +7,7 @@ metadata:
     chart: {{ .Chart.Name }}
     release: {{ template "releaseName" .  }}
     heritage: {{ .Release.Service }}
-    onedata-service: "onezone"
+    component: {{ .Chart.Name }}
   annotations:
     version: "{{ .Chart.Version }}"
 data:
