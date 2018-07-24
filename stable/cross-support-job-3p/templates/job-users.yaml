@@ -15,7 +15,7 @@ metadata:
     release: "{{ template "releaseName" . }}"
     heritage: "{{ .Release.Service }}"
     job: {{ template "fullname" . }}-users
-    component: {{ .Chart.Name }}
+    component: {{ .Chart.Name }}-users
   annotations:
     version: "{{ .Chart.Version }}"
 spec:
@@ -29,7 +29,7 @@ spec:
         release: "{{ template "releaseName" . }}"
         heritage: "{{ .Release.Service }}"
         job: {{ template "fullname" . }}-users
-        component: {{ .Chart.Name }}
+        component: {{ .Chart.Name }}-users
       annotations:
         version: "{{ .Chart.Version }}"
     spec:

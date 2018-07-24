@@ -16,7 +16,7 @@ metadata:
     release: "{{ template "releaseName" $ }}"
     heritage: "{{ .Release.Service }}"
     job: {{ template "fullname" . }}-luma
-    component: {{ .Chart.Name }}
+    component: {{ .Chart.Name }}-luma
   annotations:
     version: "{{ .Chart.Version }}"
 spec:
@@ -30,7 +30,7 @@ spec:
         release: "{{ template "releaseName" $ }}"
         heritage: "{{ .Release.Service }}"
         job: {{ template "fullname" . }}-luma
-        component: {{ .Chart.Name }}
+        component: {{ .Chart.Name }}-luma
       annotations:
         version: "{{ .Chart.Version }}"
     spec:

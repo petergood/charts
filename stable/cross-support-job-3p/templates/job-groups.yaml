@@ -9,7 +9,7 @@ metadata:
     release: "{{ template "releaseName" . }}"
     heritage: "{{ .Release.Service }}"
     job: {{ template "fullname" . }}-groups
-    component: {{ .Chart.Name }}
+    component: {{ .Chart.Name }}-groups
   annotations:
     version: "{{ .Chart.Version }}"
 spec:
@@ -23,7 +23,7 @@ spec:
         release: "{{ template "releaseName" . }}"
         heritage: "{{ .Release.Service }}"
         job: {{ template "fullname" . }}-groups
-        component: {{ .Chart.Name }}
+        component: {{ .Chart.Name }}-groups
       annotations:
         version: "{{ .Chart.Version }}"
     spec:

@@ -58,7 +58,9 @@ spec:
 {{ toYaml .Values.nodeSelector | indent 8 }}
       {{- end }}
 {{ include "imagePullSecrets" . | indent 6 }}
+      {{- if or (index .Values "keycloak" "enabled") (or (index .Values "keycloak" "enabled") (index .Values "generate-certificates" "enabled")) }}
       initContainers:
+      {{- end }}
       {{- if (index .Values "generate-certificates" "enabled") }}
         - name: certificate-init-container
           image: {{ index .Values "generate-certificates" "image" }}
@@ -85,8 +87,8 @@ spec:
               if [[ $POD_NAME != {{ template "fullname" . }}-0 ]] ; then echo "Not generating certificates" ; exit 0 ; fi ;
               mkdir $(CERT_DIR) ;
               /certificate-init-container -secret-name={{ template "fullname" . }}-secret-tls -labels=app={{ template "fullname" . }},chart={{ .Chart.Name }},release={{ template "releaseName" . }},heritage={{ .Release.Service }} -additional-dnsnames={{ template "fullname" . }},{{ template "fullname" . }}.$(NAMESPACE),{{ template "fullname" . }}.$(NAMESPACE).svc -cert-dir=$(CERT_DIR) -namespace=$(NAMESPACE) -pod-ip=$(POD_IP) -pod-name=$(POD_NAME) -service-names={{ template "fullname" . }} -cluster-domain={{ template "cluster_domain" . }} ;
-     {{- end }}
-     {{- if (index .Values "keycloak" "enabled") }}
+      {{- end }}
+      {{- if (index .Values "keycloak" "enabled") }}
         - name: keycloak-secret-init
           image: {{ index .Values "wait_for" "image" }}
           imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" (index .Values "generate-certificates") }}
@@ -112,12 +114,14 @@ spec:
               cat /mnt/auth.config ;
               exit 0 ;
       {{- end }}
+      {{- if (index .Values "keycloak" "enabled") }}
         - name: wait-token-dispenser
           image: {{ .Values.wait_for.image }}
           imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
           args:
             - "pod"
             - "-lapp={{ template "token-dispenser_name" . }}"
+      {{- end }}
       containers:
       - name: {{ .Chart.Name }}
         image: {{ .Values.image }}

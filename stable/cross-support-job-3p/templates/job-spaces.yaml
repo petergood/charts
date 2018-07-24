@@ -10,7 +10,7 @@ metadata:
     release: "{{ template "releaseName" . }}"
     heritage: "{{ .Release.Service }}"
     job: {{ template "fullname" . }}-spaces
-    component: {{ .Chart.Name }}
+    component: {{ .Chart.Name }}-spaces
   annotations:
     version: "{{ .Chart.Version }}"
 spec:
@@ -24,7 +24,7 @@ spec:
         release: "{{ template "releaseName" . }}"
         heritage: "{{ .Release.Service }}"
         job: {{ template "fullname" . }}-spaces
-        component: {{ .Chart.Name }}
+        component: {{ .Chart.Name }}-spaces
       annotations:
         version: "{{ .Chart.Version }}"
     spec:

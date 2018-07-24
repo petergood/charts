@@ -9,7 +9,7 @@ metadata:
     chart: {{ .Chart.Name }}
     release: {{ template "releaseName" . }}
     heritage: {{ .Release.Service }}
-    component: {{ .Chart.Name }}
+    component: {{ .Chart.Name }}-init
   annotations:
     version: "{{ .Chart.Version }}"
 spec:
@@ -20,7 +20,7 @@ spec:
         chart: {{ .Chart.Name }}
         release: {{ template "releaseName" .  }}
         heritage: {{ .Release.Service }}
-        component: {{ .Chart.Name }}
+        component: {{ .Chart.Name }}-init
       annotations:
         version: "{{ .Chart.Version }}"
     spec:
