@@ -186,6 +186,8 @@ spec:
         env:
           - name: ONEPANEL_LOG_LEVEL
             value: {{ default "info" .Values.log_level | quote }}
+          - name: ONEPANEL_DEBUG_MODE
+            value: {{ default "false" .Values.onepanel_debug_mode | quote }}
           - name: ONEPANEL_GENERATE_TEST_WEB_CERT
             value: {{ default "false" .Values.onepanel_generate_test_web_cert | quote }}
           - name: ONEPANEL_GENERATED_CERT_DOMAIN
