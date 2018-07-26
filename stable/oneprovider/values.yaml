@@ -51,6 +51,9 @@ adminEmail: "getting-started@onedata.org"
 # Log level of the processes in the container
 log_level: "info"
 
+# Prevent oneprovider container to exit when container entrypoint fails
+onepanel_debug_mode: false
+
 # Enable loading oneprovider configuration from ONEPROVIDER_CONFIG env variable
 onepanel_batch_mode_enabled: true
 
