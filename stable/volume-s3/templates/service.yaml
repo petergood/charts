@@ -13,6 +13,6 @@ metadata:
 spec:
   type: {{ .Values.serviceType }}
   ports:
-    - port: {{ .Values.scality_port }}
+    - port: {{ .Values.port }}
   selector:
     app: {{ template "fullname" . }}
