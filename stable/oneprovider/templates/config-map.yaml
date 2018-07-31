@@ -86,7 +86,7 @@ data:
       {{- if (index .Values "volume-s3" "enabled") }}
         s3:
           type: s3
-          hostname: {{ template "volume-s3_name" . }}:8000
+          hostname: {{ template "volume-s3_name" . }}:{{ index .Values "volume-s3" "port" }}
           bucketName: {{ index .Values "volume-s3" "bucketName" }}
           accessKey: {{ index .Values "volume-s3" "key_id" }}
           secretKey: {{ index .Values "volume-s3" "access_key" }}
