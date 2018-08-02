@@ -47,9 +47,6 @@ onepanel_generated_cert_domain: "xx"
 #   be used in production.
 onepanel_trust_test_ca: false
 
-# If enabled entrypoint enters infinite log loop on error instead of exiting.
-onepanel_debug_mode: false
-
 # Number of nodes (pod replicas) for of this onezone
 # their indexes will be asigned FROM 0 (ZERO!)
 # up to, but not including the count value

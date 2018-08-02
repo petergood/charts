@@ -188,8 +188,6 @@ spec:
                 onepanel_ready() { sleep 5 ; exit 0 ; } ;
                 if [[ "$HOSTNAME" == {{ template "fullname" . }}-{{ sub (.Values.onezone_nodes_count) 1 }} ]]; then exit 0 ; else onepanel_ready ; fi ;
         env:
-          - name: ONEPANEL_DEBUG_MODE
-            value: {{ default "false" .Values.onepanel_debug_mode | quote }}
           - name: ONEPANEL_LOG_LEVEL
             value: {{ default "info" .Values.log_level | quote }}
           - name: ONEPANEL_DEBUG_MODE
