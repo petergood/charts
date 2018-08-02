@@ -249,8 +249,13 @@ spec:
             {{- if $volume.readOnly }}
             mount -o remount,ro /{{ $volume.name }} ;
             {{- end }}
-            {{- range $a_chown := $volume.chowns }}
-            chown -R {{ $a_chown.user }}{{- if $a_chown.group }}:{{ $a_chown.group }}{{- end }} {{ $volume.dataPath }}/{{ $a_chown.path }} ;
+            {{- range $a_permission := $volume.permissions }}
+            {{- if $a_permission.user }}
+            chown -R {{ $a_permission.user }}{{- if $a_permission.group }}:{{ $a_permission.group }}{{- end }} {{ $volume.dataPath }}/{{ $a_permission.path }} ;
+            {{- end }}
+            {{- if $a_permission.mask }}
+            chmod -R {{ $a_permission.mask }} {{ $volume.dataPath }}/{{ $a_permission.path }} ;
+            {{- end }}
             {{- end }}
             sleep 3600000 ;
         volumeMounts:
