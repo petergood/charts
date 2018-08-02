@@ -121,7 +121,7 @@ spec:
             - "-lapp={{ template "volume-swift_name" . }}"
       {{- end }}
       containers:
-      - name: {{ .Chart.Name }}
+      - name: oneprovider
         image: {{ .Values.image }}
         imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
         {{- if or .Values.cpu .Values.memory }}
