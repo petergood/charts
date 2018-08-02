@@ -189,18 +189,19 @@ volume-data-sync:
     imagePullPolicy: IfNotPresent
     dataPath: /data
     readOnly: false
-    chowns: 
-    # chown -R command parameters
-    # the root of the path is dataPath
+    permissions: 
       - path: Landsat-5
-        user: 30000 #admin
-        group: 50001 #alpha
+        # chown -R command parameters
+        # the root of the path is dataPath
+        user: 40001 #admin
+        group: 42001 #alpha
       - path: Landsat-5/TM/L1T/2010/06/13
-        user: 30001 #user
-        group: 50002 #beta
+        user: 40001 #user
+        group: 42001 #beta
       - path: Landsat-5/TM/L1T/2010/06/21
         user: 40001 #user
-        group: 50003 #gamma
+        group: 42001 #gamma
+
   - name: volume-data-sync-ro
     luma-enabled: *luma_enabled_posix
     image: onedata/eo-data-mock:Landsat-5-sample-latest
