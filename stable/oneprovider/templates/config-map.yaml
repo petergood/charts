@@ -101,7 +101,7 @@ data:
       {{- end }}
       {{- if (index .Values "volume-ceph" "enabled") }}
         ceph:
-          type: ceph
+          type: cephrados
           username: {{ index .Values "volume-ceph" "username" }}
           key: {{ index .Values "volume-ceph" "key" }}
           monitorHostname: {{ template "volume-ceph_name" . }}
