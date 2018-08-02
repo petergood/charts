@@ -51,6 +51,9 @@ adminEmail: "getting-started@onedata.org"
 # Log level of the processes in the container
 log_level: "info"
 
+# Prevent oneprovider container to exit when container entrypoint fails
+onepanel_debug_mode: false
+
 # Enable loading oneprovider configuration from ONEPROVIDER_CONFIG env variable
 onepanel_batch_mode_enabled: true
 
@@ -209,12 +212,18 @@ volume-data-sync:
       - path: Landsat-5
         user: 30000 #admin
         group: 50001 #alpha
+        # if luma is not enabled this needs to give access to all
+        # random uid/gid of onedata users to be used on that dataset
+        mask: 0777
       - path: Landsat-5/TM/L1T/2010/06/13
         user: 30001 #user
         group: 50002 #beta
+        mask: 0775
       - path: Landsat-5/TM/L1T/2010/06/21
         user: 40001 #user
         group: 50003 #gamma
+        mask: 0755
+
   - name: volume-data-sync-ro
     luma-enabled: *luma_enabled_posix
     image: onedata/eo-data-mock:Landsat-5-sample-latest

@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-image: ceph/demo:tag-build-master-luminous-ubuntu-16.04
+image: ceph/daemon:v3.1.0rc1-stable-3.1-mimic-centos-7
 imagePullPolicy: IfNotPresent
 serviceType: ClusterIP
 

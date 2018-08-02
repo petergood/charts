@@ -11,6 +11,7 @@ metadata:
   annotations:
     version: "{{ .Chart.Version }}"
 spec:
+  replicas: {{ .Values.replicas }}
   template:
     metadata:
       labels:
@@ -25,7 +26,6 @@ spec:
       hostname: {{ .Chart.Name }}
       subdomain: {{ template "fullname" . }}
       hostNetwork: {{ template "hostNetwork" . }}
-      replicas: {{ .Values.replicas }}
     {{- if .Values.affinity }}
       affinity:
 {{ toYaml .Values.affinity | indent 8 }}

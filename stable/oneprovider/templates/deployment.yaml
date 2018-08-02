@@ -121,7 +121,7 @@ spec:
             - "-lapp={{ template "volume-swift_name" . }}"
       {{- end }}
       containers:
-      - name: {{ .Chart.Name }}
+      - name: oneprovider
         image: {{ .Values.image }}
         imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
         {{- if or .Values.cpu .Values.memory }}
@@ -186,6 +186,8 @@ spec:
             value: {{ default "false" .Values.onepanel_debug_mode | quote }}
           - name: ONEPANEL_LOG_LEVEL
             value: {{ default "info" .Values.log_level | quote }}
+          - name: ONEPANEL_DEBUG_MODE
+            value: {{ default "false" .Values.onepanel_debug_mode | quote }}
           - name: ONEPANEL_GENERATE_TEST_WEB_CERT
             value: {{ default "false" .Values.onepanel_generate_test_web_cert | quote }}
           - name: ONEPANEL_GENERATED_CERT_DOMAIN
@@ -253,8 +255,13 @@ spec:
             {{- if $volume.readOnly }}
             mount -o remount,ro /{{ $volume.name }} ;
             {{- end }}
-            {{- range $a_chown := $volume.chowns }}
-            chown -R {{ $a_chown.user }}{{- if $a_chown.group }}:{{ $a_chown.group }}{{- end }} {{ $volume.dataPath }}/{{ $a_chown.path }} ;
+            {{- range $a_permission := $volume.permissions }}
+            {{- if $a_permission.user }}
+            chown -R {{ $a_permission.user }}{{- if $a_permission.group }}:{{ $a_permission.group }}{{- end }} {{ $volume.dataPath }}/{{ $a_permission.path }} ;
+            {{- end }}
+            {{- if $a_permission.mask }}
+            chmod -R {{ $a_permission.mask }} {{ $volume.dataPath }}/{{ $a_permission.path }} ;
+            {{- end }}
             {{- end }}
             sleep 3600000 ;
         volumeMounts:
