@@ -36,15 +36,13 @@ spec:
           - "/bin/sh"
           - "-c"
           - >
-            user="" ;
-            while [ "$user" = "" ] ; do user="$(curl -k -u admin:password -sS --tlsv1.2 -X GET 'https://{{ template "onezone_name" . }}:9443/api/v3/onepanel/users/user')"; echo "Waiting for https://{{ template "onezone_name" . }}:9443/api/v3/onepanel/users/user to return something..." ; echo "$user" ; sleep 2 ; done ;
+            deployed="" ;
+            while [ "$deployed" != "true" ] ; do deployed="$(curl -k  -sS  -X GET 'https://{{ template "onezone_name" . }}:9443/configuration' | jq .'deployed')" ; echo "Waiting for https://{{ template "onezone_name" . }}:9443/configuration to return something..." ; echo "returned=$deployed" ; sleep 2 ; done ;
       containers:
       - name: onezone-ready-check
         image: {{ .Values.onedata_cli.image }}
         imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
         env:
-          - name: ONEZONE_API_KEY
-            value: "supplied_at_runtime"
           - name: ONEZONE_HOST
             value: "https://{{ template "onezone_name" . }}"
           - name: ONEPANEL_HOST
@@ -55,15 +53,13 @@ spec:
           - "bash"
           - "-c"
           - >
+            set -e ;
             echo "-k" > ~/.curlrc ; echo "-f" >> ~/.curlrc ;
-            echo "Getting token:" ;
-            export ONEZONE_API_KEY="$(curl -k -u $ONEPANEL_BASIC_AUTH -X POST -d '' -H 'content-type: application/json' $ONEZONE_HOST/api/v3/onezone/user/client_tokens | jq -r .token)" ;
-            echo "Curl output:" ; 
             echo "ONEZONE_HOST=$ONEZONE_HOST" ;
-            echo "ONEZONE_API_KEY=$ONEZONE_API_KEY" ;
-          {{/* TODO: Fix this onepanel user propagation hack */}}
+          {{- /* TODO: Fix this onepanel user propagation hack */ -}}
           {{- range .Values.onepanel_users }}
-            onezone-rest-cli -w "'%{http_code}'" -u {{ .name }}:{{ .password }} getUser ;
+            echo "Propagating onepanel user={{ .name }} to onezone" ;
+            {{- /* Because of an error in coresponding invocation in onezone-rest-cli, I use curl here */ -}}
+            curl -u user:password -sS --tlsv1.2 -v -w '%{http_code}' -X GET "${ONEZONE_HOST}/api/v3/onezone/user/" ;
           {{- end }}
-            exit 0 ;
 
