@@ -61,6 +61,11 @@ cluster_config:
   workers: [ ]
   databases: [ ]
 
+# Oneprovider entrypoint waits for external rsync to finish updating 
+# container files before it continues
+deployFromSources:
+  enabled: false
+
 # Erlang configuration file, which values will overide
 # respected default values in the app.conf of Onepanel
 # The idea is to overite as needed small parts when needed
