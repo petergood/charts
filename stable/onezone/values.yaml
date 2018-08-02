@@ -112,13 +112,13 @@ onezone_main_admin:
 # List of onezone onepanel users with administrative privileges
 onepanelAdminUsers: []
 
-# List of onezone onepanel regular users
-onepanel_users:
-  - name: user
-    password: password
-    idps:
-      onepanel:
-        enabled: true
+# List of onezone onepanel regular users with example bellow
+onepanel_users: []
+  # - name: user
+  #   password: password
+  #   idps:
+  #     onepanel:
+  #       enabled: true
 
 saml-idp:
   enabled: false
