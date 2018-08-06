@@ -57,9 +57,12 @@ spec:
             echo "-k" > ~/.curlrc ; echo "-f" >> ~/.curlrc ;
             echo "ONEZONE_HOST=$ONEZONE_HOST" ;
           {{- /* TODO: Fix this onepanel user propagation hack */ -}}
-          {{- range .Values.onepanel_users }}
-            echo "Propagating onepanel user={{ .name }} to onezone" ;
-            {{- /* Because of an error in coresponding invocation in onezone-rest-cli, I use curl here */ -}}
-            curl -u user:password -sS --tlsv1.2 -v -w '%{http_code}' -X GET "${ONEZONE_HOST}/api/v3/onezone/user/" ;
+          {{- range $user := .Values.onepanel_users }}
+          {{- $idp := (first (pluck "onepanel" $user.idps )) }}{{- if $idp }}{{- if $idp.enabled }}
+            echo "Propagating onepanel user={{ $user.name }} to onezone" ;
+            {{- /* TODO: Because of an error in swagger in coresponding invocation in onezone-rest-cli, I use curl here */ -}}
+            curl -u {{ $user.name }}:{{ $user.password }} -sS --tlsv1.2 -v -w '%{http_code}' -X GET "${ONEZONE_HOST}/api/v3/onezone/user/" ;
+          {{- end }}
+          {{- end }}
           {{- end }}
 
