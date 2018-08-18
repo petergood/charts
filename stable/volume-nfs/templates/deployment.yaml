@@ -51,3 +51,14 @@ spec:
             containerPort: 111
         securityContext:
           privileged: true
+        volumeMounts:
+        - mountPath: /exports
+          name: persistence
+      volumes:
+        - name: persistence
+      {{- if .Values.persistence.enabled }}
+        hostPath:
+          path: {{ .Values.persistence.hostPath | quote }}
+      {{ else }}
+        emptyDir: {}
+      {{ end }}
