@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-image: onedata/oneprovider:18.02.0-rc4
+image: onedata/oneprovider:18.02.0-rc10
 imagePullPolicy: IfNotPresent
 serviceType: ClusterIP
 
@@ -45,7 +45,7 @@ memory: 4Gi
 geoLatitude: 55.333
 geoLongitude: 55.333
 
-# TODO: add comment
+# Oneprovider admin email
 adminEmail: "getting-started@onedata.org"
 
 # Log level of the processes in the container
