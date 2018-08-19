@@ -1,0 +1,12 @@
+name: volume-irods
+version: 0.1.0
+description: A single container IRODS setup, suitable for testing purposes.
+keywords:
+  - onedata
+  - volume-irods
+  - storage
+maintainers:
+  - name: Michal Orzechowski
+    email: orzechowski.michal@gmail.com
+engine: gotpl
+appVersion: latest

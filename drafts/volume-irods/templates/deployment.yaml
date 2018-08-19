@@ -1,0 +1,82 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "fullname" . }}
+    chart: {{ .Chart.Name }}
+    release: {{ template "releaseName" . }}
+    heritage: {{ .Release.Service }}
+    component: {{ .Chart.Name }}
+  annotations:
+    version: "{{ .Chart.Version }}"
+spec:
+  template:
+    metadata:
+      labels:
+        app: {{ template "fullname" . }}
+        chart: {{ .Chart.Name }}
+        release: {{ template "releaseName" . }}
+        heritage: {{ .Release.Service }}
+        component: {{ .Chart.Name }}
+      annotations:
+        version: "{{ .Chart.Version }}"
+    spec:
+      hostname: {{ .Chart.Name | quote }}
+      subdomain: {{ template "fullname" . }}
+      hostNetwork: {{ template "hostNetwork" . }}
+      {{- if .Values.affinity }}
+      affinity:
+{{ toYaml .Values.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      {{- end }}
+{{ include "imagePullSecrets" . | indent 6 }}
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ .Values.image }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
+        ports:
+          - containerPort: 5432
+          - containerPort: 1247
+          - containerPort: 1248
+          - containerPort: 20000
+          - containerPort: 20001
+        env:
+        - name: MON_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: IRODS_PORT_RANGE_BEGIN
+          value: "20000"
+        - name: IRODS_PORT_RANGE_BEGIN
+          value: "20001"
+        # - name: CEPH_DEMO_ACCESS_KEY
+        #   value: "G1EZ5R4K6IJ7XUQKMAED"
+        # - name: CEPH_DEMO_UID
+        #   value: "{{ .Values.username }}"
+        # command:
+        #   - "/bin/bash"
+        #   - "-c"
+        #   - >
+        #     a=$(ip -o -f inet addr show | awk '/scope global/{sub(/[^.]+\//,"0/",$4);print $4}') ;
+        #     export CEPH_PUBLIC_NETWORK="${a%.*}.0/24" ;
+        #     export CEPH_NETWORK=$CEPH_PUBLIC_NETWORK ;
+        #     env ;
+        #     /entrypoint.sh demo;
+        livenessProbe:
+          tcpSocket:
+            port: 5432
+        # readinessProbe:
+        #   exec:
+        #     command:
+        #       - "/bin/bash"
+        #       - "-c"
+        #       - >
+        #         [[ $(ceph health) == "HEALTH_OK" ]];
