@@ -1,0 +1,19 @@
+# Default values for nfs-storage
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global: {}
+
+hostPath: /tmp/data-nfs-server-provisioner-0
+storage: 2Gi
+mount_options: ""
+
+# Ovverride the default values of a parent keycloak
+# chart to make. So it playes nicely with Onedata charts.
+volume-nfs:
+  persistentVolumeReclaimPolicy: Delete
+  persistence:
+    enabled: true
+    hostPath: /tmp/nfs-onedata
+  nodeSelector:
+    kubernetes.io/hostname: k8s-cyfronet-1-node-4

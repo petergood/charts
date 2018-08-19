@@ -1,0 +1,9 @@
+dependencies:
+- name: onedata-chart-utils
+  repository: https://onedata.github.io/charts/
+  version: 0.2.10
+- name: redis
+  repository: https://kubernetes-charts.storage.googleapis.com
+  version: 1.1.11
+digest: sha256:2d59dec6438535b418525d8f804b3af3ba8668b39a75bde6b63e580e5021ef09
+generated: 2018-08-19T05:50:02.59502354+02:00

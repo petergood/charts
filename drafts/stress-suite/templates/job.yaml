@@ -1,0 +1,159 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ template "fullname" . }}"
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    component: "{{ .Chart.Name }}"
+  annotations:
+    version: "{{ .Chart.Version }}"
+spec:
+  parallelism: 1
+  backoffLimit: 1
+  template:
+    metadata:
+      name: "{{ .Release.Name}}"
+      labels:
+        app: {{ template "fullname" . }}
+        chart: "{{ .Chart.Name }}"
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
+        component: "{{ .Chart.Name }}"
+      annotations:
+        version: "{{ .Chart.Version }}"
+    spec:
+      restartPolicy: Never
+      containers:
+    {{- range $job := .Values.jobs }}
+      - name: {{ $job.name }}
+        image: {{ $.Values.image }}
+        imagePullPolicy: {{ $.Values.imagePullPolicy | default "IfNotPresent" }}
+        env:
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+        command:
+          - "/usr/bin/env"
+          - "bash"
+          - "-c"
+          - >
+            cat /job.config ;
+            helm repo add onedata https://onedata.git.io/charts/ ;
+            helm search cross ;
+            helm search onedata ;
+            jobChart=onedata-stress-job;
+            helm delete --purge "{{ $.Release.Name }}-{{ $job.name }}" ;
+            echo "Configuration:" ;
+            helm install -f /job.config -f /job-environment.config -f /job-custom.config --namespace ${MY_POD_NAMESPACE} --name "{{ $.Release.Name }}-{{ $job.name }}" --debug --version {{ .Values.onedataStressJobVersion }} | tee helm.log ;
+            kubectl -n kube-system label cm -lNAME={{ $.Release.Name }}-{{ $job.name }} release_owner="{{ $.Release.Name }}" --overwrite ;
+            until kubectl describe job -lapp={{ $.Release.Name }}-{{ $job.name }}-${jobChart},component=results  | grep "Pods Statuses:[[:blank:]]\+0 Running / [[:digit:]]\+ Succeeded / 0 Failed" ; do sleep 1 ; done ;
+            sed -n '/COMPUTED VALUES:/,/HOOKS/p' helm.log >> /results/{{ $job.name }}-configuration.log ;
+            kubectl logs -ljob-name={{ $.Release.Name }}-{{ $job.name }}-${jobChart}-results -c results >> /results/{{ $job.name }}.log ;
+            echo 1 > /results/{{ $job.name }}-logs-written ;
+            echo "Results:" ;
+            cat /results/{{ $job.name }}.log ;
+            sleep 40000;
+        volumeMounts:
+          - mountPath: /persistence/
+            name: persistence
+          - mountPath: /results/
+            name: results
+          - name: config-map
+            mountPath: /job.config
+            subPath: {{ $job.name }}
+          - name: config-map
+            mountPath: /job-environment.config
+            subPath: {{ $job.name }}-environment
+          - name: config-map
+            mountPath: /job-custom.config
+            subPath: {{ $job.name }}-custom
+    {{- end }}
+      - name: results
+        image: alpine/git
+        imagePullPolicy: {{ $.Values.imagePullPolicy | default "IfNotPresent" }}
+        env:
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: SUITE_ENVIRONMENT_CONFIG
+            value: {{ .Values.environment | toYaml | quote }}
+          - name: resultsPath
+            value: "/results.log"
+          - name: clone_destination_dir
+            value: "/git_repo"
+        command:
+          - "/usr/bin/env"
+          - "sh"
+          - "-c"
+          - >
+            apk update; apk add jq curl curl-dev;
+            touch $resultsPath ;
+          {{- if .Values.git.enabled }}
+            ssh-keyscan -H {{ if .Values.git.sshServerPort }}-p{{ .Values.git.sshServerPort }}{{ end }} {{ .Values.git.sshServer }} >> /root/.ssh/known_hosts ;
+            export GIT_SSH_COMMAND="ssh -i /root/.ssh/id_rsa" ;
+            git clone "{{ .Values.git.repo }}" "$clone_destination_dir";
+          {{- end }}
+            echo "## {{ .Values.name }} (${MY_POD_NAME})" >> $resultsPath ;
+            echo "Suite global configuration:" >> $resultsPath ;
+            oneprovider_version=$(curl -k -s -X GET 'https://{{ .Values.environment.oneclient.provider_host }}/configuration' -k | jq -r '"Oneprovider: version[\(.version)] | build[\(.build)]"');
+            (echo "~~~" ; echo "$oneprovider_version" ; echo "$SUITE_ENVIRONMENT_CONFIG" ; echo "~~~" ) >> $resultsPath ;
+          {{- range $job := .Values.jobs }}
+            while [ ! -f "/results/{{ $job.name }}-logs-written" ] ; do echo "Waiting for {{ $job.name }} to finish." ; sleep 2 ; done ;
+            echo "### {{ $job.name }}" >> $resultsPath ;
+            cat "/results/{{ $job.name }}.log" >> $resultsPath ;
+            echo "" >> $resultsPath ;
+            echo "##### Configuration:" >> $resultsPath ;
+            (echo "~~~" ; cat "/results/{{ $job.name }}-configuration.log" ; echo "~~~" ) >> $resultsPath ;
+            echo "" >> $resultsPath ;
+          {{- end }}
+          {{- if .Values.git.enabled }}
+            cp $resultsPath $clone_destination_dir/$(date +%s)-${MY_POD_NAME}.md ;
+            cd $clone_destination_dir ;
+            git add -A ; 
+            git -c user.name="{{ .Values.git.userName }}" -c user.email="{{ .Values.git.userEmail }}" commit -a {{ if .Values.git.author }}--author="{{ .Values.git.author }}"{{ end }} -m "{{ .Values.git.commitMessage }}" || echo "There was noting to commit." ;
+            git push ;
+          {{- else }}
+            cat $resultsPath ;
+          {{- end }}
+        volumeMounts:
+          - mountPath: /persistence/
+            name: persistence
+          - mountPath: /results/
+            name: results
+          - name: ssh-secret
+            mountPath: /root/.ssh/id_rsa
+            subPath: id_rsa
+      volumes:
+        - name: ssh-secret
+          secret:
+            secretName: {{ template "fullname" . }}
+            items:
+            - key: sshPrivateKey
+              path: id_rsa
+              mode: 0600
+        - name: config-map
+          configMap:
+            name: {{ template "fullname" . }}
+            defaultMode: 0600
+        - name: persistence
+        {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.claimName }}
+        {{ else }}
+          emptyDir: {}
+        {{ end }}
+        - name: results
+          emptyDir: {}

@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "fullname" . }}
+    chart: {{ .Chart.Name }}
+    release: {{ template "releaseName" .  }}
+    heritage: {{ .Release.Service }}
+    component: {{ .Chart.Name }}
+  annotations:
+    version: "{{ .Chart.Version }}"
+data:
+{{- range $job := .Values.jobs }}
+  {{ $job.name }}: |-
+{{ $.Files.Get $job.config_path | indent 4 }}
+  {{ $job.name }}-environment: |-
+{{ toYaml $.Values.environment | indent 4 }}
+  {{ $job.name }}-custom: |-
+{{ toYaml $job | indent 4 }}
+{{- end }}

@@ -1,0 +1,8 @@
+dependencies:
+- name: onedata-chart-utils
+  version: 0.2.10
+  repository: https://onedata.github.io/charts/
+
+- name: redis
+  version: 1.1.11
+  repository: "@stable"

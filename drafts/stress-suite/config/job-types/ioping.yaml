@@ -1,0 +1,72 @@
+job_replicas: 1
+compute:
+  image: karteek/alpine-ioping:latest
+
+  # The computation can have 3 parts: preparation, computation (execution) and cleaning.
+  # Arguments for each part can be set here.
+  prepare_args: -s 10G ioping.$((JOB_ID%JOB_REPLICAS))
+  compute_args: -c 5 -i 0 -S 10G ioping.$((JOB_ID%JOB_REPLICAS))
+  clean_args: ""
+
+  # Space name
+  spaceName: "par-su"
+
+  # Chose the folder where spaces are mounted
+  dataMountPoint: /mnt/oneclient
+  command:
+    - "/usr/bin/env"
+    - "sh"
+    - "-c"
+    - >
+      set -e ;
+      trap "{ echo 1 > /monitor/ordinal_number ; echo 1 > /monitor/wait-for-compute-prep-barrier ; echo 1 > /results/prep-starting ; echo 1 > /results/prep-ended ; echo 1 > /monitor/wait-for-compute-run-barrier ; echo 1 > /results/compute-starting ; echo 1 > /results/compute-ended ; echo 1 > /monitor/wait-for-compute-clean-barrier ; echo 1 > /results/clean-starting ; echo 1 > /monitor/wait-for-compute-clean-barrier ; echo 1 > /results/clean-ended ; echo 1 > /monitor/oneclient-can-exit ; }" EXIT ;
+      apk update; apk add bash;
+      work_dir="$dataMountPoint/$spaceName" ;
+      echo "Waiting for job ordinal number..." ;
+      while [ ! -f /monitor/ordinal_number ] ; do sleep 1 ; done ;
+      export JOB_ID=$(cat /monitor/ordinal_number) ; echo "Ordinal number acquired: JOB_ID=$JOB_ID" ;
+      prepare() {
+        echo "Changing working directo to: $work_dir" ;
+        cd "$work_dir" ;
+        pwd ;
+        printf "$(date) " ; echo "Starting ioping prep with truncate." ;
+      {{- if .Values.randomJobFailuresEnabled }}  if [ `expr $RANDOM % 2` -eq 0 ]; then exit 1 ; fi; {{- end }} 
+        eval truncate $prepare_args ;
+        printf "$(date) " ; echo "ioping prep end" ;
+      } ;
+      compute() {
+        printf "$(date)" ; echo "Starting computation sysbench run." ;
+        ls -la ;
+        bash -c 'eval ioping $compute_args | tee >(sed -ne "/ioping statistics/,$ p" > /results/compute_results)' ;
+        printf "$(date) " ; echo "sysbench compute end" ;
+      } ;
+      clean() {
+        printf "$(date)" ; echo "Starting cleaning." ;
+        echo "No cleaning needed." ;
+        printf "$(date) " ; echo "clean end" ;
+      } ;
+      echo "Waiting for oneclient..." ;
+      while [ ! -f /monitor/oneclient-started ] ; do sleep 1 ; done ;
+      echo "Oneclient ready." ;
+      echo "Reached compute point." ;
+      echo "Waiting for all other jobs to reach this point before running sysbench prepare." ;
+      echo 1 > /monitor/wait-for-compute-prep-barrier ;
+      while [ ! -f /monitor/wait-for-all-jobs-prep-barrier ] ; do sleep 1 ; done ;
+      echo 1 > /results/prep-starting ;
+      if [ "$prepare_args" != "" ]; then prepare ; fi ;
+      echo 1 > /results/prep-ended ;
+      echo "Waiting for all other jobs to reach this point before running sysbench run." ;
+      echo 1 > /monitor/wait-for-compute-run-barrier ;
+      while [ ! -f /monitor/wait-for-all-jobs-run-barrier ] ; do sleep 1 ; done ;
+      echo 1 > /results/compute-starting ;
+      if [ "$compute_args" != "" ]; then compute ; fi ;
+      echo 1 > /results/compute-ended ;
+      echo "Waiting for all other jobs to reach this point before running cleaning procedure." ;
+      echo 1 > /monitor/wait-for-compute-clean-barrier ;
+      while [ ! -f /monitor/wait-for-all-jobs-clean-barrier ] ; do sleep 1 ; done ;
+      echo 1 > /results/clean-starting ;
+      if [ "$clean_args" != "" ]; then clean ; fi ;
+      echo 1 > /results/clean-ended ;
+      printf "$(date)" ; echo "The compute container finished." ;
+      printf "$(date)" ; echo "Signaling oneclient to finish." ;
+      echo 1 > /monitor/oneclient-can-exit ;

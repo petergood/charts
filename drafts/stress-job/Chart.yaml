@@ -1,0 +1,13 @@
+name: stress-job
+version: 0.1.1
+description: Job that executes a test against oneclient container
+keywords:
+  - onedata
+  - bnechmark
+  - job
+  - oneclient
+home: https://github.com/onedata/charts
+maintainers:
+  - name: Michal Orzechowski
+    email: orzechowski.michal@gmail.com
+engine: gotpl

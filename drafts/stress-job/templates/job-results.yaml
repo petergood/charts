@@ -1,0 +1,108 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ template "fullname" . }}-results"
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    component: "results"
+  annotations:
+    version: "{{ .Chart.Version }}"
+spec:
+  parallelism: 1
+  backoffLimit: 1
+  template:
+    metadata:
+      name: "{{ .Release.Name}}"
+      labels:
+        app: {{ template "fullname" . }}
+        chart: "{{ .Chart.Name }}"
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
+        component: "results"
+      annotations:
+        version: "{{ .Chart.Version }}"
+    spec:
+      initContainers:
+      - name: wait-for-test-jobs
+        image: {{ .Values.wait_for.image }}
+        imagePullPolicy: {{ .Values.wait_for.imagePullPolicy | default "IfNotPresent" }}
+        args:
+          - "job-we"
+          - >
+            {{ template "fullname" . }}-test
+      hostname: "{{ .Chart.Name }}-test"
+      restartPolicy: Never
+      containers:
+      - name: results
+        image: {{ .Values.resultsGatherer.image }}
+        imagePullPolicy: {{ .Values.compute.imagePullPolicy | default "IfNotPresent" }}
+        env:
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: JOB_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.labels['job-name']
+          - name: ONECLINET_CONFIG
+            value: {{ .Values.oneclient | toYaml | quote }}
+          - name: COMPUTE_CONFIG
+            value: {{ .Values.compute | toYaml | quote }}
+        command:
+          - "sh"
+          - "-c"
+          - >
+            persistence_dir="/persistence/$MY_POD_NAME" ;
+            mkdir "$persistence_dir" ;
+            succeeded_log_path="$persistence_dir/succeeded.log" ;
+            failed_log_path="$persistence_dir/failed.log" ;
+            kubectl describe job -lapp={{ template "fullname" . }},component=test | grep "Pods Statuses" ; echo "" ;
+            echo "> {{ .Values.description }}" ; echo "" ; 
+            completOutputs={{ .Values.resultsGatherer.completOutputs }} ;
+            failedOutputs={{ .Values.resultsGatherer.failedOutputs }} ;
+            kubectl get pods -ljob-name={{ template "fullname" . }}-test --show-labels=false --no-headers -o custom-columns=NAME:{.metadata.name} --field-selector=status.phase=Succeeded | (while read name ; do completOutputs=$((completOutputs-1)) ; if [ $completOutputs -ge 0 ] ; then (echo "###### POD: $name" ; echo "~~~bash" ; kubectl logs $name -c results ; echo "" ; echo "~~~" ; ) | tee -a /succeeded_stdout.log ; else (echo "POD: $name" ; kubectl logs $name -c results ; echo "" ;) ; fi ; done ;) >> "$succeeded_log_path" ;
+            kubectl get pods -ljob-name={{ template "fullname" . }}-test --show-labels=false --no-headers -o custom-columns=NAME:{.metadata.name} --field-selector=status.phase=Failed | (while read name ; do failedOutputs=$((failedOutputs-1)) ; if [ $failedOutputs -ge 0 ] ; then (echo "###### POD: $name" ; echo "~~~bash" ; kubectl logs $name -c results ; kubectl logs $name -c compute ; echo "" ; echo "~~~" ; ) | tee -a /failed_stdout.log ; else (echo "POD: $name" ; kubectl logs $name -c results ; kubectl logs $name -c compute ;  echo "" ;) fi ; done ;) >> "$failed_log_path" ;
+            oneprovider_version=$(curl -k -s -X GET 'https://{{ .Values.oneclient.provider_host }}/configuration' -k | jq -r '"Oneprovider: version[\(.version)] | build[\(.build)]"');
+            echo "##### Job configuration:" ;
+            echo "" ; echo "~~~" ;
+            echo "$oneprovider_version" ;
+            echo "$ONECLINET_CONFIG" ;
+            echo "$COMPUTE_CONFIG ;"
+            echo "" ; echo "~~~" ; 
+          {{- if gt (int64 .Values.resultsGatherer.failedOutputs | ) 0 }}
+            if [[ -f /failed_stdout.log ]] ; then
+            echo "##### Failed job outputs:" ;
+            cat /failed_stdout.log ;
+            echo "" ;
+            fi ;
+          {{- end }}
+          {{- if gt (int64 .Values.resultsGatherer.completOutputs) 0 }}
+            echo "##### Succeeded job outputs:" ;
+            if [[ -f /succeeded_stdout.log ]] ; then
+            cat /succeeded_stdout.log ;
+            echo "" ;
+            fi ;
+          {{- end }}
+        volumeMounts:
+          - mountPath: /persistence/
+            name: persistence
+      volumes:
+        - name: persistence
+        {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.claimName }}
+        {{ else }}
+          emptyDir: {}
+        {{ end }}
+      volumes:
+        - name: persistence
+        {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.claimName }}
+        {{ else }}
+          emptyDir: {}
+        {{ end }}

@@ -1,0 +1,267 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ template "fullname" . }}-test"
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    component: "test"
+  annotations:
+    version: "{{ .Chart.Version }}"
+spec:
+  parallelism: {{ .Values.job_replicas }}
+  backoffLimit: {{ .Values.backoffLimit }}
+  template:
+    metadata:
+      name: "{{ .Release.Name}}"
+      labels:
+        app: {{ template "fullname" . }}
+        chart: "{{ .Chart.Name }}"
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
+        component: "test"
+      annotations:
+        version: "{{ .Chart.Version }}"
+    spec:
+      initContainers:
+     {{- if .Values.getClientToken.enabled }}
+      - name: get-client-token
+        image: {{ .Values.getClientToken.image }}
+        imagePullPolicy: {{ .Values.getClientToken.imagePullPolicy | default "IfNotPresent" }}
+        env:
+          - name: ONEZONE_HOST
+            value: https://{{ .Values.getClientToken.onezone_host }}
+          - name: ONEZONE_BASIC_AUTH
+            value: {{ .Values.getClientToken.basicAuth }}
+        command:
+          - "sh"
+          - "-c"
+          - >
+            token="tooShortToken!" ;
+            while : ; do
+              echo "Waiting for token... " ;
+              token=$(curl -k -u $ONEZONE_BASIC_AUTH -X POST -d "" -H "content-type: application/json" $ONEZONE_HOST/api/v3/onezone/user/client_tokens | tee curl_log | jq -r ".token");
+              cat curl_log ;
+              if echo $token | grep -E "^[A-Za-z0-9]{80,}" ; then break ; else sleep 1 ; fi ;
+            done ;
+            echo "$token" > /monitor/token ;
+        volumeMounts:
+        - mountPath: /monitor
+          name: monitor
+      {{- end }}
+      - name: wait-for-redis
+        image: {{ .Values.wait_for.image }}
+        imagePullPolicy: {{ .Values.wait_for.imagePullPolicy | default "IfNotPresent" }}
+        env:
+        - name: REDIS_HOST
+          value: {{ .Values.syncBarier.redisHost | default (printf "%s-redis" .Release.Name) | quote }}
+        - name: REDIS_PORT
+          value: {{ .Values.syncBarier.redisPort | quote }}
+        command:
+          # In this rare case, we can't use kube-api server to check redis avilability, since this job will be started >1000 times
+          # and it might be equivalent to a DOS attack on kube-api server.
+          - "sh"
+          - "-c"
+          - >
+            echo "Waiting for redis server to start. Checking every second. " ;
+            while ! nc -z -w1 -v $REDIS_HOST $REDIS_PORT ; do sleep 1 ; done ; 
+      hostname: "{{ .Chart.Name }}-results"
+      restartPolicy: Never
+      containers:
+      - name: compute
+        image: {{ .Values.compute.image }}
+        imagePullPolicy: {{ .Values.compute.imagePullPolicy | default "IfNotPresent" }}
+        env:
+          - name: dataMountPoint
+            value: {{ .Values.compute.dataMountPoint | quote }}
+          - name: spaceName
+            value: {{ .Values.compute.spaceName | quote }}
+          - name: prepare_args
+            value: {{ .Values.compute.prepare_args | quote }}
+          - name: compute_args
+            value: {{ .Values.compute.compute_args | quote }}
+          - name: clean_args
+            value: {{ .Values.compute.clean_args | quote }}
+          - name: JOB_REPLICAS
+            value: {{ .Values.job_replicas | quote }}
+        command:
+{{ toYaml .Values.compute.command | indent 10 }}
+        volumeMounts:
+        - mountPath: {{ .Values.compute.dataMountPoint }}:shared
+          name: oneclient
+        - mountPath: /monitor
+          name: monitor
+        - mountPath: /results
+          name: results
+      - name: oneclient
+        image: {{ .Values.oneclient.image }}
+        imagePullPolicy: {{ .Values.oneclient.imagePullPolicy | default "IfNotPresent" }}
+        env:
+          - name: ONECLIENT_INSECURE
+            value: {{ .Values.oneclient.insecure | quote }}
+          - name: ONECLIENT_ACCESS_TOKEN # change this to your access token
+            value: {{ .Values.oneclient.accessToken | quote }}
+          - name: ONECLIENT_PROVIDER_HOST # change this to your provider ip or FQDN
+            value: {{ .Values.oneclient.provider_host| quote  }}
+          - name: experiment
+            value: {{ .Values.grafanaPrefix.experiment }}
+          - name: date
+            valueFrom:
+              configMapKeyRef:
+                name: {{ template "fullname" . }}-config
+                key: date
+          - name: release
+            value: {{ .Values.grafanaPrefix.release }}
+          - name: dc
+            value: {{ .Values.grafanaPrefix.dc }}
+          - name: cluster
+            value: {{ .Values.grafanaPrefix.cluster }}
+          - name: MY_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: GRAFANA_URL
+            value: tcp://{{ .Values.oneclient.grafanaUrl }}
+          - name: MOUNT_POINT
+            value: {{ .Values.oneclient.mountPoint }}
+        command:
+          - "sh"
+          - "-c"
+          - >
+            trap "{ echo 1 > /monitor/oneclient-started ; }" EXIT ;
+            {{- if .Values.getClientToken.enabled }}
+            ONECLIENT_ACCESS_TOKEN=$(cat /monitor/token) ;
+            export ONECLIENT_ACCESS_TOKEN ;
+            {{- end }}
+            args="test";
+            graphite_prefix="{{ .Values.oneclient.graphite_prefix }}" ;
+            printf "Grafana prefix: $graphite_prefix\n" ;
+            printf "Oneclient version: " ; oneclient --version ;
+            echo "Running Oneclient. Upon succesful mount will list all avilable spaces..." ;
+            echo "export ONECLIENT_ACCESS_TOKEN=$ONECLIENT_ACCESS_TOKEN ; export ONECLIENT_PROVIDER_HOST=$ONECLIENT_PROVIDER_HOST; export ONECLIENT_INSECURE=$ONECLIENT_INSECURE ; oneclient {{ .Values.oneclient.args }}" ;
+            oneclient {{ .Values.oneclient.args }} ;
+            while [ -z "$(ls -A "$MOUNT_POINT" )" ]; do sleep 2 ; done ;
+            ls $MOUNT_POINT ;
+            echo 1 > /monitor/oneclient-started ;
+            while [ ! -f /monitor/oneclient-can-exit ] ; do sleep 2 ; done ;
+            oneclient -u "$MOUNT_POINT" ;
+            echo "Compute finished, stopping oneclient." ;
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: {{ .Values.oneclient.mountPoint }}:shared
+          name: oneclient
+        - mountPath: /monitor
+          name: monitor
+      - name: results
+        image: {{ .Values.resultsGatherer.image }}
+        imagePullPolicy: {{ .Values.compute.imagePullPolicy | default "IfNotPresent" }}
+        command:
+{{ toYaml .Values.resultsGatherer.command | indent 10 }}
+        volumeMounts:
+        - mountPath: /monitor
+          name: monitor
+        - mountPath: /results
+          name: results
+      - name: sync-barrier
+        image: {{ .Values.syncBarier.image }}
+        imagePullPolicy: {{ .Values.syncBarier.imagePullPolicy | default "IfNotPresent" }}
+        env:
+        - name: REDIS_HOST
+          value: "{{ .Release.Name}}-redis"
+        - name: REDIS_PORT
+          value: {{ .Values.syncBarier.redisPort | quote }}
+        - name: TOTAL_JOBS_COUNT
+          value: {{ .Values.job_replicas | quote }}
+        command:
+          - "bash"
+          - "-c"
+          - >
+            incr() {
+              redis_var="$1" ;
+              redis_val="" ;
+              while : ; do
+                printf %b "*2\r\n\$4\r\nINCR\r\n\$"${#redis_var}"\r\n${redis_var}\r\n" >&3 ;
+                read -r redis_val <&3 ;
+                redis_val=$(printf %b "$redis_val" | cut -f2 -d$ | tr -d "\r:\'") ;
+                printf "$(date): " ; echo "Counter increased. $redis_var: <${redis_val}>" ;
+                if [ "$redis_val" = "" ] ; then sleep 1 ; else break ; fi ;
+              done ;
+            } ;
+            wait_for_all() {
+              redis_var="$1" ;
+              redis_val="" ;
+              while : ; do
+                printf %b "*2\r\n\$3\r\nGET\r\n\$"${#redis_var}"\r\n${redis_var}\r\n" >&3 ;
+                read -r redis_val <&3 ;
+                read -r redis_val <&3 ;
+                redis_val=$(printf %b "$redis_val" | cut -f2 -d$ | tr -d "\r:\'") ;
+                printf "$(date): " ; echo "Ready count is $redis_var: <${redis_val}>" ;
+                if [ "$redis_val" = "" ] ; then sleep 1 ; else break ; fi ;
+              done ;
+              printf "$(date): " ; echo "Waiting for all ($TOTAL_JOBS_COUNT) pods to reach a compute point." ;
+              while [[ $redis_val -lt $TOTAL_JOBS_COUNT ]] ; do
+                printf "$(date): " ; echo "$redis_var: <$redis_val> is less then $TOTAL_JOBS_COUNT" ;
+                redis_val="" ;
+                while : ; do
+                  printf %b "*2\r\n\$3\r\nGET\r\n\$"${#redis_var}"\r\n${redis_var}\r\n" >&3 ;
+                  read -r redis_val <&3 ;
+                  read -r redis_val <&3 ;
+                  redis_val=$(printf %b "$redis_val" | cut -f2 -d$ | tr -d "\r:\'") ;
+                  if [ "$redis_val" = "" ] ; then sleep 1 ; else break ; fi ;
+                done ;
+                sleep 1 ;
+              done ;
+              echo "Wait ended with $redis_var: <$redis_val>." ;
+            } ;
+            printf "$(date): " ; echo "Opening port to redis server." ;
+            exec 3<>/dev/tcp/${REDIS_HOST}/${REDIS_PORT} ;
+            printf "$(date): " ; echo "/dev/tcp/${REDIS_HOST}/${REDIS_PORT}" ;
+            printf "$(date): " ; echo "Getting job ordinal number." ;
+            incr job_id ; ordinal_number=$redis_val ; 
+            if [ $ordinal_number = "" ] ; then printf "$(date): " ; echo "[ERROR] Failed to aquire job rdinal number" ; exit 1 ; fi ;
+            printf "$(date): " ; echo "Job ordinal number is: <$ordinal_number>" ;
+            echo $ordinal_number > /monitor/ordinal_number ;
+            printf "$(date): " ; echo "Waiting for this pod to reach a compute point." ;
+            while [ ! -f /monitor/wait-for-compute-prep-barrier ] ; do sleep 2 ; done ;
+            incr compute_prep; wait_for_all compute_prep;
+            printf "$(date): " ; echo "All $TOTAL_JOBS_COUNT pods reached compute prep point." ;
+            echo 1 >  /monitor/wait-for-all-jobs-prep-barrier ;
+            while [ ! -f /monitor/wait-for-compute-run-barrier ] ; do sleep 2 ; done ;
+            incr compute_run; wait_for_all compute_run;
+            printf "$(date): " ; echo "All $TOTAL_JOBS_COUNT pods reached compute run point." ;
+            echo 1 >  /monitor/wait-for-all-jobs-run-barrier ;
+            while [ ! -f /monitor/wait-for-compute-clean-barrier ] ; do sleep 2 ; done ;
+            incr compute_clean; wait_for_all compute_clean;
+            printf "$(date): " ; echo "All $TOTAL_JOBS_COUNT pods reached compute clean point." ;
+            echo 1 >  /monitor/wait-for-all-jobs-clean-barrier ;
+        volumeMounts:
+        - mountPath: /monitor
+          name: monitor
+        # volumeMounts:
+        #   - name: podstates
+        #     mountPath: /podstates
+        #     readOnly: false
+      volumes:
+        - name: monitor
+          emptyDir: {}
+        - name: oneclient
+          emptyDir: {}
+        - name: results
+          emptyDir: {}
+        # - name: podstates
+        #   downwardAPI:
+        #     items:
+        #       - path: "compute"
+        #         fieldRef:
+        #           fieldPath: status.containerStatuses

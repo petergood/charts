@@ -1,0 +1,121 @@
+# Default values for onedata-stress-suite
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+claimName: nfs-storage-volume-nfs-pv
+
+global: {}
+
+image: onedata/landscaper:v2.8.0-2
+
+name: "Example suite"
+
+randomJobFailuresEnabled: false
+
+onedataStressJobVersion: "0.1.1"
+
+jobs:
+  - name: sysbench
+    config_path: config/job-types/sysbench.yaml
+  - name: ioping
+    config_path: config/job-types/ioping.yaml
+
+
+git:
+  enabled: false
+  repo: git@github.com:groundnuty/reports.git
+  sshPrivateKey: |-
+    -----BEGIN RSA PRIVATE KEY-----
+    Example Key dsaAtqESxQtMA0BplZoa8tC4trLzkdgB94HDO9Q+5H6M4+G1O9Fc
+    vnkhR7tXPfoz5NQL2Irrll2CaBXOONdS1+NiGrbxj8hqPrxSIGf40hX3KOOX1yas
+    NFZEI+MGvgpC2jDcGsnZEkwG1ZJXzk3FgWwYiGjRe0dRegacFfVlU4TM3sFBXZiC
+    HdQz9UTg/4jEhqXkxeY+tcmqeMGpcOghwSU1uzPMT43106/fiKGf4SqLLXuVBL/Z
+    qFSFsYDagyS3cJqavPrDwu0duT5K7RFGh5D4sxhYy2VQERQufcyDnCAaJrff8fc5
+    FfWxUJjvqkslfkdls;fkdl;skfl;skdwopkfoepwfk;slkfsl;lllZzLACAcmsZq
+    BKDwGHy9BkVv8GcFAOLXJGMva0od23+Cccnq2VVDOI1L0Jzcu9lcDzGxZ31mIHFJ
+    3FkzlSeMBdMqthVVDO+PhzHemzAoyssGiBkp8u5KAVpF/cRzrSZSltNXVOClb1xe
+    rR5yMqxiyM5ryPziE2MHnlID4P5BHK3jTjkuO7N1ZiiYCwk5Z/cFdUPlOhqsrwT0
+    sfJOx1nyfb1B5zCGdWaAJuFNQcbIGl+0/yP2BkVHDs3lOPwWp6C06hOosee156E8
+    3ji342S8p9HaW37moMFGLoTcIWIFcssAp/9RDTSLa9cElcc5mJgsY3qqquoHuQIa
+    8naR2U0CgYEA41+G8w EXAMPLE KEY dsadadsadsadsFTP32SHlPJwJKr7jmzl/v
+    bt4ITuSzNKaEu58bVhahF7T4uIUdsadsadsadsadsaQE0wk/DEuznn8AE2+D423w
+    fJZGzz6f97JUoaorUR7ETgFD1jBn252fUnA36TY/7rmMweI2AjAelOsCgYEAzZ9m
+    4LKwIjphFCEG/xyP5G2L2yiyfUcCcxyY2MEZ0ReZmti0gbm/ZePae4cIWtxx5em8
+    VSkmL1w1jMONpuyJn1DN6c2dSbg/vByOlYnSB648wBkx2NCd455LOKIMyni/s4FT
+    3GYHHOMrf/kr0nXLozFjONIBvbdtR18VDCLRi8sCgYEA4sQZQS81GMiV/JW/EUnC
+    7b4MtdA0tJq/jiQThwCFsrAUcOEGQHlpwLbsrlJlcHNLGhx7FQcIry4siUsfuIww
+    vQjJDYQChFX/4cHtAYRWphKfrsKfVSoGmRr/kB4zSMSwp3OiNAttWSbl0y7/xgaU
+    KZIGES+r35lrCstjdhcryPUCgYAzu/xdYnfwVLHiJ6EkBKKrfWhnvqiR3pDeN365
+    YnRFaGOsUwOvc/WVBCwPUl0mxzoc95776juCRPfwL69vJSpHHESCo8oEJ0hZ4vF4
+    7FEcv5jnWC9zdqGTCFuypwsC0jihSFO6Ky109i8WprGA5URUDfQB8syfWAw1ndWk
+    1QnV2wKBgBKH1HfYUA3+pG39XHbHSUyoy1B+SxFphjtfSqRxy1gYxrQav3WzSGsM
+    vpfh4vyRl6ZFWnQEjUk1TOhC5nw+d7EhfDDFH9tXeVISaAMom+qhgYn6F9O363O5
+    4BHmXNvgdsadsadsadsadsadsadsasdasdaslVapLYc
+    -----END RSA PRIVATE KEY-----
+  userName: "Bamboo role account"
+  userEmail: "bamboo@plg-web12.grid.cyf-kr.edu.pl"
+  commitMessage: "results of ${MY_POD_NAME}"
+  sshServer: "github.com"
+  sshServerPort: ""
+  #author: "groundnuty <michal.orzechowski@cyfronet.pl>"
+
+environment:
+  grafanaPrefix:
+    experiment: orzech-test
+    release: "release18020-rc11"
+    dc: cyf
+    cluster: k8s
+
+  # Oneclient container parameters
+  oneclient:
+    image: docker.onedata.org/oneclient:ID-37f0316983
+
+    # Graphite prefix template that gets values from container env
+    graphite_prefix: exper.${experiment}.date.${date}.args.${args}.release.${release}.dc.${dc}.cluster.${cluster}.host.${MY_NODE_NAME}.container.${MY_POD_NAMESPACE}-${MY_POD_NAME}.uid.0
+    
+    # Oneclient arguments
+    args: -v 1 --force-fullblock-read --rndrd-prefetch-cluster-window=2007040 --rndrd-prefetch-cluster-block-threshold=1000000  --cluster-prefetch-threshold-random --provider-timeout=400 --monitoring-type graphite --monitoring-level-full --monitoring-period 10 --graphite-url "$GRAFANA_URL" --graphite-namespace-prefix "$graphite_prefix" --force-direct-io ${MOUNT_POINT}
+
+    # Grafana url used by oneclient to report data
+    grafanaUrl: go-carbon.mon.svc.dev.onedata.uk.to
+
+    # Onedata access token
+    accessToken: "MDAxNWxvY2F00aW9uIG9uZXpvbmUKMDAzMGlkZW500aWZpZXIgYWRhMmJlNzUxNDUxMjJlZmRkMzU2NjgwZGExNzJkMTgKMDAxYWNpZCB00aW1lIDwgMTU1MDYwOTI2MQowMDJmc2lnbmF00dXJlIEH49m3Oj4ZIRaPTRRSCI01QcO575Lqt8MswQhL1CVmdPCg"
+
+    # Oneclient will connect to this provider.
+    provider_host: release18020-rc11-oneprovider-paris.release18020-rc11.svc.dev.onedata.uk.to
+
+    # Where spaces should be mounted
+    mountPoint: /mnt/oneclient
+
+    # Should oneclient-oneprovider connection allow for insecured https
+    insecure: "true"
+
+  # getClientToken container parameters
+  getClientToken:
+    # False if you want to disbale token prereching
+    enabled: true
+    
+    image: onedata/rest-cli:18.02.0-rc7
+    imagePullPolicy: IfNotPresent
+
+    # Onezone host
+    onezone_host: release18020-rc11-onezone.release18020-rc11.svc.dev.onedata.uk.to
+    # Onezone REST api credentials
+    basicAuth: joe:password
+
+  persistence:
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    claimName: nfs-storage-nfs-storage-nfs-pvc
+
+
+
+## Persist data to a persistent volume
+##
+persistence: &persistence
+  enabled: true
+  accessMode: ReadWriteOnce
+  size: 1Gi
+  claimName: nfs-storage-nfs-storage-nfs-pvc
