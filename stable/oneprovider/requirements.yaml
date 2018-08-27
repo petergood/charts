@@ -1,6 +1,6 @@
 dependencies:
 - name: oneclient
-  version: 0.2.11
+  version: 0.2.12
   repository: https://onedata.github.io/charts/
   condition: oneclient.enabled
 
