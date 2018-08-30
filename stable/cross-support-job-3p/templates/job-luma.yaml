@@ -47,7 +47,10 @@ spec:
       nodeSelector:
 {{ toYaml .Values.nodeSelector | indent 8 }}
       {{- end }}
+      {{- if (index .Values "wait_for_spaces" "enabled") }}
       initContainers:
+      {{- end }}
+      {{- if (index .Values "wait_for_spaces" "enabled") }}
         - name: wait-for-spaces
           image: {{ .Values.wait_for.image }}
           imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
@@ -55,6 +58,7 @@ spec:
             - "job"
             - >
               -ljob={{ template "fullname" . }}-spaces
+      {{- end }}
 {{ include "imagePullSecrets" . | indent 6 }}
       restartPolicy: Never
       containers:

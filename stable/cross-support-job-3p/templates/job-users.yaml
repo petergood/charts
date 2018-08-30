@@ -46,7 +46,10 @@ spec:
       nodeSelector:
 {{ toYaml .Values.nodeSelector | indent 8 }}
       {{- end }}
+      {{- if (index .Values "wait_for_release" "enabled") }}
       initContainers:
+      {{- end }}
+      {{- if (index .Values "wait_for_release" "enabled") }}
         - name: wait-for-release
           image: {{ .Values.wait_for.image }}
           imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
@@ -54,6 +57,7 @@ spec:
             - "pod"
             - >
               -l release in ({{ template "releaseName" . }}), chart notin ({{ .Chart.Name }})
+      {{- end }}
 {{ include "imagePullSecrets" . | indent 6 }}
       restartPolicy: Never
       containers:
