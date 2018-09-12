@@ -89,6 +89,10 @@ spec:
             printf "Creating user {{ .name }} [response: " ;
             onepanel-rest-cli -w "'%{http_code}'" -k -u {{ template "admin_username_template" $ }}:{{ template "admin_password_template" $ }} addUser username=={{ .name }} password=={{ .password }} userRole=={{ .idps.onepanel.type }} ;
             echo "] Success." ;
+            {{- /* TODO: Fix this onepanel user propagation hack */ -}}
+            echo "Propagating onepanel user={{ .name }} to onezone" ;
+            {{- /* TODO: Because of an error in swagger in coresponding invocation in onezone-rest-cli, I use curl here */ -}}
+            curl -k -vvv -u {{ .name }}:{{ .password }} -X GET ${ONEZONE_HOST}/api/v3/onezone/user ;
         {{- end }}{{- end }}{{- end }}{{- end }}{{- end }}
         {{- range .Values.users }}{{ if (hasKey . "idps"  )}}{{ if (hasKey .idps "keycloak" )}}{{ if and .idps.keycloak.enabled .idps.keycloak.onezoneLogin }}
             idp=keycloak-{{ template "keycloak_idpName_template" $ }};
