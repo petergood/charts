@@ -38,10 +38,10 @@ spec:
       {{- end }}  
       restartPolicy: Never
 {{ include "imagePullSecrets" . | indent 6 }}
-      {{- if (index .Values "wait_for_s3" "enabled") }}
+      {{- if (index .Values "wait_for_swift" "enabled") }}
       initContainers:
       {{- end }}
-      {{- if (index .Values "wait_for_s3" "enabled") }}
+      {{- if (index .Values "wait_for_swift" "enabled") }}
         - name: wait-for-{{ .Chart.Name }}
           image: {{ .Values.wait_for.image }}
           imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
@@ -50,18 +50,11 @@ spec:
             - "-lapp={{ template "fullname" . }}"
       {{- end }}
       containers:
-      - name: aws
-        image: {{ .Values.aws_client_image }}
+      - name: swift
+        image: {{ .Values.image }}
         imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
         command:
-          - "sh"
+          - "/bin/bash"
           - "-c"
           - >
-            echo '[scality]' > ~/.aws/credentials ;
-            echo 'aws_access_key_id = {{ .Values.key_id }}' >> ~/.aws/credentials ;
-            echo 'aws_secret_access_key = {{ .Values.access_key }}' >> ~/.aws/credentials ;
-            aws s3api create-bucket --endpoint-url http://{{ template "fullname" . }}:{{ .Values.port }} --profile scality --bucket {{ .Values.bucketName }} ;
-            exit 0;
-          # TODO: for some reason the s3 url does not want to be resolved with aws client hence the command $(grep search /etc/resolv.conf | cut -d ' ' -f 2)
-
-
+            swift --auth-version 2 -A http://{{ template "volume-swift_name" . }}:5000/v2.0 -K swift -U swift --os-tenant-name service post {{ .Values.containerName }} ;

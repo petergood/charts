@@ -9,6 +9,11 @@ wait_for:
   image: onedata/k8s-wait-for:v1.1
   imagePullPolicy: IfNotPresent
 
+# Wait for onezone service to start
+wait_for_onezone:
+  enabled: true
+
+
 # The gneralization of nodeSelector.
 # Allows for moe fine grained controll over which
 # nodes are selected by a kubernetes scheduler

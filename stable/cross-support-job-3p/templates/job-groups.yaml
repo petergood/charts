@@ -40,13 +40,17 @@ spec:
       nodeSelector:
 {{ toYaml .Values.nodeSelector | indent 8 }}
       {{- end }}
+      {{- if (index .Values "wait_for_users" "enabled") }}
       initContainers:
-        - name: wait-for-groups
+      {{- end }}
+      {{- if (index .Values "wait_for_users" "enabled") }}
+        - name: wait-for-users
           image: {{ .Values.wait_for.image }}
           imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
           args:
             - "job"
             - "{{ template "fullname" . }}-users"
+        {{- end }}
 {{ include "imagePullSecrets" . | indent 6 }}
       restartPolicy: Never
       containers:
@@ -73,6 +77,7 @@ spec:
             apk update ; apk add bc ;
             START=$(date +%s.%N) ;
             echo "-k" > ~/.curlrc ; echo "-f" >> ~/.curlrc ;
+        {{- if .Values.groups }}
             echo "Getting token:" ;
             export ONEZONE_API_KEY="$(curl --silent -k -u $ONEPANEL_BASIC_AUTH -X POST -d '' -H 'content-type: application/json' $ONEZONE_HOST/api/v3/onezone/user/client_tokens)" ;
             echo "Curl output:" ;
@@ -130,6 +135,7 @@ spec:
             printf "[TIME] Admin user={{ template "admin_username_template" $ }} joining child group {{ .name }}($child_group_id) to parent group {{ $parent.parent.name }}($parent_group_id) with privileges(empty means default)" ; echo "$END - $START" | bc ;
             {{- end }}
           {{- end }}
+        {{- end }}
             BEND=$(date +%s.%N) ;
             printf "[TIME] Adding groups to groups:" ; echo "$BEND - $BSTART" | bc ;
 

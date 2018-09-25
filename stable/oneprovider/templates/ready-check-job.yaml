@@ -1,4 +1,5 @@
-
+{{- if (index .Values "oneprovider_ready_check" "enabled") }}
+---
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -45,3 +46,4 @@ spec:
           - "-c"
           - >
             echo 'all ok, exiting' ;
+{{- end }}

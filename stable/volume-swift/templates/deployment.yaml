@@ -39,8 +39,8 @@ spec:
       {{- end }}
 {{ include "imagePullSecrets" . | indent 6 }}
       containers:
-      - name: swift
-        image: {{ .Values.image }}
+      - name: {{ .Chart.Name }}
+        image: onedata/dockswift:v2
         imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
         env:
           - name: INITIALIZE
@@ -49,6 +49,26 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: status.podIP
+        readinessProbe:
+          exec:
+            command:
+              - "/bin/bash"
+              - "-c"
+              - >
+                SWIFT_READY="error" ;
+                while [ -n "${SWIFT_READY}" ]; do SWIFT_READY=$(swift --auth-version 2 -A http://${IPADDRESS}:5000/v2.0 -K swift -U swift --os-tenant-name service list 2>&1); done ;
+#        livenessProbe:
+#            exec:
+#              command:
+#              - "/bin/bash"
+#              - "-c"
+#              - >
+#                curl -vvv http://localhost:8080/healthcheck ;
+        command:
+          - "/bin/bash"
+          - "-c"
+          - >
+            /sbin/my_init
         ports:
           - name: horizon
             containerPort: 80
@@ -65,24 +85,3 @@ spec:
           - name: keystoneadmin
             containerPort: 35357
             protocol: TCP
-        readinessProbe:
-          timeoutSeconds: 3
-          initialDelaySeconds: 10
-          exec:
-            command:
-              - "/bin/bash"
-              - "-c"
-              - >
-                curl -v -H 'X-Storage-User: {{ .Values.tenantName }}:{{ .Values.username }}' -H 'X-Storage-Pass: {{ .Values.password }}' http://localhost:8080/auth/v1.0 ;
-          periodSeconds: 25
-          successThreshold: 1
-          failureThreshold: 15
-        livenessProbe:
-          timeoutSeconds: 3
-          initialDelaySeconds: 10
-          exec:
-            command:
-              - "/bin/bash"
-              - "-c"
-              - >
-                curl -v -H 'X-Storage-User: {{ .Values.tenantName }}:{{ .Values.username }}' -H 'X-Storage-Pass: {{ .Values.password }}' http://localhost:8080/auth/v1.0 ;
