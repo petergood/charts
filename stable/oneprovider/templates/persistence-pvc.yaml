@@ -1,21 +1,22 @@
-{{- if (index .Values "volume-nfs" "enabled") }}
+{{- if .Values.persistence.enabled }}
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: {{ template "fullname" . }}-nfs-pvc
+  name: {{ template "fullname" . }}-persistence-pvc
   labels:
     app: {{ template "fullname" . }}
     chart: {{ .Chart.Name }}
     release: {{ template "releaseName" . }}
     heritage: {{ .Release.Service }}
     component: "oneprovider"
-    type: nfs
+    type: local-storage
   annotations:
     version: "{{ .Chart.Version }}"
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
+  storageClassName: local-storage
   resources:
     requests:
-      storage: {{ index .Values "volume-nfs" "storage_claim" }}
+      storage: 20Gi
 {{- end }}

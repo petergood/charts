@@ -51,3 +51,9 @@ users:
     # an empty element as an temporary solution    
     oneclient:
       - ""
+
+oneclientFlags: --force-direct-io --force-direct-io
+
+directIO:
+  nfs:
+    enabled: true

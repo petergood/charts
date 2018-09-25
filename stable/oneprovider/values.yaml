@@ -128,6 +128,10 @@ generate-certificates:
   enabled: false
   image: onedata/certificate-init-container:8434eb0
   imagePullPolicy: IfNotPresent
+
+# Create a PVC and persist /volumes/persistence 
+persistence:
+  enabled: false
   
 # If set true, oneprovider will not be deployed on the same node as other oneproviders
 # or onezones that are part of this deployment

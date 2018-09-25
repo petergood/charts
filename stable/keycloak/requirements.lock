@@ -3,7 +3,7 @@ dependencies:
   repository: https://kubernetes-charts.storage.googleapis.com
   version: 3.1.0
 - name: onedata-chart-utils
-  repository: https://onedata.github.io/charts/
+  repository: file://../onedata-chart-utils
   version: 0.2.10
-digest: sha256:a1d7b357a43093e9c80cb52340fa1e2f76ae9e6223fc0e425ab53f58ff8a159d
-generated: 2018-08-18T18:35:20.167905284+02:00
+digest: sha256:d56b173a5fbc7e35dc82b0b65a65a9e23c3e47f3c1945ce62ce04291fdaa73ae
+generated: 2018-08-31T14:01:10.519859542+02:00

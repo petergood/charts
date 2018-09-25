@@ -1,4 +1,4 @@
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ template "fullname" . }}
@@ -10,7 +10,14 @@ metadata:
     component: {{ .Chart.Name }}
   annotations:
     version: "{{ .Chart.Version }}"
-spec:
+spec:  
+  selector:
+    matchLabels:
+      app: {{ template "fullname" . }}
+      chart: {{ .Chart.Name }}
+      release: {{ template "releaseName" . }}
+      heritage: {{ .Release.Service }}
+      component: {{ .Chart.Name }}
   serviceName: {{ template "fullname" . }}
   replicas: {{ .Values.onezone_nodes_count }}
   template:
@@ -100,6 +107,7 @@ spec:
             - "/bin/sh"
             - "-c"
             - >
+              set -e ;
               echo "Mounted whole config" ;
               ls -lR /mnt ;
               while [ "$(kubectl get cm {{ template "keycloak_name" . }}-config -o jsonpath='{.data.clientSecret}')" = "KEYCLOAK_APP_CELINT_SECRET_SUPPLIED_AT_RUNTIME" ]; do echo "$(date) Waiting for keycloak client secret..." ; sleep 2 ; done ;
@@ -188,10 +196,18 @@ spec:
                 onepanel_ready() { sleep 5 ; exit 0 ; } ;
                 if [[ "$HOSTNAME" == {{ template "fullname" . }}-{{ sub (.Values.onezone_nodes_count) 1 }} ]]; then exit 0 ; else onepanel_ready ; fi ;
         env:
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
           - name: ONEPANEL_LOG_LEVEL
             value: {{ default "info" .Values.log_level | quote }}
           - name: ONEPANEL_DEBUG_MODE
-            value: {{ default "false" .Values.onepanel_debug_mode | quote }}
+            value: {{ default "fal  se" .Values.onepanel_debug_mode | quote }}
           - name: ONEPANEL_GENERATE_TEST_WEB_CERT
             value: {{ default "false" .Values.onepanel_generate_test_web_cert | quote }}
           - name: ONEPANEL_GENERATED_CERT_DOMAIN
@@ -206,6 +222,11 @@ spec:
                 name: {{ template "fullname" . }}-config
                 key: ONEZONE_CONFIG
         volumeMounts:
+    {{- if .Values.persistence.enabled }}
+          - name: persistence
+            mountPath: /volumes/persistence
+            subPath: $(NAMESPACE)-$(POD_NAME)
+    {{- end }}
           - name: config-map
             mountPath: /etc/oz_panel/overlay.config
             subPath: panel-overlay.config
@@ -247,6 +268,11 @@ spec:
             name: config-map
             readOnly: true
       volumes:
+    {{- if .Values.persistence.enabled }}
+      - name: persistence
+        persistentVolumeClaim:
+          claimName: {{ template "fullname" . }}-persistence-pvc
+    {{- end }}
       - name: config-map
         configMap:
           name: {{ template "fullname" . }}-config

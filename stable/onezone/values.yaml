@@ -1,6 +1,14 @@
 # Default values for onezone.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+global:
+  # TODO: Find a way to eliminate necessity for region and tld values
+  # to make deployment cluster independent
+  #releaseNameOverride: ""
+  region: dev
+  tld: onedata.uk.to
+  imagePullPolicy: "Always"
+  #hostNetwork: true
 
 image: onedata/onezone:18.02.0-rc10
 imagePullPolicy: IfNotPresent
@@ -100,6 +108,10 @@ generate-certificates:
   enabled: false
   image: onedata/certificate-init-container:8434eb0
   imagePullPolicy: IfNotPresent
+
+# Create a PVC and persist /volumes/persistence 
+persistence:
+  enabled: false
 
 # If set true, onezone will not be deployed on the same node as other onezones
 # or oneproviders that are part of this deployment
