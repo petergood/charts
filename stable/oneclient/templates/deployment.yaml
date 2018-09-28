@@ -132,6 +132,9 @@ spec:
             subPath: oneclient-mount.sh
             name: oneclient-mount
             readOnly: true
+        volumeMounts:
+          - mountPath: /volumes/nfs
+            name: nfs
       volumes:
       - name: oneclient-mount
         configMap:
