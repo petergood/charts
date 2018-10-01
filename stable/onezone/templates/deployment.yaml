@@ -100,6 +100,7 @@ spec:
             - "/bin/sh"
             - "-c"
             - >
+              set -e ;
               echo "Mounted whole config" ;
               ls -lR /mnt ;
               while [ "$(kubectl get cm {{ template "keycloak_name" . }}-config -o jsonpath='{.data.clientSecret}')" = "KEYCLOAK_APP_CELINT_SECRET_SUPPLIED_AT_RUNTIME" ]; do echo "$(date) Waiting for keycloak client secret..." ; sleep 2 ; done ;
@@ -153,6 +154,7 @@ spec:
           - "/bin/bash"
           - "-c"
           - >
+            set -e ;
             echo {{ template "fullname" . }}-{{ sub (.Values.onezone_nodes_count) 1 }} ;
             if [[ "$HOSTNAME" != {{ template "fullname" . }}-{{ sub (.Values.onezone_nodes_count) 1 }} ]]; then export ONEPANEL_BATCH_MODE="false" ; fi ;
             env ;
