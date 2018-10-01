@@ -151,6 +151,7 @@ spec:
           - "/bin/bash"
           - "-c"
           - >
+            set -e ;
             echo {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ;
             if [[ "$HOSTNAME" != {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ]]; then export ONEPANEL_BATCH_MODE="false" ; fi ;
             env ;
