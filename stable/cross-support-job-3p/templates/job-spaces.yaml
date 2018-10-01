@@ -79,7 +79,7 @@ spec:
             echo "Got token for idp=$idp user={{ .user.name }}, token=$ONEZONE_API_KEY" ;
             echo "Create space and request support" ;
             echo "Creating space {{ $space.name }}" ;
-            export SPACE_ID="$(onezone-rest-cli -vvv  createSpace name=='{{ $space.name }}' 2>&1 | grep -i 'location:' | sed -nr 's#.*/spaces/(.*)#\1#p' | tr -d ' \r')" ;
+            export SPACE_ID="$(onezone-rest-cli -vvv  createUserSpace name=='{{ $space.name }}' 2>&1 | grep -i 'location:' | sed -nr 's#.*/spaces/(.*)#\1#p' | tr -d ' \r')" ;
             echo "Space SPACE_ID=$SPACE_ID created" ;
             {{- range $space.users }}
             {{ $user := .user }}

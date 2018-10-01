@@ -82,7 +82,7 @@ spec:
             echo "ONEZONE_API_KEY=$ONEZONE_API_KEY" ;
           {{- range .Values.groups }}{{ if .idps }}{{ if .idps.onezone }}{{if .idps.onezone.enabled }}
             printf "Creating group {{ .name }} [response: " ;
-            onezone-rest-cli -w "'%{http_code}'" -u {{ template "admin_username_template" $ }}:{{ template "admin_password_template" $ }} createGroup name=='{{ .name }}'{{- if .type }} type=role{{- end }} ;
+            onezone-rest-cli -w "'%{http_code}'" -u {{ template "admin_username_template" $ }}:{{ template "admin_password_template" $ }} createGroupForUser name=='{{ .name }}'{{- if .type }} type=role{{- end }} ;
             echo "] Success." ;
           {{- end }}{{- end }}{{- end }}{{- end }}
           {{- range $user := .Values.users }}
