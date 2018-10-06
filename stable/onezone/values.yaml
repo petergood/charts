@@ -131,6 +131,7 @@ onepanel_users: []
   #   idps:
   #     onepanel:
   #       enabled: true
+  #       mode: config
 
 saml-idp:
   enabled: false
