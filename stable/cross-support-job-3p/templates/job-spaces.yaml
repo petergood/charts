@@ -11,6 +11,7 @@ metadata:
     heritage: "{{ .Release.Service }}"
     job: {{ template "fullname" . }}-spaces
     component: {{ .Chart.Name }}-spaces
+    dependency-level: "2"
   annotations:
     version: "{{ .Chart.Version }}"
 spec:
@@ -25,6 +26,7 @@ spec:
         heritage: "{{ .Release.Service }}"
         job: {{ template "fullname" . }}-spaces
         component: {{ .Chart.Name }}-spaces
+        dependency-level: "2"
       annotations:
         version: "{{ .Chart.Version }}"
     spec:
@@ -47,8 +49,9 @@ spec:
           image: {{ .Values.wait_for.image }}
           imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
           args:
-            - "job"
-            - "{{ template "fullname" . }}-groups"
+            - "pod"
+            - >
+              -l release in ({{ template "releaseName" . }}), chart in ({{ .Chart.Name }}), dependency-level notin (0,1,2)
       {{- end }}
 {{ include "imagePullSecrets" . | indent 6 }}
       restartPolicy: Never
