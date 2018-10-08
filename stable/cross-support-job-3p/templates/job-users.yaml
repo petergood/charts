@@ -1,7 +1,8 @@
+{{- if .Values.users }}
+
 {{- $keycloak_realmId := "UNINITIALIZED" }}
 {{- if hasKey (index $.Values "keycloakInstance" ) "init" }}
 {{- $keycloak_realmId := $.Values.keycloakInstance.init.realmId }}
-
 {{- end }}
 ---
 
@@ -102,4 +103,4 @@ spec:
             curl -k --silent -H "X-Auth-Token: $TOKEN" $ONEZONE_HOST/api/v3/onezone/user ;
           {{- end }}{{ end }}{{ end }}{{ end }}
             exit 0;
-
+{{- end }}
