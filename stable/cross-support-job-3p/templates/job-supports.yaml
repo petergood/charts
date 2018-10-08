@@ -1,4 +1,4 @@
----
+{{- if .Values.spaces }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -48,7 +48,7 @@ spec:
           image: {{ .Values.wait_for.image }}
           imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
           args:
-            - "pod"
+            - "job"
             - >
               -l release in ({{ template "releaseName" . }}), chart in ({{ .Chart.Name }}), dependency-level notin (0)
       {{- end}}
@@ -72,8 +72,8 @@ spec:
             echo "-k" > ~/.curlrc ; echo "-f" >> ~/.curlrc ;
             echo "ONEZONE_HOST=$ONEZONE_HOST" ;
             echo "ONEPANEL_BASIC_AUTH=$ONEPANEL_BASIC_AUTH" ;
-{{- range $space := .Values.spaces }}
-  {{- if (hasKey .user "idps"  )}}
+      {{- range $space := .Values.spaces }}
+        {{- if (hasKey .user "idps"  )}}
             {{- if (hasKey .user.idps "onepanel")}}{{ if (.user.idps.onepanel.enabled) }}
             idp=onepanel;
             {{- end }}{{ end }}
@@ -129,5 +129,6 @@ spec:
             echo "$storage_support_json" | onepanel-rest-cli supportSpace - | jq --null-input  --exit-status 'inputs' ;
             echo "return_code=$?" ;
             {{- end -}}
-  {{- end -}}
-{{- end -}}
+        {{- end -}}
+      {{- end -}}
+{{- end }}
