@@ -1,3 +1,5 @@
+{{- if .Values.lumaJobEnabled }}
+
 {{- $keycloak_realmId := "UNINITIALIZED" }}
 {{- $keycloak_idpName := "UNINITIALIZED" }}
 {{- if hasKey (index .Values "keycloakInstance" ) "init" }}
@@ -288,4 +290,5 @@ spec:
             {{- end -}}
            {{- end -}}
           {{- end }}
+{{- end }}
 

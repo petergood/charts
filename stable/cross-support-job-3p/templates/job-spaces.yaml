@@ -1,5 +1,5 @@
 
----
+{{- if .Values.spaces }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -70,7 +70,7 @@ spec:
             set -e;
             echo "-k" > ~/.curlrc ; echo "-f" >> ~/.curlrc ;
             echo "ONEZONE_HOST=$ONEZONE_HOST" ;
-{{- range $space := .Values.spaces }}
+    {{- range $space := .Values.spaces }}
             echo "Creating spaces as user {{ .user.name }}:{{ .user.password }}" ;
             echo "Getting token..." ;
       {{- if (hasKey .user "idps"  )}}
@@ -106,4 +106,5 @@ spec:
             echo "]. Success" ;
             {{- end -}}
       {{- end -}}
-{{- end -}}
+    {{- end -}}
+{{- end }}

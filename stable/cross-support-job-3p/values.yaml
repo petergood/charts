@@ -38,11 +38,28 @@ onedata-3p:
 # deployed environment
 # releaseName: dev
 
-oneprovider:
-  - oneprovider-krakow
-  - oneprovider-paris
-  - oneprovider-lisbon
+# Run luma configuration job
+lumaJobEnabled: false
 
+# Set to {} to disable group creation job
+groups: {}
+
+# Set to {} to disable user creation job
+users: &all_users
+  - &user_admin
+    name: admin
+    firstName: ""
+    lastName: ""
+    idps:
+      onepanel:
+        enabled: true
+        type: admin
+        mode: config
+    password: password
+    email: admin@example.com
+
+# Set to {} to disable space creation
+# and support configuration jobs
 spaces:
   - name: "krk-3"
     supports:
