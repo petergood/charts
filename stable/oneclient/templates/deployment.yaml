@@ -132,9 +132,11 @@ spec:
             subPath: oneclient-mount.sh
             name: oneclient-mount
             readOnly: true
+        {{- if .Values.directIO.nfs.enabled }}
         volumeMounts:
           - mountPath: /volumes/nfs
             name: nfs
+        {{- end }}
       volumes:
       - name: oneclient-mount
         configMap:

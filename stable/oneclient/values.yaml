@@ -69,3 +69,4 @@ oneclientFlags: --force-direct-io --force-direct-io
 directIO:
   nfs:
     enabled: true
+    container_mount_path: /volumes/nfs
