@@ -69,11 +69,6 @@ data:
         {{ .Values.onezone_main_admin.name }}:
           password: {{ .Values.onezone_main_admin.password }}
           userRole: admin
-        {{- range .Values.onepanelAdminUsers }}
-        {{ .name }}:
-          password: {{ .password }}
-          userRole: admin
-        {{- end }}
         {{- range .Values.onepanel_users }}
         {{- if (hasKey .idps "onepanel") }}{{- if (hasKey .idps.onepanel "mode" ) }}{{- if and .idps.onepanel.enabled (eq .idps.onepanel.mode "config") }}
         {{ .name }}:
