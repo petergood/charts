@@ -272,6 +272,9 @@ spec:
             {{- if $volume.readOnly }}
             mount -o remount,ro /{{ $volume.name }} ;
             {{- end }}
+            {{ if $volume.mountPermissions }}
+            chmod {{ $volume.mountPermissions }} /{{ $volume.name }} ;
+            {{- end }}
             {{- range $a_permission := $volume.permissions }}
             {{- if $a_permission.user }}
             chown -R {{ $a_permission.user }}{{- if $a_permission.group }}:{{ $a_permission.group }}{{- end }} {{ $volume.dataPath }}/{{ $a_permission.path }} ;
