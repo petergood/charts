@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-image: onedata/dockswift:v2
+image: onedata/dockswift:v3
 imagePullPolicy: IfNotPresent
 serviceType: ClusterIP
 
@@ -13,8 +13,10 @@ wait_for:
 wait_for_swift:
   enabled: true
 
-# Those are the default, values that cannot be overridden atm.
+# Name of the tenant to create. By default service tenant will be created.
 tenantName: service
+
+# Credentials of user to create. By default swift:swift user will be created.
 username: swift
 password: swift
 
