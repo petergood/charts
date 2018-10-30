@@ -230,6 +230,11 @@ spec:
           - name: config-map
             mountPath: /etc/oz_worker/overlay.config
             subPath:  worker-overlay.config
+      {{- if (index .Values "keycloak" "enabled") }}
+          - name: config-map
+            mountPath: /var/www/html/custom/oz_worker/keycloak.svg
+            subPath:  keycloak.svg
+      {{- end }}
       {{- if (index .Values "generate-certificates" "enabled") }}
           - mountPath: /etc/oz_panel/certs/web_key.pem
             subPath: tls.key
