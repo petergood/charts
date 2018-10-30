@@ -136,10 +136,11 @@ saml-idp:
 
 keycloak: &keycloak
   idpName: rhea
+  displayName: Onedata Keycloak
   tokenPrefix: onedata
   appId: onedata
   voGroupId: Onedata-Keycloak-1
-  superGroup: vo:HNSciCloud-RHEA/rl:one-data-special-role
+  superGroup: onedataKeycloakAdmins
   enabled: false
   
 token-dispenser:
