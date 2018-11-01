@@ -47,8 +47,7 @@ volumes-test: test-volume-s3 test-volume-ceph test-volume-nfs
 helm-test-volumes: helm-test-volume-s3 helm-test-volume-ceph helm-test-volume-nfs
 
 build-%:
-	if [ -f $*/requirements.yaml ]; then helm dependency update --skip-refresh $*; fi
-	helm package $*
+	./smart-rebuild.sh $*
 
 install-%:
 	if [ -f $*/requirements.yaml ]; then helm dependency update $*; fi
