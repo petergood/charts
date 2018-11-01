@@ -9,6 +9,6 @@ dependencies:
   condition: onedata-3p.enabled  
   import-values:
     - child: onezone.onezone_main_admin
-      parent: onedata-3p.onezone.onezoneAdmin
+      parent: global.onezoneMainAdmin
     - child: onezone.keycloak
-      parent: keycloakInstance
+      parent: global.keycloakInstance

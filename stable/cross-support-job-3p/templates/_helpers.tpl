@@ -18,56 +18,56 @@
 {{- end -}}
 
 {{- define "admin_username_template" -}}
-{{- if hasKey (index .Values "onedata-3p" "onezone") "onezoneAdmin" -}}
-{{- (index .Values "onedata-3p" "onezone" "onezoneAdmin" "name") }}
+{{- if hasKey (index .Values "global") "onezoneMainAdmin" -}}
+{{- (index .Values "global" "onezoneMainAdmin" "name") }}
 {{- else -}}
 {{- printf "%s" "UNINITIALIZED" }}
 {{- end -}}
 {{- end -}}
 
 {{- define "admin_password_template" -}}
-{{- if hasKey (index .Values "onedata-3p" "onezone") "onezoneAdmin" -}}
-{{- (index .Values "onedata-3p" "onezone" "onezoneAdmin" "password") }}
+{{- if hasKey (index .Values "global") "onezoneMainAdmin" -}}
+{{- (index .Values "global" "onezoneMainAdmin" "password") }}
 {{- else -}}
 {{- printf "%s" "UNINITIALIZED" }}
 {{- end -}}
 {{- end -}}
 
 {{- define "keycloak_realmId_template" -}}
-{{- if hasKey (index .Values "keycloakInstance" ) "init" }}
-{{- .Values.keycloakInstance.init.realmId -}}
+{{- if hasKey (index .Values "global") "keycloakInstance" -}}
+{{- (index .Values "global" "keycloakInstance" "realmId") }}
 {{- else -}}
 {{- printf "%s" "UNINITIALIZED" }}
 {{- end -}}
 {{- end -}}
 
 {{- define "keycloak_adminUsername_template" -}}
-{{- if hasKey (index .Values "keycloakInstance" ) "init" }}
-{{- .Values.keycloakInstance.init.adminUsername -}}
+{{- if hasKey (index .Values "global") "keycloakInstance" -}}
+{{- (index .Values "global" "keycloakInstance" "adminUsername") }}
 {{- else -}}
 {{- printf "%s" "UNINITIALIZED" }}
 {{- end -}}
 {{- end -}}
 
 {{- define "keycloak_adminPassword_template" -}}
-{{- if hasKey (index .Values "keycloakInstance" ) "init" }}
-{{- .Values.keycloakInstance.init.adminPassword -}}
+{{- if hasKey (index .Values "global") "keycloakInstance" -}}
+{{- (index .Values "global" "keycloakInstance" "adminPassword") }}
 {{- else -}}
 {{- printf "%s" "UNINITIALIZED" }}
 {{- end -}}
 {{- end -}}
 
 {{- define "keycloak_idpName_template" -}}
-{{- if hasKey (index .Values "keycloakInstance" ) "idpName" }}
-{{- .Values.keycloakInstance.idpName -}}
+{{- if hasKey (index .Values "global") "keycloakInstance" -}}
+{{- (index .Values "global" "keycloakInstance" "idpName") }}
 {{- else -}}
 {{- printf "%s" "UNINITIALIZED" }}
 {{- end -}}
 {{- end -}}
 
 {{- define "keycloak_tokenPrefix_template" -}}
-{{- if hasKey (index .Values "keycloakInstance" ) "tokenPrefix" }}
-{{- .Values.keycloakInstance.tokenPrefix -}}
+{{- if hasKey (index .Values "global") "keycloakInstance" -}}
+{{- (index .Values "global" "keycloakInstance" "tokenPrefix") }}
 {{- else -}}
 {{- printf "%s" "UNINITIALIZED" }}
 {{- end -}}
