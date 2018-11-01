@@ -23,7 +23,7 @@ deployAsPreInstallHook: false
 # objects 
 cleanUpJob:
   enabled: false
-  image: onedata/k8s-wait-for:v1.1
+  image: onedata/k8s-wait-for:v1.2
   imagePullPolicy: IfNotPresent
 
 persistence:
