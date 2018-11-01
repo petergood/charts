@@ -6,7 +6,7 @@ image: onedata/rest-cli:18.02.0-rc7
 imagePullPolicy: IfNotPresent
 
 wait_for:
-  image: onedata/k8s-wait-for:v1.1
+  image: onedata/k8s-wait-for:v1.2
   imagePullPolicy: IfNotPresent
 
 # Specifies if users job should wait for release to start

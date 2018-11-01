@@ -11,7 +11,7 @@ onedata_cli:
   imagePullPolicy: IfNotPresent
 
 wait_for:
-  image: onedata/k8s-wait-for:v1.1
+  image: onedata/k8s-wait-for:v1.2
   imagePullPolicy: IfNotPresent
 
 # Specifies if ready check job should be created.
