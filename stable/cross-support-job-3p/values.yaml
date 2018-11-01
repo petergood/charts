@@ -45,38 +45,43 @@ lumaJobEnabled: false
 groups: {}
 
 # Set to {} to disable user creation job
-users: &all_users
-  - &user_admin
-    name: admin
-    firstName: ""
-    lastName: ""
+users:
+  - &user_joe
+    name: joe
+    firstName: Joe
+    lastName: Morgan
     idps:
       onepanel:
         enabled: true
-        type: admin
+        type: regular
         mode: config
     password: password
-    email: admin@example.com
+    email: joe@example.com
+    oneclient: [ krakow ]
 
 # Set to {} to disable space creation
 # and support configuration jobs
 spaces:
   - name: "krk-3"
+    user: *user_joe 
     supports:
       - provider: "krakow"
         storage_name: "ceph"
         size: '1000000000'
   - name: "par-n"
+    user: *user_joe 
     supports:
       - provider: "paris"
         storage_name: "nfs"
         size: '1000000000'
   - name: "lis-3"
+    user: *user_joe 
     supports:
       - provider: "lisbon"
         storage_name: "s3"
         size: '1000000000'
   - name: "krk-n-par-3"
+    user: *user_joe 
     supports:
       - provider: "krakow"
         storage_name: "nfs"
@@ -85,6 +90,7 @@ spaces:
         storage_name: "s3"
         size: '1000000000'
   - name: "krk-3-lis-c"
+    user: *user_joe 
     supports:
       - provider: "krakow"
         storage_name: "s3"
@@ -93,6 +99,7 @@ spaces:
         storage_name: "ceph"
         size: '1000000000'
   - name: "par-n-lis-c"
+    user: *user_joe 
     supports:
       - provider: "paris"
         storage_name: "nfs"
@@ -101,6 +108,7 @@ spaces:
         storage_name: "ceph"
         size: '1000000000'
   - name: "krk-3-par-c-lis-n"
+    user: *user_joe 
     supports:
       - provider: "krakow"
         storage_name: "s3"
@@ -112,6 +120,7 @@ spaces:
         storage_name: "nfs"
         size: '1000000000'
   - name: "krk-3-par-c-lis-n"
+    user: *user_joe 
     supports:
       - provider: "krakow"
         storage_name: "s3"
@@ -123,11 +132,13 @@ spaces:
         storage_name: "nfs"
         size: '1000000000'  
   - name: "krk-g"
+    user: *user_joe 
     supports:
       - provider: "krakow"
         storage_name: "gluster"
         size: '1000000000' 
   - name: "krk-g-par-3"
+    user: *user_joe 
     supports:
       - provider: "krakow"
         storage_name: "gluster"
