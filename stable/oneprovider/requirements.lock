@@ -1,30 +1,30 @@
 dependencies:
 - name: oneclient
   repository: https://onedata.github.io/charts/
-  version: 0.2.11
+  version: 0.2.12
 - name: onedata-cli
   repository: https://onedata.github.io/charts/
-  version: 0.2.11
+  version: 0.2.12
 - name: onedata-chart-utils
   repository: https://onedata.github.io/charts/
   version: 0.2.10
 - name: volume-s3
   repository: https://onedata.github.io/charts/
-  version: 0.2.7
+  version: 0.2.8
 - name: volume-ceph
   repository: https://onedata.github.io/charts/
-  version: 0.2.8
+  version: 0.2.9
 - name: volume-nfs
   repository: https://onedata.github.io/charts/
-  version: 0.2.9
+  version: 0.2.10
 - name: volume-gluster
   repository: https://onedata.github.io/charts/
-  version: 0.2.5
+  version: 0.2.6
 - name: volume-swift
   repository: https://onedata.github.io/charts/
-  version: 0.2.4
+  version: 0.2.5
 - name: luma
   repository: https://onedata.github.io/charts/
-  version: 0.2.4
-digest: sha256:05c2bab28871a0673575904f7c33b1d1281c781405e0ff180585313565722230
-generated: 2018-08-18T18:57:47.481395876+02:00
+  version: 0.2.5
+digest: sha256:de7dd20d5a4814621d93a51fdf2ab272cd1ab4e24c7f30a911b9cffdaba3d226
+generated: 2018-11-03T17:26:16.689882+01:00

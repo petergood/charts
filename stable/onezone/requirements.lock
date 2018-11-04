@@ -4,9 +4,9 @@ dependencies:
   version: 0.2.10
 - name: keycloak
   repository: https://onedata.github.io/charts/
-  version: 0.1.1
+  version: 0.1.2
 - name: token-dispenser
   repository: https://onedata.github.io/charts/
-  version: 0.1.1
-digest: sha256:fac64a697f1424458198263f11a2a4318103fce0dac719cff488aed80fe0a6c2
-generated: 2018-08-18T18:37:00.985551577+02:00
+  version: 0.1.2
+digest: sha256:9576161c412ffb910aa8e532d9cad08cdc0400c62268458c7d4399317a6c3da5
+generated: 2018-11-03T17:21:47.162505+01:00
