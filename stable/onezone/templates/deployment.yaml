@@ -148,14 +148,6 @@ spec:
           - containerPort: 53
           - containerPort: 80
           - containerPort: 443
-          - containerPort: 5555
-          - containerPort: 5556
-          - containerPort: 6665
-          - containerPort: 6666
-          - containerPort: 7443
-          - containerPort: 8443
-          - containerPort: 8876
-          - containerPort: 8877
           - containerPort: 9443
         command:
           - "/bin/bash"

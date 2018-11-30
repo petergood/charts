@@ -20,22 +20,6 @@ spec:
       port: 80
     - name: https
       port: 443
-    - name: oneclient
-      port: 5555
-    - name: oneprovider-to-oneproviders
-      port: 5556
-    - name: rtransfer-data-1
-      port: 6665
-    - name: rtransfer-data-2
-      port: 6666
-    - name: oneprovider-to-oneozne-metadata
-      port: 7443
-    - name: rest-cdmi
-      port: 8443
-    - name: rtransfer-porotcol-1
-      port: 8876
-    - name: rtransfer-porotcol-2
-      port: 8877
     - name: onepanel
       port: 9443
   selector:
