@@ -63,6 +63,8 @@ data:
       name: {{ template "fullname" . }}
       {{- end }}
       domainName: {{ template "service_url" . }}
+      policies:
+        subdomainDelegation: false
     {{- if or .Values.onepanelAdminUsers .Values.onepanel_users }}
     onepanel:
       users:
