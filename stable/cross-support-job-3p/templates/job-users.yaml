@@ -93,14 +93,14 @@ spec:
             {{- /* TODO: Fix this onepanel user propagation hack */ -}}
             echo "Propagating onepanel user={{ .name }} to onezone" ;
             {{- /* TODO: Because of an error in swagger in coresponding invocation in onezone-rest-cli, I use curl here */ -}}
-            curl -k -vvv -u {{ .name }}:{{ .password }} -X GET ${ONEZONE_HOST}/api/v3/onezone/user ;
+            onezone-rest-cli -u {{ .name }}:{{ .password }} getCurrentUser ;
         {{- end }}{{- end }}{{- end }}{{- end }}{{- end }}
         {{- range .Values.users }}{{ if (hasKey . "idps"  )}}{{ if (hasKey .idps "keycloak" )}}{{ if and .idps.keycloak.enabled .idps.keycloak.onezoneLogin }}
             idp=keycloak-{{ template "keycloak_idpName_template" $ }};
             echo "Loging keycloak user={{ .name }} with password={{ .password }} to Onezone. User info from Onezone is: " ;
             TOKEN="$(curl -k --silent -u {{ .name }}:{{ .password }} http://{{ template "token-dispenser_name" $ }}/api/v1.0/token/$idp)" ;
             echo "Onezone api access TOKEN=$TOKEN" ;
-            curl -k --silent -H "X-Auth-Token: $TOKEN" $ONEZONE_HOST/api/v3/onezone/user ;
+            ONEZONE_API_KEY=$TOKEN onezone-rest-cli getCurrentUser ;
           {{- end }}{{ end }}{{ end }}{{ end }}
             exit 0;
 {{- end }}
