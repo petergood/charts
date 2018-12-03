@@ -6,7 +6,6 @@ aliases() {
   case $( uname -s ) in
     Linux)
           _find=find
-
           ;;
     Darwin)
           _find=gfind
@@ -34,15 +33,21 @@ if [ -f $chartToBuild/requirements.yaml ]; then
       # Get a newest file of the dependency
       newestDepFile=$(${_find} $depPath -type f -printf '%T@ %p\n' | sort -n | tail -1 | cut -f2- -d" ")
 
-      # Compare it with and mdate of dependency direcotry with 
-      # mdate of saved dependency package in chart we want to rebuild
-      depChartPackage=$(ls -t $chartToBuild/charts/$name-* | tail -1);
-      if [ "$newestDepFile" -nt "$depChartPackage" ] || [ "$depPath" -nt "$depChartPackage" ] ; then
-        echo "The dependency $depPath of chart $chartToBuild needs to be updated" ;
+      # If the dependency is missing it the chat needs to be rebuild
+      if ls -t $chartToBuild/charts/$name-* 2>/dev/null ; then 
+        # Compare it with and mdate of dependency direcotry with 
+        # mdate of saved dependency package in chart we want to rebuild
+        depChartPackage=$(ls -t $chartToBuild/charts/$name-* | tail -1);
+        if [ "$newestDepFile" -nt "$depChartPackage" ] || [ "$depPath" -nt "$depChartPackage" ] ; then
+          echo "The dependency $depPath of chart $chartToBuild needs to be updated" ;
+          needsRebuild=true ;
+          break
+        # else
+        #   echo "$depPath is older then $chartToBuild" ;
+        fi
+      else
+        echo "The dependency $depPath of chart $chartToBuild is missing - update needed." ;
         needsRebuild=true ;
-        break
-      # else
-      #   echo "$depPath is older then $chartToBuild" ;
       fi
     else
       # The full list of status values: https://github.com/helm/helm/blob/master/cmd/helm/dependency.go#L156
