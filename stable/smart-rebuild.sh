@@ -2,6 +2,20 @@
 
 set -e
 
+aliases() {
+  case $( uname -s ) in
+    Linux)
+          _find=find
+
+          ;;
+    Darwin)
+          _find=gfind
+          ;;
+  esac
+}
+aliases
+
+
 chartToBuild=$1
 needsRebuild=false
 
@@ -18,7 +32,7 @@ if [ -f $chartToBuild/requirements.yaml ]; then
       depPath="${dep#file://../}"
       
       # Get a newest file of the dependency
-      newestDepFile=$(gfind $depPath -type f -printf '%T@ %p\n' | sort -n | tail -1 | cut -f2- -d" ")
+      newestDepFile=$(${_find} $depPath -type f -printf '%T@ %p\n' | sort -n | tail -1 | cut -f2- -d" ")
 
       # Compare it with and mdate of dependency direcotry with 
       # mdate of saved dependency package in chart we want to rebuild
@@ -61,7 +75,7 @@ fi
 # If the dependecny did not change the chart itself might have
 
 # Get newest file of the chart
-newestChartFile=$(gfind $chartToBuild -type f -printf '%T@ %p\n' | sort -n | tail -1 | cut -f2- -d" ")
+newestChartFile=$(${_find} $chartToBuild -type f -printf '%T@ %p\n' | sort -n | tail -1 | cut -f2- -d" ")
 #date -r $newestChartFile
 #date -r $(ls -1t ${chartToBuild}-* | head -1)
 
