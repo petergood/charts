@@ -15,12 +15,11 @@ if [ -f $chartToBuild/requirements.yaml ]; then
     
     # if the dependency is local
     if [[ "$dep" =~ file://* ]]; then
-      exit 1
       depPath="${dep#file://../}"
       
       # Get a newest file of the dependency
       newestDepFile=$(gfind $depPath -type f -printf '%T@ %p\n' | sort -n | tail -1 | cut -f2- -d" ")
-      echo $dep
+
       # Compare it with and mdate of dependency direcotry with 
       # mdate of saved dependency package in chart we want to rebuild
       depChartPackage=$(ls -t $chartToBuild/charts/$name-* | tail -1);
