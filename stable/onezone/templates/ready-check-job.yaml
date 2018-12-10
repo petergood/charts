@@ -60,7 +60,7 @@ spec:
           {{- /* TODO: Fix this onepanel user propagation hack */ -}}
             echo "Propagating onepanel admin user={{ .Values.onezone_main_admin.name }} to onezone" ;
             {{- /* TODO: Because of an error in swagger in coresponding invocation in onezone-rest-cli, I use curl here */ -}}
-            curl -u {{ .Values.onezone_main_admin.name }}:{{ .Values.onezone_main_admin.password }} -sS --tlsv1.2 -v -w '%{http_code}' -X GET "${ONEZONE_HOST}/api/v3/onezone/user/" ;
+            onezone-rest-cli -u {{ .Values.onezone_main_admin.name }}:{{ .Values.onezone_main_admin.password }} -sS --tlsv1.2 -v -w '%{http_code}' getCurrentUser ;
 
           {{- range $adminUser := .Values.onepanelAdminUsers }}
             echo "Propagating onepanel admin user={{ $adminUser.name }} to onezone" ;
@@ -71,7 +71,7 @@ spec:
           {{- $idp := (first (pluck "onepanel" $user.idps )) }}{{- if $idp }}{{- if $idp.enabled }}
             echo "Propagating onepanel user={{ $user.name }} to onezone" ;
             {{- /* TODO: Because of an error in swagger in coresponding invocation in onezone-rest-cli, I use curl here */ -}}
-            curl -u {{ $user.name }}:{{ $user.password }} -sS --tlsv1.2 -v -w '%{http_code}' -X GET "${ONEZONE_HOST}/api/v3/onezone/user/" ;
+            onezone-rest-cli -u {{ $user.name }}:{{ $user.password }} -v -w '%{http_code}' getCurrentUser ;
           {{- end }}
           {{- end }}
           {{- end }}
