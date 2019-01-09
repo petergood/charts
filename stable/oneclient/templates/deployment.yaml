@@ -92,6 +92,9 @@ spec:
          - >
            trap : TERM INT ;
            echo "source /oneclient-mount.sh" >> ~/.bashrc ;
+           {{- if (index .Values "deployFromSources" "enabled") }}
+             while [ ! -f /tmp/sources_ready.txt ]; do sleep 1; done ;
+           {{- end }}
            {{- range $user := .Values.users }}{{ if hasKey . "oneclient"  }}{{ if has $.Values.suffix $user.oneclient }}{{ if .idps }}
            {{- if .idps.onepanel }}{{if .idps.onepanel.enabled }}
            idp=onepanel;
