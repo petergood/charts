@@ -65,7 +65,7 @@ cluster_config:
   workers: [ ]
   databases: [ ]
 
-# Oneprovider entrypoint waits for external rsync to finish updating 
+# Onezone entrypoint waits for external rsync to finish updating
 # container files before it continues
 deployFromSources:
   enabled: false

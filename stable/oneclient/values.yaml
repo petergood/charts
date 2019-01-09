@@ -25,6 +25,11 @@ wait_for_oneprovider:
 # each oneclient pod will be identical 
 replicas: 1
 
+# Oneclient entrypoint waits for external rsync to finish updating
+# container files before it continues
+deployFromSources:
+  enabled: false
+
 # The generalization of nodeSelector.
 # Allows for more fine grained controls over which
 # nodes are selected by a kubernetes scheduler
