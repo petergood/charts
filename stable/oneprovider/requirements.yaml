@@ -37,6 +37,11 @@ dependencies:
   version: 0.2.5
   repository: https://onedata.github.io/charts/
   condition: volume-swift.enabled
+  
+- name: volume-webdav
+  version: 0.2.0
+  repository: https://onedata.github.io/charts/
+  condition: volume-webdav.enabled
 
 - name: luma
   version: 0.2.5

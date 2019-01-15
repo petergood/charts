@@ -36,6 +36,7 @@ ceph_enabled: &ceph_enabled false
 nfs_enabled: &nfs_enabled false
 gluster_enabled: &gluster_enabled false
 swift_enabled: &swift_enabled false
+webdav_enabled: &webdav_enabled false
 
 volume_data_sync_enabled: &volume_data_sync_enabled false
 
@@ -59,6 +60,8 @@ volume-gluster:
   enabled: *gluster_enabled
 volume-swift:
   enabled: *swift_enabled
+volume-webdav:
+  enabled: *webdav_enabled
 volume-data-sync:
   enabled: *volume_data_sync_enabled
 
@@ -96,6 +99,9 @@ luma: &luma_global
     enabled: &luma_enabled_nfs false
     lowest_uid: 1000
     highest_uid: 65536
+
+  webdav:
+    enabled: &luma_enabled_webdav false
 
 # Onezone configuration
 onezone:
@@ -186,6 +192,10 @@ oneprovider-krakow:
     enabled: *swift_enabled
     suffix: *op1s
     luma-enabled: *luma_enabled_swift
+  volume-webdav:
+    enabled: *webdav_enabled
+    suffix: *op1s
+    luma-enabled: *luma_enabled_webdav
 
 oneprovider-paris:
   suffix: &op2s paris
@@ -252,6 +262,11 @@ oneprovider-paris:
     enabled: *swift_enabled
     suffix: *op2s
     luma-enabled: *luma_enabled_swift
+  volume-webdav:
+    enabled: *webdav_enabled
+    suffix: *op2s
+    luma-enabled: *luma_enabled_webdav
+
 
 oneprovider-lisbon:
   suffix: &op3s lisbon
@@ -318,3 +333,7 @@ oneprovider-lisbon:
     enabled: *swift_enabled
     suffix: *op3s
     luma-enabled: *luma_enabled_swift
+  volume-webdav:
+    enabled: *webdav_enabled
+    suffix: *op3s
+    luma-enabled: *luma_enabled_webdav

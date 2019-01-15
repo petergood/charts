@@ -199,6 +199,8 @@ luma:
     enabled: &luma_enabled_gluster false
   nfs:
     enabled: &luma_enabled_nfs false
+  webdav:
+    enabled: &luma_enabled_webdav false
 
 # Create a extra containers in the same pod as Oneprovider with a dataset
 # that can be imported using data sync space support option.
@@ -292,6 +294,18 @@ volume-swift:
   readOnly: false
   insecure: true
   luma-enabled: *luma_enabled_swift
+  
+volume-webdav:
+  enabled: false
+  suffix: *providerSuffix
+  username: tester
+  password: testing
+  credentialsType: basic
+  rangeWriteSupport: sabredav
+  verifyServerCertificate: false
+  readOnly: false
+  insecure: true
+  luma-enabled: *luma_enabled_webdav
 
 # This section will be added the end of 'storages' section in oneprovider
 # cluster configuration

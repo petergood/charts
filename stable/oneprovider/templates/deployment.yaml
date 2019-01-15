@@ -127,6 +127,14 @@ spec:
             - "pod"
             - "-lapp={{ template "volume-swift_name" . }}"
       {{- end }}
+      {{- if (index .Values "volume-webdav" "enabled") }}
+        - name: wait-for-volume-webdav
+          image: {{ .Values.wait_for.image }}
+          imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
+          args:
+            - "pod"
+            - "-lapp={{ template "volume-webdav_name" . }}"
+      {{- end }}
       {{- if (index .Values "wait-for-onezone" "enabled") }}
         - name: wait-for-onezone
           image: {{ .Values.wait_for.image }}
