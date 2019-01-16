@@ -64,7 +64,8 @@ spec:
             value: "https://{{ template "releaseName" . }}-onezone.{{ template "service_namespace_domain" . }}"
           - name: ONEZONE_API_KEY
             value: "supplied_at_runtime"
-        args:
+        command:
+          - "bash"
           - "-c"
           - >
             set -e;
