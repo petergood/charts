@@ -1,12 +1,12 @@
 dependencies:
 - name: onedata-chart-utils
   repository: https://onedata.github.io/charts/
-  version: 0.2.10
+  version: 0.2.11
 - name: keycloak
   repository: https://onedata.github.io/charts/
-  version: 0.1.2
+  version: 0.1.3
 - name: token-dispenser
   repository: https://onedata.github.io/charts/
-  version: 0.1.2
-digest: sha256:9576161c412ffb910aa8e532d9cad08cdc0400c62268458c7d4399317a6c3da5
-generated: 2018-11-03T17:21:47.162505+01:00
+  version: 0.1.3
+digest: sha256:fbfc4f226e8322746cf608b6ec815940cfbf9cef0adedf9a4200c1d4617f7fc5
+generated: 2019-01-16T11:46:47.702022+01:00
