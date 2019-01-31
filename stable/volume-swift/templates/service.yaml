@@ -13,20 +13,8 @@ metadata:
 spec:
   type: {{ .Values.serviceType }}
   ports:
-    - name: horizon
-      port: 80
-      protocol: TCP
-    - name: keystone
-      port: 5000
-      protocol: TCP
     - name: swiftbrowser
-      port: 8000
-      protocol: TCP
-    - name: objectstorage
-      port: 8080
-      protocol: TCP
-    - name: keystoneadmin
-      port: 35357
+      port: 12345
       protocol: TCP
   selector:
     app: {{ template "fullname" . }}
