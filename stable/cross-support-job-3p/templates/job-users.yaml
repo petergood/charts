@@ -17,7 +17,7 @@ metadata:
     heritage: "{{ .Release.Service }}"
     job: {{ template "fullname" . }}-users
     component: {{ .Chart.Name }}-users
-    dependency-level: "4"
+    dependency-level: "5"
   annotations:
     version: "{{ .Chart.Version }}"
 spec:
@@ -86,7 +86,9 @@ spec:
           - >
             set -e;
             echo "-k" > ~/.curlrc ; echo "-f" >> ~/.curlrc ;
-        {{- range .Values.users }}{{ if (hasKey . "idps"  )}}{{ if (hasKey .idps "onepanel" )}}{{ if (hasKey .idps.onepanel "mode" )}}{{ if and .idps.onepanel.enabled (eq .idps.onepanel.mode "rest") }}
+            export KEYCLOAK_VARS_INITIALIZED="False" ;
+        {{- range .Values.users }}{{ if (hasKey . "idps"  )}}
+        {{ if (hasKey .idps "onepanel" )}}{{ if (hasKey .idps.onepanel "mode" )}}{{ if and .idps.onepanel.enabled (eq .idps.onepanel.mode "rest") }}
             printf "Creating user {{ .name }} [response: " ;
             onepanel-rest-cli -w "'%{http_code}'" -k -u {{ template "admin_username_template" $ }}:{{ template "admin_password_template" $ }} addUser username=={{ .name }} password=={{ .password }} userRole=={{ .idps.onepanel.type }} ;
             echo "] Success." ;
@@ -94,13 +96,16 @@ spec:
             echo "Propagating onepanel user={{ .name }} to onezone" ;
             {{- /* TODO: Because of an error in swagger in coresponding invocation in onezone-rest-cli, I use curl here */ -}}
             onezone-rest-cli -u {{ .name }}:{{ .password }} getCurrentUser ;
-        {{- end }}{{- end }}{{- end }}{{- end }}{{- end }}
-        {{- range .Values.users }}{{ if (hasKey . "idps"  )}}{{ if (hasKey .idps "keycloak" )}}{{ if and .idps.keycloak.enabled .idps.keycloak.onezoneLogin }}
-            idp=keycloak-{{ template "keycloak_idpName_template" $ }};
-            echo "Loging keycloak user={{ .name }} with password={{ .password }} to Onezone. User info from Onezone is: " ;
-            TOKEN="$(curl -k --silent -u {{ .name }}:{{ .password }} http://{{ template "token-dispenser_name" $ }}/api/v1.0/token/$idp)" ;
-            echo "Onezone api access TOKEN=$TOKEN" ;
-            ONEZONE_API_KEY=$TOKEN onezone-rest-cli getCurrentUser ;
-          {{- end }}{{ end }}{{ end }}{{ end }}
+        {{- end }}{{- end }}{{- end }}
+        {{- if (hasKey .idps "keycloak" )}}{{ if (hasKey .idps.keycloak "mode" )}}{{ if and .idps.keycloak.enabled (eq .idps.keycloak.mode "duringCrossSupportJob") }}
+            if [[ ${KEYCLOAK_VARS_INITIALIZED} == "False" ]] ; then
+              realmId={{ template "keycloak_realmId_template" $ }} ;
+              keycloak_url=${KEYCLOAK_HOST} ;
+              export KEYCLOAK_TOKEN={{ template "onedata-chart-utils.createKeycloakToken" $ }} ;
+              KEYCLOAK_VARS_INITIALIZED="True" ;
+            fi ;
+        {{ template "onedata-chart-utils.createKeycloakUser" dict "user" . }}
+        {{- end }}{{- end }}{{- end }}
+        {{- end }}{{- end }}
             exit 0;
 {{- end }}

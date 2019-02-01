@@ -56,8 +56,8 @@ spec:
             clientName={{ .Values.init.clientName }};
             onezone_url=https://{{ template "onezone_service_url" . }};
             
-            export TOKEN=$(curl --silent --max-time 10 --retry 5 --retry-delay 2 --retry-max-time 32 -X POST "$keycloak_url/auth/realms/master/protocol/openid-connect/token" -H "Content-Type: application/x-www-form-urlencoded" -d "username=$adminUsername" -d "password=$adminPassword" -d 'grant_type=password' -d 'client_id=admin-cli' | jq -r '.access_token');
-            echo "Created an short lived access token TOKEN=$TOKEN";
+            export KEYCLOAK_TOKEN={{ template "onedata-chart-utils.createKeycloakToken" $ }};
+            echo "Created an short lived access token KEYCLOAK_TOKEN=$KEYCLOAK_TOKEN";
             
             keycloak_modify_master_realm=$(cat <<EEOF
             
@@ -79,11 +79,11 @@ spec:
             
             );
             
-            echo "$keycloak_modify_master_realm" | curl --silent -X PUT "$keycloak_url/auth/admin/realms/master" -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" -d @- ;
+            echo "$keycloak_modify_master_realm" | curl --silent -X PUT "$keycloak_url/auth/admin/realms/master" -H 'Content-Type: application/json' -H "Authorization: Bearer $KEYCLOAK_TOKEN" -d @- ;
             echo "Modified realm=master to make all tokens and codes long-lived";
             
-            export TOKEN=$(curl --silent --max-time 10 --retry 5 --retry-delay 2 --retry-max-time 32 -X POST "$keycloak_url/auth/realms/master/protocol/openid-connect/token" -H "Content-Type: application/x-www-form-urlencoded" -d "username=$adminUsername" -d "password=$adminPassword" -d 'grant_type=password' -d 'client_id=admin-cli' | jq -r '.access_token');
-            echo "Created a long-lived access token TOKEN=$TOKEN";
+            export KEYCLOAK_TOKEN=$(curl --silent --max-time 10 --retry 5 --retry-delay 2 --retry-max-time 32 -X POST "$keycloak_url/auth/realms/master/protocol/openid-connect/token" -H "Content-Type: application/x-www-form-urlencoded" -d "username=$adminUsername" -d "password=$adminPassword" -d 'grant_type=password' -d 'client_id=admin-cli' | jq -r '.access_token');
+            echo "Created a long-lived access token KEYCLOAK_TOKEN=$KEYCLOAK_TOKEN";
             
             keycloak_create_realm_json=$(cat <<EEOF
             
@@ -107,7 +107,7 @@ spec:
             EEOF
             
             );
-            echo "$keycloak_create_realm_json" | curl --silent -X POST "$keycloak_url/auth/admin/realms" -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" -d @- ;
+            echo "$keycloak_create_realm_json" | curl --silent -X POST "$keycloak_url/auth/admin/realms" -H 'Content-Type: application/json' -H "Authorization: Bearer $KEYCLOAK_TOKEN" -d @- ;
             echo "Created a realm realmId=$realmId";
             [ "$realmId" = "" ]] && exit 1 ;
             
@@ -127,11 +127,11 @@ spec:
             EEOF
             
             );
-            clientId=$(echo "$keycloak_create_client_json" | curl -v -X POST "$keycloak_url/auth/admin/realms/$realmId/clients" -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" -d @- 2>&1 | grep 'Location:' | sed -ne 's#^.*/\(.*\)$#\1#p' | tr -d $'\r');
+            clientId=$(echo "$keycloak_create_client_json" | curl -v -X POST "$keycloak_url/auth/admin/realms/$realmId/clients" -H 'Content-Type: application/json' -H "Authorization: Bearer $KEYCLOAK_TOKEN" -d @- 2>&1 | grep 'Location:' | sed -ne 's#^.*/\(.*\)$#\1#p' | tr -d $'\r');
             echo "Created a clinet clientId=$clientId";
             [ "$clientId" = "" ]] && exit 1 ;
             
-            clientSecret=$(curl -v -X POST "$keycloak_url/auth/admin/realms/$realmId/clients/$clientId/client-secret" -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" 2>/dev/null | jq -r '.value');
+            clientSecret=$(curl -v -X POST "$keycloak_url/auth/admin/realms/$realmId/clients/$clientId/client-secret" -H 'Content-Type: application/json' -H "Authorization: Bearer $KEYCLOAK_TOKEN" 2>/dev/null | jq -r '.value');
             echo "Secret of clientId=$clientId is clientSecret=$clientSecret";
             [ "$clientSecret" = "" ]] && exit 1 ;
             
@@ -156,13 +156,13 @@ spec:
             
             );
             
-            admin_cli_client_id=$(curl --silent -X GET "$keycloak_url/auth/admin/realms/$realmId/clients" -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" | jq -r '.[] | select(.clientId=="admin-cli").id' );
+            admin_cli_client_id=$(curl --silent -X GET "$keycloak_url/auth/admin/realms/$realmId/clients" -H 'Content-Type: application/json' -H "Authorization: Bearer $KEYCLOAK_TOKEN" | jq -r '.[] | select(.clientId=="admin-cli").id' );
             echo -n "Creating a mapper for client=admin-cli admin_cli_client_id=$admin_cli_client_id [response: " ;
-            echo "$keycloak_create_mapper_json" | curl --silent -w "'%{http_code}'" -X POST "$keycloak_url/auth/admin/realms/$realmId/clients/$admin_cli_client_id/protocol-mappers/models" -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" -d @-;
+            echo "$keycloak_create_mapper_json" | curl --silent -w "'%{http_code}'" -X POST "$keycloak_url/auth/admin/realms/$realmId/clients/$admin_cli_client_id/protocol-mappers/models" -H 'Content-Type: application/json' -H "Authorization: Bearer $KEYCLOAK_TOKEN" -d @-;
             echo "]. Success." ;
             
             echo -n "Creating a mapper for clientName=$clientName clientId=$clientId [response: " ;
-            echo "$keycloak_create_mapper_json" | curl --silent -w "'%{http_code}'" -X POST "$keycloak_url/auth/admin/realms/$realmId/clients/$clientId/protocol-mappers/models" -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" -d @-;
+            echo "$keycloak_create_mapper_json" | curl --silent -w "'%{http_code}'" -X POST "$keycloak_url/auth/admin/realms/$realmId/clients/$clientId/protocol-mappers/models" -H 'Content-Type: application/json' -H "Authorization: Bearer $KEYCLOAK_TOKEN" -d @-;
             echo "]. Success." ;
             
             {{- if .Values.init.publishClientSecret }}
@@ -170,57 +170,12 @@ spec:
             kubectl get cm {{ template "fullname" . }}-config -o yaml | sed "s/KEYCLOAK_APP_CELINT_SECRET_SUPPLIED_AT_RUNTIME/$clientSecret/" | kubectl apply -f - ;
             {{- end }}
             
-            {{- range .Values.users }}{{ if .idps }}{{- if (hasKey .idps "keycloak") }}{{ if .idps.keycloak.enabled }}
-            keycloak_create_user=$(cat <<EEOF
-            
-            {
-              "enabled": true,
-              "firstName": "{{ .firstName }}",
-              "lastName": "{{ .lastName }}",
-              "email": "{{ .email }}",
-              "username": "{{ .name }}"
-            }
-            
-            EEOF
-            
-            );
-            userId=$(echo "$keycloak_create_user" | curl -v -X POST "$keycloak_url/auth/admin/realms/$realmId/users" -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" -d @- 2>&1 | grep 'Location:' | sed -ne 's#^.*/\(.*\)$#\1#p' | tr -d $'\r');
-            echo "Created a user=joe userId=$userId." ;
-            
-            keycloak_set_user_password=$(cat <<EEOF
-            
-            {
-              "temporary": false,
-              "type": "password",
-              "value": "{{ .password }}"
-            }
-            
-            EEOF
-            
-            );
-            echo -n "Setting password={{ .password }} for a user=joe [response: " ;
-            echo "$keycloak_set_user_password" | curl  --silent -w "'%{http_code}'" -X PUT "$keycloak_url/auth/admin/realms/$realmId/users/$userId/reset-password" -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" -d @- 2>&1;
-            echo "]. Success." ;
-            {{- end }}{{- end }}{{- end }}{{- end }}
-            createGroup() {
-              group=$1 ;
-              parentId=$2 ;
-              keycloak_create_group=$(cat <<EEOF
-              {
-                "name": "$group"
-              }
-            EEOF
-
-              );
-              if [ "$parentId" = "root" ]; then
-                groupId=$(echo "$keycloak_create_group" | curl -v -X POST "$keycloak_url/auth/admin/realms/$realmId/groups" -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" -d @- 2>&1 | grep 'Location:' | sed -ne 's#^.*/\(.*\)$#\1#p' | tr -d $'\r');
-              else
-                groupId=$(echo "$keycloak_create_group" | curl -v -X POST "$keycloak_url/auth/admin/realms/$realmId/groups/$parentId/children" -H 'Content-Type: application/json' -H "Authorization: Bearer $TOKEN" -d @- 2>&1 | grep 'Location:' | sed -ne 's#^.*/\(.*\)$#\1#p' | tr -d $'\r')
-              fi
-              echo "$groupId" ;
-            } ;
-            {{- range .Values.groups }}{{ if .idps }}{{- if (hasKey .idps "keycloak")}}{{ if and (.idps.keycloak.enabled) (not .idps.keycloak.child) }}
-            {{ template "keycloakGroup" dict "root" . "parentId" "root" }}
-            {{- end }}{{- end }}{{- end }}{{- end }}
+            {{- range .Values.users }}{{- if (hasKey . "idps") }}{{- if (hasKey .idps "keycloak") }}{{- if (hasKey .idps.keycloak "mode" )}}{{- if and .idps.keycloak.enabled (eq .idps.keycloak.mode "duringKeycloakDeployment")}}
+            {{ template "onedata-chart-utils.createKeycloakUser" dict "user" . }}
+            {{- end }}{{- end }}{{- end }}{{- end }}{{- end }}
+            {{ template "onedata-chart-utils.createGroupFun" $ }}
+            {{- range .Values.groups }}{{ if .idps }}{{- if (hasKey .idps "keycloak")}}{{- if (hasKey .idps.keycloak "mode" )}}{{ if and (.idps.keycloak.enabled) (not .idps.keycloak.child) (eq .idps.keycloak.mode "duringKeycloakDeployment")}}
+            {{ template "onedata-chart-utils.createKeycloakGroup" dict "root" . "parentId" "root" }}
+            {{- end }}{{- end }}{{- end }}{{- end }}{{- end }}
             exit 0 ;
 {{- end }}

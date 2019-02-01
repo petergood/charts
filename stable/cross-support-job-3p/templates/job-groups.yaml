@@ -10,7 +10,7 @@ metadata:
     heritage: "{{ .Release.Service }}"
     job: {{ template "fullname" . }}-groups
     component: {{ .Chart.Name }}-groups
-    dependency-level: "3"
+    dependency-level: "4"
   annotations:
     version: "{{ .Chart.Version }}"
 spec:
@@ -25,7 +25,7 @@ spec:
         heritage: "{{ .Release.Service }}"
         job: {{ template "fullname" . }}-groups
         component: {{ .Chart.Name }}-groups
-        dependency-level: "3"
+        dependency-level: "4"
       annotations:
         version: "{{ .Chart.Version }}"
     spec:
@@ -50,7 +50,7 @@ spec:
           args:
             - "job"
             - >
-              -l release in ({{ template "releaseName" . }}), chart in ({{ .Chart.Name }}), dependency-level notin (0,1,2,3)
+              -l release in ({{ template "releaseName" . }}), chart in ({{ .Chart.Name }}), dependency-level notin (0,1,2,3,4)
       {{- end }}
 {{ include "imagePullSecrets" . | indent 6 }}
       restartPolicy: Never
@@ -69,6 +69,8 @@ spec:
             value: "https://{{ template "oneprovider_name" . }}"
           - name: ONEPANEL_HOST
             value: "https://{{ template "onezone_name" . }}:9443"
+          - name: KEYCLOAK_HOST
+            value: "http://{{ template "keycloak_service_url" . }}"
           - name: TERM # otherwise zsh and bash autocompletion used in this container tends to go crazy
             value: "xterm-256color"
         command:
@@ -85,35 +87,22 @@ spec:
             echo "ONEZONE_HOST=$ONEZONE_HOST" ;
             echo "ONEPANEL_BASIC_AUTH=$ONEPANEL_BASIC_AUTH" ;
             echo "ONEZONE_API_KEY=$ONEZONE_API_KEY" ;
-          {{- range .Values.groups }}{{ if .idps }}{{ if .idps.onezone }}{{if .idps.onezone.enabled }}
+            export KEYCLOAK_VARS_INITIALIZED="False" ;
+            {{ template "onedata-chart-utils.createGroupFun" $ }}
+          {{- range .Values.groups }}{{ if (hasKey . "idps"  )}}
+          {{ if (hasKey .idps "onezone" )}}{{if .idps.onezone.enabled }}
             printf "Creating group {{ .name }} [response: " ;
             onezone-rest-cli -w "'%{http_code}'" -u {{ template "admin_username_template" $ }}:{{ template "admin_password_template" $ }} createGroupForUser name=='{{ .name }}'{{- if .type }} type=role{{- end }} ;
             echo "] Success." ;
-          {{- end }}{{- end }}{{- end }}{{- end }}
-          {{- range $user := .Values.users }}
-            {{- if (hasKey $user.idps "onepanel")}}{{ if ($user.idps.onepanel.enabled) }}
-            idp=onepanel;
-            {{- end }}{{ end }}
-            {{- if (hasKey $user.idps "keycloak")}}{{ if ($user.idps.keycloak.enabled) }}
-            idp=keycloak-{{ template "keycloak_idpName_template" $ }};
-            {{- end -}}{{- end -}}
-            userId=$(curl --silent -k -u {{ $user.name }}:{{ $user.password }} http://{{ template "token-dispenser_name" $ }}/api/v1.0/onezone/uid/$idp) ;
-            {{- $parent := . -}}
-            {{- range .groups }}
-            groupId=$(onezone-rest-cli -u {{ template "admin_username_template" $ }}:{{ template "admin_password_template" $ }} getGroup | jq -r '.groups[]' | while read -r group_id ; do onezone-rest-cli -u {{ template "admin_username_template" $ }}:{{ template "admin_password_template" $ }} getGroup id=$group_id ; done | jq -r 'select(.name=="{{ .group.name }}").groupId') ;
-            printf "Adding user {{ $parent.name }}($userId) to group {{ .group.name }}($groupId). [response: " ;
-            onezone-rest-cli -u {{ template "admin_username_template" $ }}:{{ template "admin_password_template" $ }} -w "'%{http_code}'" {{ template "json_quoted_list" dict "name" "privileges" "list" .privileges -}} -H "'Content-type: application/json'" addGroupUser id=$groupId uid=$userId ;
-            echo "]. Success added user {{ $parent.name }}($userId) to group {{ .group.name }}($groupId) with privileges(empty means default): {{ template "json_quoted_list" dict "name" "privileges" "list" .privileges -}}" ;
-            {{- end }}
-          {{- end }}
-          {{- range .Values.groups_graph }}
-            parent_group_id=$(onezone-rest-cli -u {{ template "admin_username_template" $ }}:{{ template "admin_password_template" $ }} getGroup | jq -r '.groups[]' | while read -r a_group_id ; do onezone-rest-cli -u {{ template "admin_username_template" $ }}:{{ template "admin_password_template" $ }} getGroup id=$a_group_id ; done | jq -r 'select(.name=="{{ .parent.name }}").groupId') ;
-            {{- $parent := . -}}
-            {{- range .children }}
-            child_group_id=$(onezone-rest-cli -u {{ template "admin_username_template" $ }}:{{ template "admin_password_template" $ }} getGroup | jq -r '.groups[]' | while read -r a_group_id ; do onezone-rest-cli -u {{ template "admin_username_template" $ }}:{{ template "admin_password_template" $ }} getGroup id=$a_group_id ; done | jq -r 'select(.name=="{{ .name }}").groupId') ;
-            printf "Admin user={{ template "admin_username_template" $ }} joining child group {{ .name }}($child_group_id) to parent group {{ $parent.parent.name }}($parent_group_id) with privileges(empty means default): {{ template "json_quoted_list" dict "name" "privileges" "list" $parent.privileges -}}. [response: " ;
-            onezone-rest-cli -u {{ template "admin_username_template" $ }}:{{ template "admin_password_template" $ }} -w "'%{http_code}'" -u {{ template "admin_username_template" $ }}:{{ template "admin_password_template" $ }} {{ template "json_quoted_list" dict "name" "privileges" "list" $parent.privileges -}} -H "'Content-type: application/json'" addChildGroup id=$parent_group_id cid=$child_group_id ;
-            echo "]. Success." ;
-            {{- end }}
-          {{- end }}
+          {{- end }}{{- end }}
+          {{- if (hasKey .idps "keycloak")}}{{- if (hasKey .idps.keycloak "mode" )}}{{ if and (.idps.keycloak.enabled) (not .idps.keycloak.child) (eq .idps.keycloak.mode "duringCrossSupportJob")}}
+            if [[ ${KEYCLOAK_VARS_INITIALIZED} == "False" ]] ; then
+              realmId={{ template "keycloak_realmId_template" $ }} ;
+              keycloak_url=${KEYCLOAK_HOST} ;
+              export KEYCLOAK_TOKEN={{ template "onedata-chart-utils.createKeycloakToken" $ }} ;
+              KEYCLOAK_VARS_INITIALIZED="True" ;
+            fi ;
+          {{ template "onedata-chart-utils.createKeycloakGroup" dict "root" . "parentId" "root" }}
+          {{- end }}{{- end }}{{- end }}
+          {{- end }}{{- end }}
 {{- end }}
