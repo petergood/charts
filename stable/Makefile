@@ -34,12 +34,13 @@ luma: onedata-chart-utils
 luma: build-luma
 
 #volumes
-volumes: volume-s3 volume-nfs volume-ceph volume-gluster volume-swift
+volumes: volume-s3 volume-nfs volume-ceph volume-gluster volume-swift volume-webdav
 volume-s3: onedata-chart-utils build-volume-s3
 volume-nfs: onedata-chart-utils build-volume-nfs
 volume-ceph: onedata-chart-utils build-volume-ceph
 volume-gluster: onedata-chart-utils build-volume-gluster
 volume-swift: onedata-chart-utils build-volume-swift
+volume-webdav: onedata-chart-utils build-volume-webdav
 
 onedata-chart-utils: build-onedata-chart-utils
 
