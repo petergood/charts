@@ -143,6 +143,28 @@ spec:
             - "pod"
             - "-lapp={{ template "onezone_name" . }}"
       {{- end }}
+    {{- if .Values.global.alpha }}
+      {{- if (index .Values "onezone-registration-token" "enabled") }}
+        - name: onezone-registration-token
+          image: {{ .Values.onedata_cli.image }}
+          imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
+          env:
+            - name: ONEZONE_HOST
+              value: "https://{{ template "onezone_name" . }}"
+          command:
+            - "/bin/sh"
+            - "-c"
+            - >
+              userId=$(onezone-rest-cli -k -u {{ index (first .Values.onepanel_admin_users) "login" }}:{{ index (first .Values.onepanel_admin_users) "password" }} -v getCurrentUser | jq -r ".userId") ;
+              echo "userId=$userId for user={{ index (first .Values.onepanel_admin_users) "login" }} with password={{ index (first .Values.onepanel_admin_users) "password" }}" ;
+              providerRegistrationToken=$(curl -k -vv -sS --tlsv1.2 -u {{ index (first .Values.onepanel_admin_users) "login" }}:{{ index (first .Values.onepanel_admin_users) "password" }} -X POST  -H 'content-type: application/json' "https://{{ template "onezone_name" . }}/api/v3/onezone/user/clusters/provider_registration_token" | jq -r ".token") ;
+              echo "Provider registration token=$providerRegistrationToken for user user={{ index (first .Values.onepanel_admin_users) "login" }}" ;
+              echo "$providerRegistrationToken" >> /onezone-registration-token/token ;
+          volumeMounts:
+            - mountPath: /onezone-registration-token
+              name: onezone-registration-token
+      {{- end }}
+    {{- end }}
       containers:
       - name: oneprovider
         image: {{ .Values.image }}
@@ -167,6 +189,12 @@ spec:
           - "-c"
           - >
             set -e ;
+          {{- if .Values.global.alpha }}
+            echo "Onezone registration token:" ;
+            cat /onezone-registration-token/token ;
+            ONEPROVIDER_REGISTRATION_TOKEN=$(cat /onezone-registration-token/token) ;
+            export ONEPROVIDER_CONFIG=$(echo "$ONEPROVIDER_CONFIG" | sed "s/ONEPROVIDER_REGISTRATION_TOKEN_SUPPLIED_AT_RUNTIME/$ONEPROVIDER_REGISTRATION_TOKEN/g") ;
+          {{- end }}
             echo {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ;
             if [[ "$HOSTNAME" != {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ]]; then export ONEPANEL_BATCH_MODE="false" ; fi ;
             env ;
@@ -267,6 +295,12 @@ spec:
             name: {{ $volume.name }}
         {{- end }}
       {{- end }}
+    {{- if .Values.global.alpha }}
+      {{- if (index .Values "onezone-registration-token" "enabled") }}
+          - mountPath: /onezone-registration-token
+            name: onezone-registration-token
+      {{- end }}
+    {{- end }}
       {{- if and (index .Values "volume-data-sync" "enabled") (eq (int .Values.oneprovider_nodes_count) 1) }}
         {{- range $volume := (index .Values "volume-data-sync" "volumes") }}
       - name: {{ $volume.name }}
@@ -320,6 +354,12 @@ spec:
         persistentVolumeClaim:
           claimName: {{ template "fullname" . }}-persistence-pvc
     {{- end }}
+  {{- if .Values.global.alpha }}
+    {{- if (index .Values "onezone-registration-token" "enabled") }}
+      - name: onezone-registration-token
+        emptyDir: {}
+    {{- end }}
+  {{- end }}
       - name: config-map
         configMap:
           name: {{ template "fullname" . }}-config
