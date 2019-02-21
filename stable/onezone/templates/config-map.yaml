@@ -175,7 +175,7 @@ data:
                 ,{ {{- .Values.keycloak.idpName }}, #{
                     % Configuration of the login page button
                     displayName => "{{ .Values.keycloak.displayName }}",
-                    iconPath => "custom/keycloak.svg",
+                    iconPath => "/custom/keycloak.svg",
                     iconBackgroundColor => "#FFFFFF",
                     % Which protocol is used for this IdP
                     protocol => openid,
