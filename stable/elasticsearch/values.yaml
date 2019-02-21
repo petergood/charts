@@ -1,0 +1,39 @@
+# Default values for elasticsearch.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+elasticsearch:
+  appVersion: "6.6.0"
+
+  serviceAccounts:
+    client:
+      create: false
+      name:
+    master:
+      create: false
+      name:
+    data:
+      create: false
+      name:
+
+  podSecurityPolicy:
+    enabled: false
+
+  cluster:
+    env:
+      MINIMUM_MASTER_NODES: "1"
+
+  client:
+    replicas: 1
+
+  master:
+    name: master
+    replicas: 1
+    persistence:
+      enabled: false
+
+  data:
+    name: data
+    replicas: 1
+    persistence:
+      enabled: false

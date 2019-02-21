@@ -1,0 +1,11 @@
+name: elasticsearch
+version: 0.1.0
+description: Extension of the stable/elasticsearch chart
+home: https://github.com/onedata/charts/stable/elasticsearch
+sources:
+  - https://github.com/onedata/charts/stable/elasticsearch
+maintainers:
+  - name: Michal Orzechowski
+    email: orzechowski.michal@gmail.com
+engine: gotpl
+appVersion: 6.6.0

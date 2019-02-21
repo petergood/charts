@@ -16,7 +16,7 @@ onedata: build-onedata
 onedata-cli: onedata-chart-utils
 onedata-cli: build-onedata-cli
 
-onezone: onedata-chart-utils keycloak
+onezone: onedata-chart-utils keycloak elasticsearch
 onezone: build-onezone
 
 oneprovider: onedata-chart-utils volumes luma
@@ -29,6 +29,9 @@ test: test-onedata-chart-utils test-volume-s3 test-volume-ceph test-volume-nfs t
 
 keycloak: onedata-chart-utils
 keycloak: build-keycloak
+
+elasticsearch: onedata-chart-utils
+elasticsearch: build-elasticsearch
 
 luma: onedata-chart-utils 
 luma: build-luma
