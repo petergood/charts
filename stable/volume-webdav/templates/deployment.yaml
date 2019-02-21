@@ -63,4 +63,65 @@ spec:
         readinessProbe:
           tcpSocket:
             port: 80
+      {{- if and (index .Values "volume-data-sync" "enabled") }}
+        volumeMounts:
+        {{- range $volume := (index .Values "volume-data-sync" "volumes") }}
+          - mountPath: /var/www/files/{{ $volume.name }}:shared
+            name: {{ $volume.name }}
+        {{- end }}
+      {{- end }}
+      {{- if and (index .Values "volume-data-sync" "enabled") }}
+        {{- range $volume := (index .Values "volume-data-sync" "volumes") }}
+      - name: {{ $volume.name }}
+        image: {{ $volume.image }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" $ "context" $volume }}
+        command:
+          - "/bin/sh"
+          - "-c"
+          - >
+            mount -o bind {{ $volume.dataPath }} /{{ $volume.name }} ;
+            {{- if $volume.readOnly }}
+            mount -o remount,ro /{{ $volume.name }} ;
+            {{- end }}
+            {{ if $volume.mountPermissions }}
+            chmod {{ $volume.mountPermissions }} /{{ $volume.name }} ;
+            {{- end }}
+            {{- range $a_permission := $volume.permissions }}
+            {{- if $a_permission.user }}
+            chown -R {{ $a_permission.user }}{{- if $a_permission.group }}:{{ $a_permission.group }}{{- end }} {{ $volume.dataPath }}/{{ $a_permission.path }} ;
+            {{- end }}
+            {{- if $a_permission.mask }}
+            chmod -R {{ $a_permission.mask }} {{ $volume.dataPath }}/{{ $a_permission.path }} ;
+            {{- end }}
+            {{- end }}
+            sleep 3600000 ;
+        lifecycle:
+          preStop:
+            exec:
+              command:
+                - "sh"
+                - "-c"
+                - >
+                  {{- if $volume.readOnly }}
+                  mount -o remount,rw /{{ $volume.name }} ;
+                  {{- end }}
+                  umount /{{ $volume.name }};
+                  umount /{{ $volume.name }};
+        volumeMounts:
+          - mountPath: /{{ $volume.name }}:shared
+            name: {{ $volume.name }}
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - SYS_ADMIN
+        {{- end }}
+      {{- end }}
+      {{- if and (index .Values "volume-data-sync" "enabled") }}
+      volumes:
+        {{- range $volume := (index .Values "volume-data-sync" "volumes") }}
+      - name: {{ $volume.name }}
+        emptyDir: {}
+        {{- end }}
+      {{- end }}
 
