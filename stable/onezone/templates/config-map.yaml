@@ -65,6 +65,7 @@ data:
       domainName: {{ template "service_url" . }}
       policies:
         subdomainDelegation: false
+      builtInDnsServer: false
     {{- if or .Values.onepanelAdminUsers .Values.onepanel_users }}
     onepanel:
       users:
