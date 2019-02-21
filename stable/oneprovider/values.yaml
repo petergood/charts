@@ -6,6 +6,10 @@ image: onedata/oneprovider:18.02.0-rc10
 imagePullPolicy: IfNotPresent
 serviceType: ClusterIP
 
+onedata_cli:
+  image: onedata/rest-cli:18.02.0-rc13
+  imagePullPolicy: IfNotPresent
+
 wait_for:
   image: onedata/k8s-wait-for:v1.2
   imagePullPolicy: IfNotPresent
@@ -16,6 +20,10 @@ oneprovider_ready_check:
 
 # Wait for Onezone service to be ready before starting.
 wait-for-onezone:
+  enabled: true
+
+# Acquire provider registration token prior to starting onezone
+onezone-registration-token:
   enabled: true
 
 # When running multiple copies of oneprovider as a part of a helm release
