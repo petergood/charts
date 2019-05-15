@@ -31,7 +31,7 @@ nodeSelector: {}
 volume-data-sync:
   enabled: false
   volumes:
-  - name: data
+  - name: volume-data-sync-rw
     image: onedata/eo-data-mock:Landsat-5-sample-latest
     imagePullPolicy: IfNotPresent
     dataPath: /data
