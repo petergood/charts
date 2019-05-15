@@ -1,14 +1,6 @@
 # Default values for volume-webdav
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-global:
-  # TODO: Find a way to eliminate necessity for region and tld values
-  # to make deployment cluster independent
-  #releaseNameOverride: ""
-  region: dev
-  tld: onedata.uk.to
-  imagePullPolicy: "Always"
-  #hostNetwork: true
 
 image: onedata/sabredav:v1-auth-fix
 imagePullPolicy: IfNotPresent
