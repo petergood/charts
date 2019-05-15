@@ -8,13 +8,10 @@ elasticsearch:
   serviceAccounts:
     client:
       create: false
-      name:
     master:
       create: false
-      name:
     data:
       create: false
-      name:
 
   podSecurityPolicy:
     enabled: false
