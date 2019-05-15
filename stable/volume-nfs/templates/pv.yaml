@@ -15,7 +15,6 @@ metadata:
   annotations:
   {{- if .Values.deployAsPreInstallHook }}
     "helm.sh/hook": pre-install
-    "helm.sh/hook-delete-policy": before-hook-creation
   {{- end }}
     version: "{{ .Chart.Version }}"
 spec:
