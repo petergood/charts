@@ -37,6 +37,6 @@ spec:
           - "sh"
           - "-c"
           - >
-            while kubectl get pv {{ template "fullname" . }}-pv -o jsonpath="$JSONPATH" | grep -q "State=Bound"; do echo "Waiting for {{ template "fullname" . }}-pv to be freed before NFS server is deleted" ; sleep 1 ; done ;
+            JSONPATH="State={.status.phase}" ; while kubectl get pv {{ template "fullname" . }}-pv -o jsonpath="$JSONPATH" | grep -q "State=Bound"; do echo "Waiting for {{ template "fullname" . }}-pv to be freed before NFS server is deleted" ; sleep 1 ; done ;
             kubectl delete deployment,service,pv -l app={{ template "fullname" . }} ;
 {{- end }}
