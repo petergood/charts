@@ -9,13 +9,13 @@ metadata:
     release: {{ template "releaseName" . }}
     heritage: {{ .Release.Service }}
     component: {{ .Chart.Name }}
-    type: local-storage
+    type: standard
   annotations:
     version: "{{ .Chart.Version }}"
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: local-storage
+  storageClassName: standard
   resources:
     requests:
       storage: {{ .Values.persistence.size }}
