@@ -23,7 +23,11 @@ data:
           hostname: {{ template "fullname" $r }}-{{ $i }}
         {{- end }}
       managers:
-        mainNode: n{{ sub (.Values.oneprovider_nodes_count) 1 }} 
+    {{- if .Values.cluster_config.managers }}
+        mainNode: n{{ first .Values.cluster_config.managers }} 
+    {{- else }}
+        mainNode: n0
+    {{- end }}
         nodes:
     {{- with .Values.cluster_config.managers }}
         {{- range $i := . }}
