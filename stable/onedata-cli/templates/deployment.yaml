@@ -73,7 +73,7 @@ spec:
           - name: CDMI_API_KEY
             value: "supplied_at_runtime"
           - name: CDMI_HOST
-            value: "https://{{ template "oneprovider_name" . }}"
+            value: "https://{{ template "oneprovider_name" . }}/cdmi"
           - name: ONEPROVIDER_HOST
             value: "https://{{ template "oneprovider_name" . }}"
           - name: ONEPANEL_HOST
