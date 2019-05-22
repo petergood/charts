@@ -78,7 +78,6 @@ spec:
             export CEPH_NETWORK=$CEPH_PUBLIC_NETWORK ;
             env ;
             /entrypoint.sh demo;
-
         lifecycle:
           postStart:
             exec:
@@ -98,9 +97,9 @@ spec:
                   ceph osd pool create {{ .Values.pool_name }} 8 ;
                   {{- /* Solves 'ceph health' error regarding unassinged aplication */ -}}
                   ceph rbd pool init {{ .Values.pool_name }} ;
-                  ceph osd pool application enable cephfs {{ .Values.pool_name }} --yes-i-really-mean-it ;
-                  ceph osd pool application enable rbd {{ .Values.pool_name }} --yes-i-really-mean-it ;
-                  ceph osd pool application enable rgw {{ .Values.pool_name }} --yes-i-really-mean-it ;
+                  ceph osd pool application enable {{ .Values.pool_name }} cephfs --yes-i-really-mean-it ;
+                  ceph osd pool application enable {{ .Values.pool_name }} rbd --yes-i-really-mean-it ;
+                  ceph osd pool application enable {{ .Values.pool_name }} rgw --yes-i-really-mean-it ;
                   echo '[{{ .Values.username }}]' > /etc/ceph/ceph.{{ .Values.username }}.keyring ;
                   echo '        key = {{ .Values.key }}' >> /etc/ceph/ceph.{{ .Values.username }}.keyring ;
                   echo '        caps mon = "allow r"' >> /etc/ceph/ceph.{{ .Values.username }}.keyring ;
