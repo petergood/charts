@@ -261,7 +261,7 @@ spec:
     {{- if .Values.persistence.enabled }}
           - name: persistence
             mountPath: /volumes/persistence
-            subPath: $(NAMESPACE)-$(POD_NAME)
+            subPathExpr: $(NAMESPACE)-$(POD_NAME)
     {{- end }}
           - name: config-map
             mountPath: /etc/op_panel/overlay.config
