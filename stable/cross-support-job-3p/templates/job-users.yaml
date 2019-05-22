@@ -57,7 +57,7 @@ spec:
           args:
             - "pod"
             - >
-              -l release in ({{ template "releaseName" . }}), chart notin ({{ .Chart.Name }})
+              -l release in ({{ template "releaseName" . }}), chart notin ({{ .Chart.Name }}, oneclient)
       {{- end }}
 {{ include "imagePullSecrets" . | indent 6 }}
       restartPolicy: Never
