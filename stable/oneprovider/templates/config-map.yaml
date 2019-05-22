@@ -165,6 +165,23 @@ data:
           lumaApiKey: {{ .Values.luma.lumaApiKey }}
         {{- end }}
       {{- end }}
+      {{- if (index .Values "volume-dcache" "enabled") }}
+        dcache:
+          type: webdav
+          endpoint: http://{{ template "volume-dcache_name" . }}.{{ $.Release.Namespace }}
+          credentials: {{ index .Values "volume-dcache" "username" }}:{{ index .Values "volume-webdav" "password" }}
+          credentialsType: {{ index .Values "volume-dcache" "credentialsType" }}
+          rangeWriteSupport: {{ index .Values "volume-dcache" "rangeWriteSupport" }}
+          verifyServerCertificate: {{ index .Values "volume-dcache" "verifyServerCertificate" }}
+          readonly: {{ index .Values "volume-dcache" "readOnly" }}
+          insecure: {{ index .Values "volume-dcache" "insecure" }}
+        {{- if (index .Values "volume-swift" "luma-enabled") }}
+          lumaEnabled: {{ .Values.luma.enabled }}
+          lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
+          lumaCacheTimeout: {{ .Values.luma.lumaCacheTimeout }}
+          lumaApiKey: {{ .Values.luma.lumaApiKey }}
+        {{- end }}
+      {{- end }}
       {{- if and (index .Values "volume-data-sync" "enabled") (eq (int .Values.oneprovider_nodes_count) 1) }}
         {{- range $volume := (index .Values "volume-data-sync" "volumes") }}
         {{ $volume.name }}:

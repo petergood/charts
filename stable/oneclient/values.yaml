@@ -21,6 +21,12 @@ wait_for_token_dispenser:
 wait_for_oneprovider:
   enabled: true
 
+# Enable container running jupyter notebook
+jupyter:
+  enabled: false
+  image: jupyter/minimal-notebook:7f1482f5a136
+  imagePullPolicy: IfNotPresent
+
 # Number of oneclients to launch
 # each oneclient pod will be identical 
 replicas: 1

@@ -166,7 +166,31 @@ spec:
           - mountPath: {{ .Values.directIO.nfs.mount_path }}
             name: nfs
       {{- end }}
+    {{- if (index .Values "jupyter" "enabled") }}
+          - mountPath: /mnt/oneclient:shared
+            name: oneclient
+    {{- end }}
+    {{- if (index .Values "jupyter" "enabled") }}
+      - name: jupyter
+        image: {{ .Values.jupyter.image }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.jupyter }}
+        lifecycle:
+          preStop:
+            exec:
+              command:
+                - "sh"
+                - "-c"
+                - >
+                  umount /mnt/oneclient ;
+        volumeMounts:
+        - mountPath: /mnt/oneclient:shared
+          name: oneclient
+    {{- end }}
       volumes:
+    {{- if (index .Values "jupyter" "enabled") }}
+      - name: oneclient
+        emptyDir: {}
+    {{- end }}
       - name: oneclient-mount
         configMap:
           name: {{ template "fullname" . }}-config
