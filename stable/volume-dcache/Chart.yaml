@@ -1,0 +1,12 @@
+name: volume-dcache
+version: 0.2.1
+description: A single container dcache setup, suitable for testing purposes.
+keywords:
+  - onedata
+  - volume-dcache
+  - storage
+maintainers:
+  - name: Michal Orzechowski
+    email: orzechowski.michal@gmail.com
+engine: gotpl
+appVersion: latest

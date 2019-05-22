@@ -1,0 +1,54 @@
+# Default values for volume-dcache.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image: onedata/dcache-docker:fd32dcf
+imagePullPolicy: IfNotPresent
+serviceType: ClusterIP
+
+postgres:
+  image: postgres:10.7
+  imagePullPolicy: IfNotPresent
+  # Resources requested by postgres
+  cpu: 0.5
+  memory: 0.5Gi
+
+# Resources requested by dCache
+cpu: 0.5
+memory: 0.5Gi
+
+config:
+  layout: |
+    [dCacheDomain]
+    dcache.broker.scheme = core
+    [dCacheDomain/zookeeper]
+    [dCacheDomain/admin]
+    [dCacheDomain/poolmanager]
+    [dCacheDomain/pnfsmanager]
+    [dCacheDomain/cleaner]
+    [dCacheDomain/gplazma]
+    [dCacheDomain/webdav]
+    webdav.authz.anonymous-operations=FULL
+    webdav.redirect.on-write=true
+    webdav.redirect.on-read=true
+    [dCacheDomain/pool]
+    pool.name=pool1
+    pool.path=/pool1
+
+#pool.wait-for-files=${pool.path}/data
+# The generalization of nodeSelector.
+# Allows for more fine grained controls over which
+# nodes are selected by a kubernetes scheduler
+# https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#affinity-and-anti-affinity
+affinity: {}
+
+# List of taints which are tolerated by the pods 
+# when nodes are selected by a kubernetes scheduler
+# https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+tolerations: {}
+
+# Specify a map of key-value pairs. For the pod 
+# to be eligible to run on a node, the node 
+# must have each of the indicated key-value pairs as labels
+# https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
+nodeSelector: {}

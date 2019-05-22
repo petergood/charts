@@ -314,6 +314,18 @@ volume-webdav:
   readOnly: false
   insecure: true
   luma-enabled: *luma_enabled_webdav
+  
+volume-dcache:
+  enabled: false
+  suffix: *providerSuffix
+  username: ""
+  password: ""
+  credentialsType: none
+  rangeWriteSupport: none
+  verifyServerCertificate: false
+  readOnly: true
+  insecure: true
+  luma-enabled: *luma_enabled_webdav
 
 # This section will be added the end of 'storages' section in oneprovider
 # cluster configuration

@@ -42,6 +42,11 @@ dependencies:
   version: 0.2.0
   repository: https://onedata.github.io/charts/
   condition: volume-webdav.enabled
+  
+- name: volume-dcache
+  version: 0.2.1
+  repository: file://../volume-dcache
+  condition: volume-dcache.enabled
 
 - name: luma
   version: 0.2.6

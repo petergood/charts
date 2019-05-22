@@ -2,7 +2,7 @@
 
 PREFIX = onedata-makefile-test-release
 
-all: cross-support-job-3p cross-support-job-1p
+all: cross-support-job-3p
 
 cross-support-job-3p: onedata-3p
 cross-support-job-3p: build-cross-support-job-3p
@@ -37,13 +37,14 @@ luma: onedata-chart-utils
 luma: build-luma
 
 #volumes
-volumes: volume-s3 volume-nfs volume-ceph volume-gluster volume-swift volume-webdav
+volumes: volume-s3 volume-nfs volume-ceph volume-gluster volume-swift volume-webdav volume-dcache
 volume-s3: onedata-chart-utils build-volume-s3
 volume-nfs: onedata-chart-utils build-volume-nfs
 volume-ceph: onedata-chart-utils build-volume-ceph
 volume-gluster: onedata-chart-utils build-volume-gluster
 volume-swift: onedata-chart-utils build-volume-swift
 volume-webdav: onedata-chart-utils build-volume-webdav
+volume-dcache: onedata-chart-utils build-volume-dcache
 
 onedata-chart-utils: build-onedata-chart-utils
 

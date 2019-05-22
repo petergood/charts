@@ -1,0 +1,159 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "fullname" . }}
+    chart: {{ .Chart.Name }}
+    release: {{ template "releaseName" . }}
+    heritage: {{ .Release.Service }}
+    component: {{ .Chart.Name }}
+  annotations:
+    version: "{{ .Chart.Version }}"
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "fullname" . }}
+      chart: {{ .Chart.Name }}
+      release: {{ template "releaseName" . }}
+      heritage: {{ .Release.Service }}
+      component: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "fullname" . }}
+        chart: {{ .Chart.Name }}
+        release: {{ template "releaseName" . }}
+        heritage: {{ .Release.Service }}
+        component: {{ .Chart.Name }}
+      annotations:
+        version: "{{ .Chart.Version }}"
+    spec:
+      hostname: {{ .Chart.Name | quote }}
+      subdomain: {{ template "fullname" . }}
+      hostNetwork: {{ template "hostNetwork" . }}
+      {{- if .Values.affinity }}
+      affinity:
+{{ toYaml .Values.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      {{- end }}
+{{ include "imagePullSecrets" . | indent 6 }}
+      containers:
+      - name: dcache
+        image: {{ .Values.image }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
+        {{- if or .Values.cpu .Values.memory }}
+        resources:
+          requests:
+          {{- if .Values.cpu }}
+            cpu: {{ .Values.cpu }}
+          {{- end }}
+          {{- if .Values.memory }}
+            memory: {{ .Values.memory }}
+          {{- end }}
+          limits:
+          {{- if .Values.cpu }}
+            cpu: {{ .Values.cpu }}
+          {{- end }}
+          {{- if .Values.memory }}
+            memory: {{ .Values.memory }}
+          {{- end }}
+        {{- end }}
+        command:
+          - "/bin/sh"
+          - "-c"
+          - >
+            cat /etc/dcache/layouts/webdav-layout.conf;
+            echo "[$(date +'%Y-%m-%d %H:%M:%S')] Waiting for Postgres." ;
+            while [ ! -f /monitor/postgres-ready ] ; do sleep 2 ; done ;
+            echo "[$(date +'%Y-%m-%d %H:%M:%S')] Postgres ready. Initializing dCache. " ;
+            dcache database update ;
+            echo "[$(date +'%Y-%m-%d %H:%M:%S')] Starting dCache" ;
+            dcache start ;
+            echo "[$(date +'%Y-%m-%d %H:%M:%S')] dCache ready" ;
+            dcache status ;
+            dcache ports ;
+            lock=$(dcache property dcache.paths.lock.file) ;
+            while [ -f "$lock" ]; do sleep 5 ; done ;
+        ports:
+          - containerPort: 2049
+          - containerPort: 80
+          - containerPort: 443
+          - containerPort: 22224
+          - containerPort: 32049
+          - containerPort: 7771
+          - containerPort: 2880
+        volumeMounts:
+          - mountPath: /monitor
+            name: monitor
+        {{- if .Values.config.layout }}
+          - mountPath: /etc/dcache/layouts/webdav-layout.conf
+            subPath: layout.conf
+            name: config
+            readOnly: true
+        {{- end }}
+        readinessProbe:
+          tcpSocket:
+            port: 2880
+      - name: postgres
+        image: {{ .Values.postgres.image }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.postgres }}
+        lifecycle:
+          postStart:
+            exec:
+              command:
+                - "sh"
+                - "-c"
+                - >
+                  echo "[$(date +'%Y-%m-%d %H:%M:%S')] Starting to wait for Postgres." ;
+                  count=0 ; goal=2 ;
+                  lastpid="" ; pid="" ;
+                  DB_NAME=postgres ; POSTGRES_USER=postgres ;
+                  getpid() {
+                      lastpid="$pid" ;
+                      pid=$(psql "$DB_NAME" -At -U "$POSTGRES_USER" -c 'SELECT pg_backend_pid()') ;
+                  };
+                  until getpid && [ "$count" -eq "$goal" ]; do
+                      echo "[$(date +'%Y-%m-%d %H:%M:%S')] Postgres has started (pid=$pid) $count out of $goal time(s)." >> /monitor/postgres_status ;
+                      if [ "$pid" ] && [ "$pid" != "$lastpid" ];
+                      then
+                        count=$((count+1)) ;
+                      fi
+                      sleep 1 ;
+                  done ;
+                  echo "[$(date +'%Y-%m-%d %H:%M:%S')] Postgres has started $goal time(s)... executing commands..." >> /monitor/postgres_status ;
+                  createuser -U postgres --no-superuser --no-createrole --createdb dcache ;
+                  createuser -U postgres --no-superuser --no-createrole --createdb chimera ;
+                  createdb -U dcache dcache ;
+                  createdb -O dcache -U postgres alarms ;
+                  createdb -O dcache -U postgres chimera ;
+                  createdb -O dcache -U postgres billing ;
+                  createdb -O dcache -U postgres pinmanager ;
+                  createdb -O dcache -U postgres spacemanager ;
+                  createdb -O dcache -U postgres transfermanagers ;
+                  createdb -O dcache -U postgres transfermanager ;
+                  createdb -O dcache -U postgres srm ;
+                  createdb -O dcache -U postgres replica ;
+                  createdb -O dcache -U postgres replicas ;
+                  touch /monitor/postgres-ready ;
+        readinessProbe:
+          tcpSocket:
+            port: 5432
+        volumeMounts:
+          - mountPath: /monitor
+            name: monitor
+      volumes:
+        - name: monitor
+          emptyDir: {}
+        {{- if .Values.config }}
+        - name: config
+          configMap:
+            name: {{ template "fullname" . }}
+        {{- end }}
