@@ -71,7 +71,7 @@ spec:
           - name: ONEZONE_API_KEY
             value: "supplied_at_runtime"
           - name: ONEPANEL_BASIC_AUTH
-            value: "{{ template "admin_username_template" . }}:{{ template "admin_password_template" . }}"
+            value: "{{ template "onepanel_emergency_username_template" . }}:{{ template "onepanel_emergency_password_template" . }}"
           - name: ONEPROVIDER_HOST
             value: "https://{{ template "oneprovider_name" . }}"
           - name: ONEPANEL_HOST
@@ -90,7 +90,7 @@ spec:
         {{- range .Values.users }}{{ if (hasKey . "idps"  )}}
         {{ if (hasKey .idps "onepanel" )}}{{ if (hasKey .idps.onepanel "mode" )}}{{ if and .idps.onepanel.enabled (eq .idps.onepanel.mode "rest") }}
             printf "Creating user {{ .name }} [response: " ;
-            onepanel-rest-cli -w "'%{http_code}'" -k -u {{ template "admin_username_template" $ }}:{{ template "admin_password_template" $ }} addUser username=={{ .name }} password=={{ .password }} userRole=={{ .idps.onepanel.type }} ;
+            onepanel-rest-cli -w "'%{http_code}'" -k addUser username=={{ .name }} password=={{ .password }} userRole=={{ .idps.onepanel.type }} ;
             echo "] Success." ;
             {{- /* TODO: Fix this onepanel user propagation hack */ -}}
             echo "Propagating onepanel user={{ .name }} to onezone" ;
