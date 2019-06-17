@@ -129,11 +129,11 @@ spec:
             );
             clientId=$(echo "$keycloak_create_client_json" | curl -v -X POST "$keycloak_url/auth/admin/realms/$realmId/clients" -H 'Content-Type: application/json' -H "Authorization: Bearer $KEYCLOAK_TOKEN" -d @- 2>&1 | grep 'Location:' | sed -ne 's#^.*/\(.*\)$#\1#p' | tr -d $'\r');
             echo "Created a clinet clientId=$clientId";
-            [ "$clientId" = "" ]] && exit 1 ;
+            [ "$clientId" = "" ] && exit 1 ;
             
             clientSecret=$(curl -v -X POST "$keycloak_url/auth/admin/realms/$realmId/clients/$clientId/client-secret" -H 'Content-Type: application/json' -H "Authorization: Bearer $KEYCLOAK_TOKEN" 2>/dev/null | jq -r '.value');
             echo "Secret of clientId=$clientId is clientSecret=$clientSecret";
-            [ "$clientSecret" = "" ]] && exit 1 ;
+            [ "$clientSecret" = "" ] && exit 1 ;
             
             keycloak_create_mapper_json=$(cat <<EEOF
             
