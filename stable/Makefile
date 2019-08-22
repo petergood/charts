@@ -1,4 +1,4 @@
-.PHONY: $(shell find * -type d -depth 0)
+.PHONY: $(shell find * -type d -maxdepth 0)
 
 PREFIX = onedata-makefile-test-release
 
