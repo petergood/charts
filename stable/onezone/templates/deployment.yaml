@@ -164,6 +164,7 @@ spec:
             while [ ! -f /tmp/sources_ready.txt ]; do sleep 1; done ;
             export ONEPANEL_OVERRIDE=$(cat /tmp/sources_ready.txt) ;
           {{- end }}
+            cp /etc/oz_worker/auth.config.orig /etc/oz_worker/auth.config ;
             /root/onezone.sh ;
         lifecycle:
           preStop:
@@ -268,7 +269,7 @@ spec:
             name: config-map
             readOnly: true
     {{- end }}
-          - mountPath: /etc/oz_worker/auth.config
+          - mountPath: /etc/oz_worker/auth.config.orig
             subPath: auth.config
             name: config-map
             readOnly: true

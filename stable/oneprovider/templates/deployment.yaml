@@ -205,10 +205,12 @@ spec:
             mkdir -p {{ index .Values "posix" "storagePath" }} ;
           {{- end }}
           {{- if .Values.global.alpha }}
+          {{- if and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled }}
             echo "Onezone registration token:" ;
             cat /onezone-registration-token/token ;
             ONEPROVIDER_REGISTRATION_TOKEN=$(cat /onezone-registration-token/token) ;
             export ONEPROVIDER_CONFIG=$(echo "$ONEPROVIDER_CONFIG" | sed "s/ONEPROVIDER_REGISTRATION_TOKEN_SUPPLIED_AT_RUNTIME/$ONEPROVIDER_REGISTRATION_TOKEN/g") ;
+          {{- end }}
           {{- end }}
             echo {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ;
             if [[ "$HOSTNAME" != {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ]]; then export ONEPANEL_BATCH_MODE="false" ; fi ;
