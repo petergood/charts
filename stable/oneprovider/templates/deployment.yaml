@@ -200,6 +200,10 @@ spec:
           - "-c"
           - >
             set -e ;
+          {{ if (index .Values "posix" "enabled") }}
+            echo "Creating directory for POSIX storage: {{ index .Values "posix" "storagePath" }}" ;
+            mkdir -p {{ index .Values "posix" "storagePath" }} ;
+          {{- end }}
           {{- if .Values.global.alpha }}
             echo "Onezone registration token:" ;
             cat /onezone-registration-token/token ;

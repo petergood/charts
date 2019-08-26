@@ -66,7 +66,7 @@ data:
       {{- if and (index .Values "posix" "enabled") (eq (int .Values.oneprovider_nodes_count) 1) }}
         posix:
           type: posix
-          mountPoint: /volumes/storage
+          mountPoint: {{ index .Values "posix" "storagePath" }}
           readonly: {{ index .Values "posix" "readOnly" }}
         {{- if (index .Values "posix" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
