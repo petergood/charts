@@ -260,6 +260,7 @@ volume-data-sync:
 # Posix local storage, it will be automatically disable if you deploy multi-node oneprovider installation
 posix:
   enabled: true
+  storagePath: /volumes/persistence/storage
   luma-enabled: *luma_enabled_posix
   readOnly: false
 
