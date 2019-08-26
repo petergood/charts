@@ -69,6 +69,11 @@ data:
       domainName: {{ template "service_url" . }}
       policies:
         subdomainDelegation: false
+      {{- if or .Values.onepanelAdminUsers .Values.onepanel_users }}
+        oneproviderRegistration: {{ .Values.oneproviderRegistration }}
+        guiPackageVerification: {{ .Values.guiPackageVerification }}
+        harversterGuiPackageVerification: {{ .Values.harversterGuiPackageVerification }}
+      {{- end }}
       builtInDnsServer: false
     {{- if or .Values.onepanelAdminUsers .Values.onepanel_users }}
   {{- if .Values.global.alpha }}
