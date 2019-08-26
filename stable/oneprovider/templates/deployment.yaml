@@ -155,7 +155,7 @@ spec:
             - "-lapp={{ template "onezone_name" . }}"
       {{- end }}
     {{- if .Values.global.alpha }}
-      {{- if (index .Values "onezone-registration-token" "enabled") }}
+      {{- if and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled }}
         - name: onezone-registration-token
           image: {{ .Values.onedata_cli.image }}
           imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
