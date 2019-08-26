@@ -85,6 +85,8 @@ data:
           password: {{ .password }}
         {{- end }}{{- end }}{{- end }}
         {{- end }}
+    onepanel:
+      guiDebugMode: {{ .Values.guiDebugMode }}
   {{- else }}
     onepanel:
       users:

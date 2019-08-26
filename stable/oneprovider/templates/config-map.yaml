@@ -228,8 +228,9 @@ data:
     onezone:
       domainName: {{ template "onezone_service_url" . }}
     {{- if not .Values.global.alpha }}
-    {{- if or .Values.onepanel_emergency_account .Values.onepanel_users }}
     onepanel:
+      guiDebugMode: {{ .Values.guiDebugMode }}
+    {{- if or .Values.onepanel_emergency_account .Values.onepanel_users }}
       users:
         {{- range .Values.onepanel_admin_users }}
         {{ .name }}:

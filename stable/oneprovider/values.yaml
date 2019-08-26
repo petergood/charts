@@ -90,6 +90,10 @@ onepanel_generated_cert_domain: ""
 #   be used in production.
 onepanel_trust_test_ca: false
 
+# When true, all GUIs hosted in this cluster will print
+# debug logs to browser console.
+guiDebugMode: false
+
 # Number of nodes (pod replicas) for of this provider
 # their indexes will be assigned FROM 0 (ZERO!)
 # up to, but not including the count value
