@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: dcache
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - k8s-cyfronet-1-node-10
+  containers:
+  - image: groundnuty/whatever:dcache-5.0.7-1 
+    name: dcache
+    imagePullPolicy: Always
+    command:
+    - /bin/sh
+    - -c
+    - sleep 30000
+    ports:
+      - name: a
+        containerPort: 2049
+        protocol: TCP
+      - name: h
+        containerPort: 80
+        protocol: TCP
+      - name: hs
+        containerPort: 443
+        protocol: TCP
+      - name: b
+        containerPort: 22224
+        protocol: TCP
+      - name: c
+        containerPort: 32049
+        protocol: TCP
+      - name: d
+        containerPort: 7771
+        protocol: TCP
+      - name: webdav
+        containerPort: 2880
+        protocol: TCP
+  - image: postgres:10.7
+    name: postgres
+    imagePullPolicy: Always
+    env:
+      - name: POSTGRES_DB
+        value: "chimera"
+      - name: POSTGRES_PASSWORD
+        value: "let-me-in"

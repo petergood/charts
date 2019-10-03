@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: wait-for
+spec:
+  containers:
+  - image: groundnuty/k8s-wait-for:v1.2-3-g50dbb24 
+    name: wait
+    command:
+      - sleep
+      - "360000"
+    imagePullPolicy: IfNotPresent
+  restartPolicy: Always

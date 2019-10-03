@@ -1,0 +1,172 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "fullname" . }}
+    chart: {{ .Chart.Name }}
+    release: {{ template "releaseName" . }}
+    heritage: {{ .Release.Service }}
+    component: {{ .Chart.Name }}
+  annotations:
+    version: "{{ .Chart.Version }}"
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "fullname" . }}
+      chart: {{ .Chart.Name }}
+      release: {{ template "releaseName" . }}
+      heritage: {{ .Release.Service }}
+      component: {{ .Chart.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "fullname" . }}
+        chart: {{ .Chart.Name }}
+        release: {{ template "releaseName" . }}
+        heritage: {{ .Release.Service }}
+        component: {{ .Chart.Name }}
+      annotations:
+        version: "{{ .Chart.Version }}"
+    spec:
+      hostname: {{ .Chart.Name }}
+      subdomain: {{ template "fullname" . }}
+      hostNetwork: {{ template "hostNetwork" . }}
+      terminationGracePeriodSeconds: 0
+    {{- if .Values.affinity }}
+      affinity:
+{{ toYaml .Values.affinity | indent 8 }}
+      {{- end }}
+    {{- if .Values.tolerations }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}
+      {{- end }}
+    {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      {{- end }}
+{{ include "imagePullSecrets" . | indent 6 }}
+      dnsPolicy: "None"
+      dnsConfig:
+        nameservers:
+          - 127.0.0.1
+          - 10.96.0.10
+        # searches:
+        #   - ns1.svc.cluster.local
+        #   - my.dns.search.suffix
+        # options:
+        #   - name: ndots
+        #     value: "2"
+        #   - name: edns0
+      hostAliases:
+      - ip: "127.0.0.1"
+        hostnames:
+        - boulder-mysql
+        - bar.local
+        - sa2.boulder
+        - ca2.boulder
+        - ra2.boulder
+        - va2.boulder
+        - publisher2.boulder
+        - sa1.boulder
+        - ca1.boulder
+        - ra1.boulder
+        - va1.boulder
+        - publisher1.boulder
+        - ocsp-updater.boulder
+        - admin-revoker.boulder
+        - boulder-hsm
+      initContainers:
+        # This container clones the desired git repo to the EmptyDir volume.
+        - name: git-clone
+          image: alpine/git # Any image with git will do
+          args:
+            - clone
+            - --single-branch
+            - --
+            - https://github.com/groundnuty/boulder # Your repo
+            - /repo # Put it in the volume
+          securityContext:
+            runAsUser: 1 # Any non-root user will do. Match to the workload.
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: boulder
+              mountPath: /repo
+      containers:
+      - name: {{ .Chart.Name }}
+        image: {{ .Values.image }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
+        env:
+          - name: FAKE_DNS
+            value: "127.0.0.1"
+          - name: PKCS11_PROXY_SOCKET
+            value: "tcp://localhost:5657"
+          - name: BOULDER_CONFIG_DIR
+            value: "test/config"
+        command:
+         - "sh"
+         - "-c"
+         - >
+           cd /go/src/github.com/letsencrypt/boulder ; test/entrypoint.sh ;
+           sleep 460000 ;
+        ports:
+          - containerPort: 4000 # ACME
+          - containerPort: 4001 # ACMEv2
+          - containerPort: 4002 # OCSP
+          - containerPort: 4003 # OCSP
+          - containerPort: 4430 # ACME via HTTPS
+          - containerPort: 4431 # ACMEv2 via HTTPS
+          - containerPort: 8055 # dns-test-srv updates
+        volumeMounts:
+          - name: boulder
+            mountPath: /go/src/github.com/letsencrypt/boulder
+      - name: bhsm
+        image: {{ .Values.image }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
+        env:
+          - name: PKCS11_DAEMON_SOCKET
+            value: "tcp://0.0.0.0:5657"
+        command:
+         - "sh"
+         - "-c"
+         - >
+           /usr/local/bin/pkcs11-daemon /usr/lib/softhsm/libsofthsm2.so ;
+        ports:
+          - containerPort: 5657
+          
+      - name: bmysql
+        image: mariadb:10.3
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
+        env:
+          - name: MYSQL_ALLOW_EMPTY_PASSWORD
+            value: "yes"
+        # command:
+        #  - "bash"
+        #  - "-c"
+        #  - >
+        #    mysqld --print-defaults ;
+        #    ls -la /var/lib/mysql ;
+        #    mysqld --bind-address=0.0.0.0 --user=mysql --datadir=/var/lib/mysql;
+        securityContext:
+          runAsUser: 999
+          fsGroup: 999
+      # - name: netaccess
+      #   image: {{ .Values.image }}
+      #   imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
+      #   env:
+      #     - name: PKCS11_PROXY_SOCKET
+      #       value: "tcp://localhost:5657"
+      #   command:
+      #    - "sh"
+      #    - "-c"
+      #    - >
+      #      sleep 46000 ;
+      #      cd /go/src/github.com/letsencrypt/boulder ;
+      #      test/entrypoint-netaccess.sh ;
+      #   volumeMounts:
+      #     - name: boulder
+      #       mountPath: /go/src/github.com/letsencrypt/boulder
+      volumes:
+      - name: boulder
+        emptyDir: {}

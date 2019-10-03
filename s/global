@@ -1,0 +1,10 @@
+environment:
+  experimentEnvironment: null
+  jobEnvironment:
+    oneclient:
+      accessToken: MDAxNWxvY2F00aW9uIG9uZXpvbmUKMDAzMGlkZW500aWZpZXIgYmE3ZTZiZWRkMzRjMzBmZjg2NTkzZDFiNTNlYTNjM2YKMDAxYWNpZCB00aW1lIDwgMTU2ODcyNDQxMQowMDJmc2lnbmF00dXJlIHei3zxEaV629rLgHZWHtEPQ3DpDdLLdkAyEqDNVPHqOCg
+      image: docker.onedata.org/oneclient:ID-546a2efcbf
+      provider_host: release18020-rc11-oneprovider-krakow.release18020-rc11.svc.dev.onedata.uk.to
+  suiteEnvironment:
+    grafanaSnapshots:
+      grafanaAPIKey: eyJrIjoiQXdyNUpsWDV1VHhpN01uZjdjNWJvbWp6ZjFTNWF6aFIiLCJuIjoiZWRpdG9yIiwiaWQiOjF9

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kwf
+spec:
+  containers:
+  - image: onedata/k8s-wait-for:v1.2
+    name: kwf
+    command:
+      - sleep
+      - "360000"
+    imagePullPolicy: IfNotPresent
+  restartPolicy: Always

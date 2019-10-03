@@ -1,0 +1,236 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ template "fullname" . }}"
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    component: "{{ .Chart.Name }}"
+    part-of: {{ template "groupingLabel" . }}
+  annotations:
+    version: "{{ .Chart.Version }}"
+spec:
+  parallelism: 1
+  backoffLimit: 1
+  template:
+    metadata:
+      name: "{{ template "releaseName" . }}"
+      labels:
+        app: {{ template "fullname" . }}
+        chart: "{{ .Chart.Name }}"
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
+        component: "{{ .Chart.Name }}"
+        part-of: {{ template "groupingLabel" . }}
+      annotations:
+        version: "{{ .Chart.Version }}"
+    spec:
+      restartPolicy: Never
+      {{- if .Values.affinity }}
+      affinity:
+{{ toYaml .Values.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      {{- end }}
+      containers:
+    {{- range $suite := .Values.suites }}
+      - name: {{ $suite.name }}
+        image: {{ $.Values.suiteController.image }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" $ "context" $.Values.suiteController }}
+        env:
+          - name: POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+        command:
+          - "/usr/bin/env"
+          - "bash"
+          - "-c"
+          - >
+            kubectl -n kube-system label cm -lNAME={{ $.Release.Name }} app.kubernetes.io/part-of="{{ template "groupingLabel" $ }}" --overwrite ;
+          {{- if $.Values.suiteController.additionalChartRepository }}
+            {{/* Add onedata repo and list available charts  */ -}}
+            helm repo add {{ $.Values.suiteController.additionalChartRepository.name }} {{ $.Values.suiteController.additionalChartRepository.url }} ;
+          {{- end }}
+            helm search stress ;
+            {{/* Clean previous suite */ -}}
+            chart="{{ $.Values.suiteController.chart }}" ; chartName=${chart##*/} ;
+            helm delete --purge "{{ $.Release.Name }}-{{ $suite.name }}" ;
+            {{/* Deploy new a suite and print it's final configuration */ -}}
+            helm install --dry-run --debug -f /global-environment.config -f /suite-environment.config -f /suite.config --set groupingLabel="{{ template "groupingLabel" $ }}",results.resultsDirectoryRoot="{{ $.Values.results.resultsDirectoryRoot }}/suites" --namespace ${POD_NAMESPACE} --name "{{ $.Release.Name }}-{{ $suite.name }}" --debug --version "{{ $.Values.suiteController.chartVersion }}" "$chart"  ;
+            helm install --debug -f /global-environment.config -f /suite-environment.config -f /suite.config --set groupingLabel="{{ template "groupingLabel" $ }}",results.resultsDirectoryRoot="{{ $.Values.results.resultsDirectoryRoot }}/suites" --namespace ${POD_NAMESPACE} --name "{{ $.Release.Name }}-{{ $suite.name }}" --debug --version "{{ $.Values.suiteController.chartVersion }}" "$chart" ;
+            {{/* Label the suite with the name of this experiment */ -}}
+            kubectl -n kube-system label cm -lNAME={{ $.Release.Name }}-{{ $suite.name }} app.kubernetes.io/part-of="{{ template "groupingLabel" $ }}" --overwrite ;
+            {{/* Wait for a suite to finish  */ -}}
+            until kubectl describe job -lapp={{ $.Release.Name }}-{{ $suite.name }}-${chartName} | grep "Pods Statuses:[[:blank:]]\+0 Running / [[:digit:]]\+ Succeeded / 0 Failed" ; do sleep 1 ; done ;
+            {{/* Save the suite completion time in a format expected by grafana dashboard url */ -}}
+            date +"%Y%m%dT%H%M%S" > /results/{{ $suite.name }}-completion-time.log ;
+            {{/* Save suite results logs and signalize that all the logs were successfully dumped */ -}}
+            kubectl logs -ljob-name={{ $.Release.Name }}-{{ $suite.name }}-${chartName}-results -c results >> /results/{{ $suite.name }}.log ;
+            echo 1 > /monitor/{{ $suite.name }}-logs-written ;
+            {{/* For debug purposes print the results */ -}}
+            echo "Results:" ;
+            cat /results/{{ $suite.name }}.log ;
+            sleep 40000;
+        volumeMounts:
+          - name: persistence
+            mountPath: /persistence/
+          - name: results
+            mountPath: /results/
+          - name: config-map
+            mountPath: /suite.config
+            subPath: {{ $suite.name }}
+          - name: config-map
+            mountPath: /suite-environment.config
+            subPath: {{ $suite.name }}-suite-environment
+          - name: config-map
+            mountPath: /global-environment.config
+            subPath: {{ $suite.name }}-global-environment
+          - name: config-map
+            mountPath: /suite-custom.config
+            subPath: {{ $suite.name }}-custom
+          - name: monitor
+            mountPath: /monitor/
+          - name: snapshots
+            mountPath: /snapshots
+    {{- end }}
+      - name: pandoc
+        image: {{ .Values.pandoc.image }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" $.Values.pandoc }}
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: resultsPath
+            value: "/results.log"
+          - name: clone_destination_dir
+            value: "/git_repo"
+        command:
+          - "/usr/bin/env"
+          - "bash"
+          - "-c"
+          - >
+            while [ ! -f "/monitor/experiment_report_ready" ] ; do echo "Waiting for experiment report." ; sleep 2 ; done ;
+            /usr/local/bin/pandoc-pp.sh $clone_destination_dir/{{ .Values.results.resultsDirectoryRoot }}/results_all.md ;
+            echo 1 > /monitor/pandoc_report_ready ;
+        volumeMounts:
+          - name: git-repo
+            mountPath: /git_repo
+          - name: persistence
+            mountPath: /persistence
+          - name: monitor
+            mountPath: /monitor
+      - name: results
+        image: {{ .Values.results.image }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" $.Values.results }}
+        env:
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: resultsPath
+            value: "/results.log"
+          - name: clone_destination_dir
+            value: "/git_repo"
+        command:
+          - "/usr/bin/env"
+          - "sh"
+          - "-c"
+          - >
+            {{/* TODO: create new container with dependencies */ -}}
+            apk update; apk add jq curl curl-dev dateutils;
+          {{- if .Values.results.git.enabled }}
+            {{/* Clone using private key */ -}}
+            echo "Cloning results repo {{ .Values.results.git.repository }}" ;
+            export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa" ;
+            git clone "{{ .Values.results.git.repository }}" "$clone_destination_dir";
+            (echo "## {{ .Values.name }} (${POD_NAME})" ; echo "" ;) >> $resultsPath ;
+            (echo "> {{ .Values.description }}" ; echo "" ;) >> $resultsPath ;
+          {{- end }}
+          {{- if .Values.results.git.enabled }}
+            mkdir -p $clone_destination_dir/{{ .Values.results.resultsDirectoryRoot }} ;
+            cp $resultsPath $clone_destination_dir/{{ .Values.results.resultsDirectoryRoot }}/$(date +%s)-${POD_NAME}.md ;
+            cd $clone_destination_dir ;
+            git add -A ;
+            echo "Committing experiment summary." ;
+            git -c user.name="{{ .Values.results.git.userName }}" -c user.email="{{ .Values.results.git.userEmail }}" commit -a {{ if .Values.results.git.commitAuthor }}--author="{{ .Values.results.git.author }}"{{ end }} -m "{{ .Values.results.git.commitMessage }}" || echo "There was noting to commit." ;
+            git push ;
+          {{- end }}
+          {{- range $suite := .Values.suites }}
+            echo "Processing job: {{ $suite.name }}" ;
+            while [ ! -f "/monitor/{{ $suite.name }}-logs-written" ] ; do echo "Waiting for {{ $suite.name }} to finish." ; sleep 2 ; done ;
+            echo "Suite {{ $suite.name }} finished." ;
+          {{- end }}
+          {{- if .Values.results.git.enabled }}
+            git pull ;
+            cat $clone_destination_dir/{{ .Values.results.resultsDirectoryRoot }}/*.md $clone_destination_dir/{{ .Values.results.resultsDirectoryRoot }}/suites/*.md > $clone_destination_dir/{{ .Values.results.resultsDirectoryRoot }}/results_all.md ;
+            echo 1 > /monitor/experiment_report_ready ;
+            while [ ! -f "/monitor/pandoc_report_ready" ] ; do echo "Waiting for pandoc report." ; sleep 2 ; done ;
+            git pull ;
+            git add -A ;
+            git -c user.name="{{ .Values.results.git.userName }}" -c user.email="{{ .Values.results.git.userEmail }}" commit -a {{ if .Values.results.git.commitAuthor }}--author="{{ .Values.results.git.author }}"{{ end }} -m "{{ .Values.results.git.commitMessage }} - final report" || echo "There was noting to commit." ;
+            git push ;
+          {{- end }}
+            sleep 40000;
+        volumeMounts:
+          - name: git-repo
+            mountPath: /git_repo
+          - name: persistence
+            mountPath: /persistence
+          - name: results
+            mountPath: /results
+          - name: monitor
+            mountPath: /monitor
+          - name: snapshots
+            mountPath: /snapshots
+        {{- if .Values.results.git.enabled }}
+          - name: ssh-secret
+            mountPath: /root/.ssh/id_rsa
+            subPath: id_rsa
+        {{- end }}
+      volumes:
+      {{- if .Values.results.git.enabled }}
+        {{/* git ssh private key  */ -}}
+        - name: ssh-secret
+          secret:
+            secretName: {{ template "fullname" . }}
+            items:
+            - key: sshPrivateKey
+              path: id_rsa
+              mode: 0600
+      {{- end }}
+        - name: config-map
+          configMap:
+            name: {{ template "fullname" . }}
+            defaultMode: 0600
+        - name: persistence
+        {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.claimName }}
+        {{ else }}
+          emptyDir: {}
+        {{ end }}
+        {{/* Partial results from all the containers */ -}}
+        - name: results
+          emptyDir: {}
+        {{/* Inter-container synchronization  */ -}}
+        - name: monitor
+          emptyDir: {}
+        {{/* Inter-container synchronization  */ -}}
+        - name: snapshots
+          emptyDir: {}
+        - name: git-repo
+          emptyDir: {}

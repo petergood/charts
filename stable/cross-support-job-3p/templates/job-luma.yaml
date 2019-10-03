@@ -82,15 +82,6 @@ spec:
             value: "supplied_at_runtime"
           - name: TERM # otherwise zsh and bash autocompletion used in this container tends to go crazy
             value: "xterm-256color"
-            # add users
-            # add users credentials:
-            #  per provider (not luma)
-            #  per storage
-
-            # add groups
-            #   per user
-            #   per provider (not luma)
-            #   per space
         command:
           - "bash"
           - "-c"
@@ -118,7 +109,7 @@ spec:
             idp=keycloak-{{ template "keycloak_idpName_template" $ }};
             {{- end -}}{{- end -}}
             userId=$(curl --silent -k -u {{ $user.name }}:{{ $user.password }} http://{{ template "token-dispenser_name" $ }}/api/v1.0/onezone/uid/$idp) ;
-            lumaUserId="$(curl --silent -k -u {{ $user.name }}:{{ $user.password }} http://{{ template "token-dispenser_name" $ }}/api/v1.0/user/info/$idp | sed -e 's/{"userId":/{"id":/g' | luma-rest-cli -v addUserDetails - 2>&1 | grep 'Location:' | sed -ne 's#^.*/\(.*\)$#\1#p' | tr -d $'\r' )" ;
+            lumaUserId="$(curl --silent -k -u {{ $user.name }}:{{ $user.password }} http://{{ template "token-dispenser_name" $ }}/api/v1.0/user/info/$idp | sed -e 's/"userId":/"id":/g' | luma-rest-cli -v addUserDetails - 2>&1 | grep 'Location:' | sed -ne 's#^.*/\(.*\)$#\1#p' | tr -d $'\r' )" ;
             printf " Success idp=$idp user {{ $user.name }}($userId), created as luma user {{ $user.name }}($lumaUserId)." ;
             echo "" ;
             {{- range .storages }}

@@ -1,0 +1,311 @@
+# Default values for stress-experiment
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Empty dictionary for avoid errors when no globals are defined
+global: {}
+
+# Experiment name as displayed in the reports
+name: "Example Suite Title"
+ 
+# Experiment description as displayed in the reports
+description: "Example Suite Title"
+
+# List of stress-suites that will be submitted using helm 
+# with customizations specified bellow
+# Suite must have unique name.
+suites:
+    # Suite name (just be unique!)
+  - name: f-s-i
+    # Suite customization config,that overrides the default suite parameters
+    config: *first-sysbench-ioping
+
+# For each suite in the list above a container is created - a suiteController
+# Each suiteController submits a site to helm and collects results
+suiteController:
+  image: onedata/landscaper:v2.8.0-2
+  imagePullPolicy: IfNotPresent
+  resultsDirectoryRoot: "$POD_NAME"
+
+  # Repository, version, name of (or path to) a chart to use for job submissions with helm
+  additionalChartRepository:
+    name: onedata
+    url:  https://onedata.github.io/charts
+  chart: "onedata/stress-suite"
+  chartVersion: "0.1.4"
+
+pandoc:
+  image: docker.onedata.org/docker-pandoc:ID-63afa6b1de
+  imagePullPolicy: IfNotPresent
+
+# Results gatherer container which:
+#   aggregates results of all suiteController
+#   generates a markdown report of all jobs
+#   submits the report to git repository
+results:
+  image: alpine/git
+  imagePullPolicy: IfNotPresent
+  resultsDirectoryRoot: "orzech-dev/$POD_NAME"
+
+  # git repository for submitting reports
+  git:
+    enabled: true
+    # username of the account that performs the operation
+    userName: "Bamboo role account"
+    # email of the account that performs the operation
+    userEmail: "bamboo@plg-web12.grid.cyf-kr.edu.pl"
+    # target repository. needs to be in ssh format
+    repository: git@github.com:groundnuty/reports.git
+    # use env. variables in the commit message to customize it
+    commitMessage: "results of ${MY_POD_NAME}"
+    # author of the commit 
+    commitAuthor: "groundnuty <michal.orzechowski@cyfronet.pl>"
+    
+    sshPrivateKey: |-
+      -----BEGIN RSA PRIVATE KEY-----
+      MIIEowIBAAKCAQEAtqESxQtMA0BplZoa8tC4trLzkdgB94HDO9Q+5H6M4+G1O9Fc
+      vnkhR7tXPfoz5NQL2Irrll2CaBXOONdS1+NiGrbxj8hqPrxSIGf40hX3KOOX1yas
+      NFZEI+MGvgpC2jDcGsnZEkwG1ZJXzk3FgWwYiGjRe0dRegacFfVlU4TM3sFBXZiC
+      HdQz9UTg/4jEhqXkxeY+tcmqeMGpcOghwSU1uzPMT43106/fiKGf4SqLLXuVBL/Z
+      qFSFsYDagyS3cJqavPrDwu0duT5K7RFGh5D4sxhYy2VQERQufcyDnCAaJrff8fc5
+      FfWxUJjvqZEnrIPJSm389f/gVoAnvJ6fjPavWQIDAQABAoIBAAVs9ZzLACAcmsZq
+      BKDwGHy9BkVv8GcFAOLXJGMva0od23+Cccnq2VVDOI1L0Jzcu9lcDzGxZ31mIHFJ
+      3FkzlSeMBdMqthVVDO+PhzHemzAoyssGiBkp8u5KAVpF/cRzrSZSltNXVOClb1xe
+      rR5yMqxiyM5ryPziE2MHnlID4P5BHK3jTjkuO7N1ZiiYCwk5Z/cFdUPlOhqsrwT0
+      sfJOx1nyfb1B5zCGdWaAJuFNQcbIGl+0/yP2BkVHDs3lOPwWp6C06hOosee156E8
+      3ji342S8p9HaW37moMFGLoTcIWIFcssAp/9RDTSLa9cElcc5mJgsY3qqquoHuQIa
+      8naR2U0CgYEA41+G8wGhY69wA036p2ab9YHYtSgLvMnFTP32SHlPJwJKr7jmzl/v
+      bt4ITuSzNKaEu58bVhahF7T4uIUTdua6G7hdZcg+IpQE0wk/DEuznn8AE2+D423w
+      fJZGzz6f97JUoaorUR7ETgFD1jBn252fUnA36TY/7rmMweI2AjAelOsCgYEAzZ9m
+      4LKwIjphFCEG/xyP5G2L2yiyfUcCcxyY2MEZ0ReZmti0gbm/ZePae4cIWtxx5em8
+      VSkmL1w1jMONpuyJn1DN6c2dSbg/vByOlYnSB648wBkx2NCd455LOKIMyni/s4FT
+      3GYHHOMrf/kr0nXLozFjONIBvbdtR18VDCLRi8sCgYEA4sQZQS81GMiV/JW/EUnC
+      7b4MtdA0tJq/jiQThwCFsrAUcOEGQHlpwLbsrlJlcHNLGhx7FQcIry4siUsfuIww
+      vQjJDYQChFX/4cHtAYRWphKfrsKfVSoGmRr/kB4zSMSwp3OiNAttWSbl0y7/xgaU
+      KZIGES+r35lrCstjdhcryPUCgYAzu/xdYnfwVLHiJ6EkBKKrfWhnvqiR3pDeN365
+      YnRFaGOsUwOvc/WVBCwPUl0mxzoc95776juCRPfwL69vJSpHHESCo8oEJ0hZ4vF4
+      7FEcv5jnWC9zdqGTCFuypwsC0jihSFO6Ky109i8WprGA5URUDfQB8syfWAw1ndWk
+      1QnV2wKBgBKH1HfYUA3+pG39XHbHSUyoy1B+SxFphjtfSqRxy1gYxrQav3WzSGsM
+      vpfh4vyRl6ZFWnQEjUk1TOhC5nw+d7EhfDDFH9tXeVISaAMom+qhgYn6F9O363O5
+      4BHmXNvgqkPPzcEuvNXWsCdOwpPfyX+pkQBNEwnHvkojTlVapLYc
+      -----END RSA PRIVATE KEY-----
+
+# Deploy an NFS server to back the persistent volume.
+# For the sake of gathering detailed partial logs in some artefact repository
+# an NFS server is automatically deployed - if such server already exists
+# nothing will happen.
+deployNFS:
+  enabled: true
+  releaseNameOverride: obench-nfs
+  image: onedata/landscaper:v2.8.0-2
+  imagePullPolicy: IfNotPresent
+
+  additionalChartRepository:
+    name: onedata
+    url:  https://onedata.github.io/charts
+  chart: onedata/stress-nfs
+  chartVersion: 0.1.0
+
+## Persist data to a persistent volume
+persistence:
+  enabled: true
+  # The claim name can be predicted here based on
+  # the settings of deployNFS section bellow
+  claimName: obench-nfs-stress-nfs-pvc
+
+# Everything defined in the environment gets injected
+# into all the charts: experiment,suite, job on the root level
+environment:
+
+  # This gets injected into job chart on it's root level
+  # overriding variables from 'environment' section above
+  jobEnvironment:
+    oneclient:
+      image: docker.onedata.org/oneclient:ID-546a2efcbf
+      provider_host: release18020-rc11-oneprovider-krakow.release18020-rc11.svc.dev.onedata.uk.to
+      graphite_prefix: exper.${experiment}.date.${date}.args.${args}.release.${release}.dc.${dc}.cluster.${cluster}.host.${MY_NODE_NAME}.pod.${MY_POD_NAMESPACE}-${MY_POD_NAME}.container.oneclient.uid.0
+      accessToken: "MDAxNWxvY2F00aW9uIG9uZXpvbmUKMDAzMGlkZW500aWZpZXIgMDA1OTdhY2VjYTI00ZmFmOGE5NTdhNzc4ODRkNGJlMmIKMDAxYWNpZCB00aW1lIDwgMTU2OTA3MjUxOQowMDJmc2lnbmF00dXJlILfDfze00Ofmx00Vu8cE3nph67ot79rMkRJoEjUs00WCs02bCg"
+    
+  # This gets injected into suite chart on it's root level
+  # overriding variables from 'environment' section above
+  suiteEnvironment:
+    grafanaSnapshots:
+      delayTime: 10 # in seconds
+      grafanaAPIKey: eyJrIjoiUkNKSnZxUTRSa2hhNWFod1h5NmlLNENMTDVWTEhTa2kiLCJuIjoiYSIsImlkIjoxfQ==
+
+  # This gets injected into experiment chart on it's root level
+  # overriding variables from 'environment' section above
+  experimentEnvironment:
+
+
+first-sysbench-ioping: &first-sysbench-ioping
+  jobs:
+    - name: sysbench
+      config: *sysbench_config
+      dashboards:
+        - name: "Sysbench Dasbaord"
+          dashboard: *oneclient_dashboard
+          panels:
+            - name: "My sequecne writes"
+              id: 12
+            - name: "My random writes"
+              id: 13
+    - name: ioping
+      config: *ioping_config
+      dashboards:
+        - name: "Ioping Dasbaord"
+          dashboard: *oneclient_dashboard
+          panels:
+            - name: "My sequecne writes"
+              id: 12
+            - name: "My random writes"
+              id: 13
+
+  jobController:
+    jobChartVersion: "0.1.4"
+
+  results:
+    git:
+      enabled: true
+      userName: "Bamboo role account"
+      userEmail: "bamboo@plg-web12.grid.cyf-kr.edu.pl"
+      repository: git@github.com:groundnuty/reports.git
+      commitMessage: "results of ${MY_POD_NAME}"
+      commitAuthor: "groundnuty <michal.orzechowski@cyfronet.pl>"
+      
+      sshPrivateKey: |-
+        -----BEGIN RSA PRIVATE KEY-----
+        MIIEowIBAAKCAQEAtqESxQtMA0BplZoa8tC4trLzkdgB94HDO9Q+5H6M4+G1O9Fc
+        vnkhR7tXPfoz5NQL2Irrll2CaBXOONdS1+NiGrbxj8hqPrxSIGf40hX3KOOX1yas
+        NFZEI+MGvgpC2jDcGsnZEkwG1ZJXzk3FgWwYiGjRe0dRegacFfVlU4TM3sFBXZiC
+        HdQz9UTg/4jEhqXkxeY+tcmqeMGpcOghwSU1uzPMT43106/fiKGf4SqLLXuVBL/Z
+        qFSFsYDagyS3cJqavPrDwu0duT5K7RFGh5D4sxhYy2VQERQufcyDnCAaJrff8fc5
+        FfWxUJjvqZEnrIPJSm389f/gVoAnvJ6fjPavWQIDAQABAoIBAAVs9ZzLACAcmsZq
+        BKDwGHy9BkVv8GcFAOLXJGMva0od23+Cccnq2VVDOI1L0Jzcu9lcDzGxZ31mIHFJ
+        3FkzlSeMBdMqthVVDO+PhzHemzAoyssGiBkp8u5KAVpF/cRzrSZSltNXVOClb1xe
+        rR5yMqxiyM5ryPziE2MHnlID4P5BHK3jTjkuO7N1ZiiYCwk5Z/cFdUPlOhqsrwT0
+        sfJOx1nyfb1B5zCGdWaAJuFNQcbIGl+0/yP2BkVHDs3lOPwWp6C06hOosee156E8
+        3ji342S8p9HaW37moMFGLoTcIWIFcssAp/9RDTSLa9cElcc5mJgsY3qqquoHuQIa
+        8naR2U0CgYEA41+G8wGhY69wA036p2ab9YHYtSgLvMnFTP32SHlPJwJKr7jmzl/v
+        bt4ITuSzNKaEu58bVhahF7T4uIUTdua6G7hdZcg+IpQE0wk/DEuznn8AE2+D423w
+        fJZGzz6f97JUoaorUR7ETgFD1jBn252fUnA36TY/7rmMweI2AjAelOsCgYEAzZ9m
+        4LKwIjphFCEG/xyP5G2L2yiyfUcCcxyY2MEZ0ReZmti0gbm/ZePae4cIWtxx5em8
+        VSkmL1w1jMONpuyJn1DN6c2dSbg/vByOlYnSB648wBkx2NCd455LOKIMyni/s4FT
+        3GYHHOMrf/kr0nXLozFjONIBvbdtR18VDCLRi8sCgYEA4sQZQS81GMiV/JW/EUnC
+        7b4MtdA0tJq/jiQThwCFsrAUcOEGQHlpwLbsrlJlcHNLGhx7FQcIry4siUsfuIww
+        vQjJDYQChFX/4cHtAYRWphKfrsKfVSoGmRr/kB4zSMSwp3OiNAttWSbl0y7/xgaU
+        KZIGES+r35lrCstjdhcryPUCgYAzu/xdYnfwVLHiJ6EkBKKrfWhnvqiR3pDeN365
+        YnRFaGOsUwOvc/WVBCwPUl0mxzoc95776juCRPfwL69vJSpHHESCo8oEJ0hZ4vF4
+        7FEcv5jnWC9zdqGTCFuypwsC0jihSFO6Ky109i8WprGA5URUDfQB8syfWAw1ndWk
+        1QnV2wKBgBKH1HfYUA3+pG39XHbHSUyoy1B+SxFphjtfSqRxy1gYxrQav3WzSGsM
+        vpfh4vyRl6ZFWnQEjUk1TOhC5nw+d7EhfDDFH9tXeVISaAMom+qhgYn6F9O363O5
+        4BHmXNvgqkPPzcEuvNXWsCdOwpPfyX+pkQBNEwnHvkojTlVapLYc
+        -----END RSA PRIVATE KEY-----
+
+  grafanaSnapshots:
+    enabled: true
+    grafanaGUIUrl: grafana.mon.svc.dev.onedata.uk.to
+    username: admin
+    password: admin
+    grafanaDashboardFolder: ObenchDashboards
+
+  environment:
+    grafanaPrefix:
+      experiment: orzech-test
+      release: "release18020-rc11"
+      dc: cyf
+      cluster: k8s
+
+    oneclient:
+      graphite_prefix: exper.${experiment}.date.${date}.args.${args}.release.${release}.dc.${dc}.cluster.${cluster}.host.${MY_NODE_NAME}.pod.${MY_POD_NAMESPACE}-${MY_POD_NAME}
+      args: --force-fullblock-read --monitoring-type graphite -v 2 --monitoring-level-full --monitoring-period 10 --graphite-url "$GRAFANA_URL" --graphite-namespace-prefix "$graphite_prefix" --force-direct-io ${MOUNT_POINT} 
+      grafanaUrl: go-carbon.mon.svc.dev.onedata.uk.to
+      mountPoint: /mnt/oneclient
+      insecure: "true"
+    getClientToken:
+      enabled: false
+    deployNFS:
+      enabled: false
+    persistence:
+      enabled: true
+      claimName: obench-nfs-stress-nfs-pvc
+
+  deployNFS:
+    enabled: false
+
+  persistence:
+    enabled: true
+    claimName: obench-nfs-stress-nfs-pvc
+
+  ## Sysbench Job Configuration
+  sysbench_config: &sysbench_config
+    name: sysbench
+    job_replicas: 1
+    compute:
+      image: severalnines/sysbench:latest
+      env:
+        prepare_args: --test=fileio --file-num=1 --file-block-size=1M --file-total-size=100M --file-test-mode=seqrd --file-io-mode=sync prepare
+        compute_args: --test=fileio --file-num=1 --file-block-size=1M --file-total-size=100M --file-test-mode=seqrd --file-io-mode=sync run
+        clean_args: ""
+      spaceName: "krk-iu"
+      dataMountPoint: /mnt/oneclient
+      shell: sh
+      command: |-
+        prepare() {
+          echo "Changing working directory to: $work_dir" ;
+          cd "$work_dir" ;
+          pwd ;
+          printf "$(date) " ; echo "Starting sysbench prep." ;
+          eval sysbench $env_prepare_args ;
+          printf "$(date) " ; echo "sysbench prep end" ;
+        } ;
+        compute() {
+          printf "$(date) " ; echo "Starting computation sysbench run." ;
+          bash -c 'sysbench $0 | tee >(sed -ne "/File operations/,$ p" > /results/compute_results)' "$env_compute_args" ;
+          printf "$(date) " ; echo "sysbench compute end" ;
+        } ;
+        clean() {
+          printf "$(date) " ; echo "Starting cleaning." ;
+          echo "No cleaning needed." ;
+          printf "$(date) " ; echo "clean end" ;
+        } ;
+
+  ## Ioping Job Configuration
+  ioping_config: &ioping_config
+    name: ioping
+    job_replicas: 1
+    compute:
+      image: karteek/alpine-ioping:latest
+      env:
+        prepare_args: -s 10G ioping.$((jobId%jobReplicas))
+        compute_args: -c 5 -i 0 -S 10G ioping.$((jobId%jobReplicas))
+        clean_args: ""
+      spaceName: "krk-iu"
+      dataMountPoint: /mnt/oneclient
+      shell: sh
+      command: |-
+        apk update; apk add bash;
+        prepare() {
+          echo "Changing working directo to: $work_dir" ;
+          cd "$work_dir" ;
+          pwd ;
+          printf "$(date) " ; echo "Starting ioping prep with truncate." ;
+          eval truncate $env_prepare_args ;
+          printf "$(date) " ; echo "ioping prep end" ;
+        } ;
+        compute() {
+          printf "$(date)" ; echo "Starting computation sysbench run." ;
+          bash -c 'eval ioping $env_compute_args | tee >(sed -ne "/ioping statistics/,$ p" > /results/compute_results)' ;
+          printf "$(date) " ; echo "sysbench compute end" ;
+        } ;
+        clean() {
+          printf "$(date)" ; echo "Starting cleaning." ;
+          echo "No cleaning needed." ;
+          printf "$(date) " ; echo "clean end" ;
+        } ;
+
+  ## Grafana Dashboards
+  oneclient_dashboard: &oneclient_dashboard |- 
+    {
+        "dashboard": {
+        }

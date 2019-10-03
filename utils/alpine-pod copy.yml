@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: anaconda3
+spec:
+  containers:
+  - image: continuumio/anaconda3:2019.07
+    name: anaconda3
+    command:
+      - sleep
+      - "36000000"
+    imagePullPolicy: IfNotPresent
+    securityContext:
+      privileged: true
+  restartPolicy: Always

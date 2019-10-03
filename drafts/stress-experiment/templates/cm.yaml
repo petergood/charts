@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "fullname" . }}
+    chart: {{ .Chart.Name }}
+    release: {{ template "releaseName" .  }}
+    heritage: {{ .Release.Service }}
+    component: {{ .Chart.Name }}
+    part-of: {{ template "groupingLabel" . }}
+  annotations:
+    version: "{{ .Chart.Version }}"
+data:
+{{- range $suite := .Values.suites }}
+  {{ $suite.name }}: |-
+{{ toYaml $suite.config | indent 4 }}
+  {{ $suite.name }}-global-environment: |-
+    environment:
+{{ toYaml $.Values.environment | indent 6 }}
+  {{ $suite.name }}-suite-environment: |-
+{{ toYaml $.Values.environment.suiteEnvironment | indent 4 }}
+{{- end }}

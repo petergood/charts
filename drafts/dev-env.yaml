@@ -1,0 +1,50 @@
+# Default values for onedata-stress
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# How many concurrent jobs should be created
+job_replicas: 5
+
+# getClientToken container parameters
+getClientToken:
+  # False if you want to disbale token prereching
+  enabled: true
+  
+  image: onedata/rest-cli:18.02.0-rc7
+  imagePullPolicy: IfNotPresent
+
+  # Onezone host
+  onezone_host: release18020-rc11-onezone.release18020-rc11.svc.dev.onedata.uk.to
+  # Onezone REST api credentials
+  basicAuth: joe:password
+
+grafanaPrefix:
+  experiment: orzech-test
+  release: "release18020-rc11"
+  dc: cyf
+  cluster: k8s
+
+# Oneclient container parameters
+oneclient:
+  image: docker.onedata.org/oneclient:ID-37f0316983
+
+  # Graphite prefix template that gets values from container env
+  graphite_prefix: exper.${experiment}.date.${date}.args.${args}.release.${release}.dc.${dc}.cluster.${cluster}.host.${MY_NODE_NAME}.container.${MY_POD_NAMESPACE}-${MY_POD_NAME}.uid.0
+  
+  # Oneclient arguments
+  args: -v 1 --force-fullblock-read --rndrd-prefetch-cluster-window=2007040 --rndrd-prefetch-cluster-block-threshold=1000000  --cluster-prefetch-threshold-random --provider-timeout=400 --monitoring-type graphite --monitoring-level-full --monitoring-period 10 --graphite-url "$GRAFANA_URL" --graphite-namespace-prefix "$graphite_prefix" --force-direct-io ${MOUNT_POINT}
+
+  # Grafana url used by oneclient to report data
+  grafanaUrl: go-carbon.mon.svc.dev.onedata.uk.to
+
+  # Onedata access token
+  accessToken: "MDAxNWxvY2F00aW9uIG9uZXpvbmUKMDAzMGlkZW500aWZpZXIgYWRhMmJlNzUxNDUxMjJlZmRkMzU2NjgwZGExNzJkMTgKMDAxYWNpZCB00aW1lIDwgMTU1MDYwOTI2MQowMDJmc2lnbmF00dXJlIEH49m3Oj4ZIRaPTRRSCI01QcO575Lqt8MswQhL1CVmdPCg"
+
+  # Oneclient will connect to this provider.
+  provider_host: release18020-rc11-oneprovider-paris.release18020-rc11.svc.dev.onedata.uk.to
+
+  # Where spaces should be mounted
+  mountPoint: /mnt/oneclient
+
+  # Should oneclient-oneprovider connection allow for insecured https
+  insecure: "true"

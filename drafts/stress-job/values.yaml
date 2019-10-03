@@ -1,0 +1,208 @@
+# Default values for stress job
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global: {}
+
+# How many concurrent jobs should be created
+job_replicas: 2
+
+# If the job fails how many times should it be retried
+backoffLimit: 1
+
+# wait-for-* containers parameters
+wait_for:
+  image: onedata/k8s-wait-for:v1.2
+  imagePullPolicy: IfNotPresent
+
+description: "Example job with example parameters."
+
+# getClientToken container parameters
+getClientToken:
+  # False if you want to disable token pre-fetching
+  enabled: false
+  
+  image: onedata/rest-cli:18.02.1
+  imagePullPolicy: IfNotPresent
+
+  # Onezone host
+  onezone_host: develop-onezone.develop.svc.dev.onedata.uk.to
+  # Onezone REST api credentials
+  basicAuth: admin:password
+
+# Compute container
+compute:
+  image: severalnines/sysbench:latest
+
+  env:
+    # The computation can have 3 parts: preparation, computation (execution) and cleaning.
+    # Arguments for each part can be set here.
+    prepare_args: --test=fileio --file-num=1 --file-block-size=1M --file-total-size=100M --file-test-mode=seqrd --file-io-mode=sync prepare
+    compute_args: --test=fileio --file-num=1 --file-block-size=1M --file-total-size=100M --file-test-mode=seqrd --file-io-mode=sync run
+    clean_args: ""
+
+  # Space name
+  spaceName: "krk-iu"
+
+  # Chose the folder where spaces are mounted
+  dataMountPoint: /mnt/oneclient
+
+  # As the entrypoint of this container will be frequently modified
+  # it's code is placed here.
+  # The framework of the test requires to just edit the bodies of functions: prepare, compute, clean.
+  # The example below uses sysbench to perform simple preparation and then tests.
+  shell: sh
+  command: |-
+    prepare() {
+      echo "Changing working directory to: $work_dir" ;
+      cd "$work_dir" ;
+      pwd ;
+      printf "$(date) " ; echo "Starting sysbench prep." ;
+      eval sysbench ${env_prepare_args} ;
+      printf "$(date) " ; echo "sysbench prep end" ;
+    } ;
+    compute() {
+      printf "$(date) " ; echo "Starting computation sysbench run." ;
+      bash -c 'sysbench $0 | tee >(sed -ne "/File operations/,$ p" > /results/compute_results)' "${env_compute_args}" ;
+      printf "$(date) " ; echo "sysbench compute end" ;
+    } ;
+    clean() {
+      printf "$(date) " ; echo "Starting cleaning." ;
+      echo "No cleaning needed." ;
+      printf "$(date) " ; echo "clean end" ;
+    } ;
+
+# the job synchronization container that provides barrier functionality
+# for the compute container using redis database
+syncBarrier:
+  image: bash:4
+
+   # Redis server address, default value: {{ .Release.Name }}-redis
+  redisHost: ""
+
+   # Redis server port
+  redisPort: 6379
+
+# Grafana prefix used to report data, the prefix example:
+# template:
+#   exper.${experiment}.date.${date}.args.${args}.release.${release}.dc.${dc}.cluster.${cluster}.host.${host}.k8s_pod.${k8s_pod}.comp.${computation}"
+# with data filled in:
+#   exper.orzech-test.date.2018-02-21_11:41:14.args.monitoringtype_graphite_monitoringlevelfull_monitoringperiod_10_graphiteurl_tcp:gocarbon,mon,svc,dev,onedata,uk,to_graphitenamespaceprefix__forcedirectio_mntoneclient.release.release18020-beta1.dc.cyf.cluster.k8s.host.k8s-cyfronet-1-node-4.k8s_pod.orzech-j-oneclient-jobs-nqv26
+grafanaPrefix:
+  experiment: orzech-test
+  # date: # computed by helm in the format 2018-02-21_11:41:14
+  # args computed in the pod's entry point
+  release: "release18020-beta1"
+  dc: cyf
+  cluster: k8s
+  # host from fieldPath
+  # k8s_pod from fieldPath
+  # computation: naive_bench
+
+# Oneclient container parameters
+oneclient:
+  enabled: true
+  image: onedata/oneclient:18.02.1
+
+  # Graphite prefix template that gets values from container env
+  graphite_prefix: exper.${experiment}.date.${date}.args.${args}.release.${release}.dc.${dc}.cluster.${cluster}.host.${MY_NODE_NAME}.k8s_pod.${MY_POD_NAMESPACE}-${MY_POD_NAME}
+
+  # Oneclient arguments
+  args: --force-fullblock-read --monitoring-type graphite -v 2 --monitoring-level-full --monitoring-period 10 --graphite-url "$GRAFANA_URL" --graphite-namespace-prefix "$graphite_prefix" --force-direct-io ${MOUNT_POINT} 
+
+  # Grafana url used by oneclient to report data
+  grafanaUrl: go-carbon.mon.svc.dev.onedata.uk.to
+
+  # Onedata access token
+  accessToken: "MDAxNWxvY2F00aW9uIG9uZXpvbmUKMDAzMGlkZW500aWZpZXIgY2Y5NWQ1OWZmZmI00NmZlNjA4OGRjZmFmNDcxMTE2NDYKMDAxYWNpZCB00aW1lIDwgMTU2ODM4MzE2NQowMDJmc2lnbmF00dXJlIKSJAmYIK1AIzGgZk2oaSZ9wrLferCfPmJhAudzhLHCkCg"
+
+  # Oneclient will connect to this provider.
+  provider_host: release18020-rc11-oneprovider-krakow.release18020-rc11.svc.dev.onedata.uk.to
+
+  # Where spaces should be mounted
+  mountPoint: /mnt/oneclient
+
+  # Should oneclient-oneprovider connection allow for insecure https
+  insecure: "true"
+
+# Results gatherer container
+resultsGatherer:
+  image: onedata/k8s-wait-for:v1.2
+  completeOutputs: 2
+  failedOutputs: 2
+
+  command:
+    - "sh"
+    - "-c"
+    - >
+      apk update; apk add dateutils ;
+      while [ ! -f /results/prep-starting ] ; do sleep 1 ; done ;
+      prep_start_time=$(date +'%s') ;
+      while [ ! -f /results/prep-ended ] ; do sleep 1 ; done ;
+      prep_end_time=$(date +'%s') ;
+      prep_time=$(datediff -i '%s' $prep_end_time $prep_start_time -f '%dd %Hh %Mm %Ss') ;
+      while [ ! -f /results/compute-starting ] ; do sleep 1 ; done ;
+      compute_start_time=$(date +'%s') ;
+      while [ ! -f /results/compute-ended ] ; do sleep 1 ; done ;
+      compute_end_time=$(date +'%s') ;
+      compute_time=$(datediff -i '%s' $compute_start_time $prep_end_time -f '%dd %Hh %Mm %Ss') ;
+      while [ ! -f /results/clean-starting ] ; do sleep 1 ; done ;
+      clean_start_time=$(date +'%s') ;
+      while [ ! -f /results/clean-ended ] ; do sleep 1 ; done ;
+      clean_end_time=$(date +'%s') ;
+      clean_time=$(datediff -i '%s' $clean_end_time $clean_start_time -f '%dd %Hh %Mm %Ss') ;
+      echo "Prepare step started at \"$(date -d @$prep_start_time)\", lasted \"$prep_time\" and ended at \"$(date -d @$prep_end_time)\"" ;
+      echo "Compute step started at \"$(date -d @$compute_start_time)\", lasted \"$compute_time\" and ended at \"$(date -d @$compute_end_time)\"" ;
+      echo "Clean step started at \"$(date -d @$clean_start_time)\", lasted \"$clean_time\" and ended at \"$(date -d @$clean_end_time)\"" ;
+      echo "Compute oputput:" ;
+      cat /results/compute_results ;
+
+deployNFS:
+  enabled: true
+  releaseNameOverride: obench-nfs
+  image: onedata/landscaper:v2.13.1-1
+  imagePullPolicy: IfNotPresent
+
+  additionalChartRepository:
+    name: onedata
+    url:  https://onedata.github.io/charts
+  chart: onedata/stress-nfs
+  chartVersion: 0.1.0
+
+## Persist data to a persistent volume
+##
+persistence:
+  enabled: false
+  claimName: stress-nfs-stress-nfs-pvc
+
+# Redis database config
+# Full documentation can be found at:
+# https://github.com/kubernetes/charts/blob/master/stable/redis/values.yaml
+redis:
+  image: bitnami/redis:4.0.7-r0
+  imagePullPolicy: IfNotPresent
+  serviceType: ClusterIP
+  securityContext:
+    enabled: true
+    fsGroup: 1001
+    runAsUser: 1001
+  usePassword: false
+  args:
+  persistence:
+    enabled: false
+  metrics:
+    enabled: false
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 100m
+  nodeSelector: {}
+  tolerations: []
+  podLabels: {}
+  podAnnotations: {}
+  networkPolicy:
+    enabled: false
+    allowExternal: true
+  service:
+    annotations: {}
+    loadBalancerIP:

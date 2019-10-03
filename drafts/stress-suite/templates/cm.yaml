@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "fullname" . }}
+    chart: {{ .Chart.Name }}
+    release: {{ template "releaseName" .  }}
+    heritage: {{ .Release.Service }}
+    component: {{ .Chart.Name }}
+    part-of: {{ template "groupingLabel" . }}
+  annotations:
+    version: "{{ .Chart.Version }}"
+data:
+{{- range $job := .Values.jobs }}
+  {{ $job.name }}: |-
+{{ toYaml $job.config | indent 4 }}
+  {{ $job.name }}-global-environment: |-
+    environment:
+{{ toYaml $.Values.environment | indent 6 }}
+  {{ $job.name }}-job-environment: |-
+{{ toYaml $.Values.environment.jobEnvironment | indent 4 }}
+{{- range $i, $dashboard := $job.dashboards }}
+  {{ $job.name }}-dashboard-{{ $i }}: |-
+{{ $dashboard.dashboard | indent 4 }}
+{{- range $j, $panel := $dashboard.panels }}
+  {{ $job.name }}-dashboard-{{ $i }}-panel-{{ $j }}-name: |-
+{{ $panel.name | indent 4 }}
+  {{ $job.name }}-dashboard-{{ $i }}-panel-{{ $j }}-id: {{ $panel.id | quote }}
+{{- end -}}
+{{- end -}}
+{{- range $i, $dashboard := $job.config.dashboards }}
+  {{ $job.name }}-dashboard-hack-{{ $i }}: |-
+{{ $dashboard.dashboard | indent 4 }}
+{{- range $j, $panel := $dashboard.panels }}
+  {{ $job.name }}-dashboard-hack-{{ $i }}-panel-{{ $j }}-name: |-
+{{ $panel.name | indent 4 }}
+  {{ $job.name }}-dashboard-hack-{{ $i }}-panel-{{ $j }}-id: {{ $panel.id | quote }}
+{{- end -}}
+{{- end -}}
+{{- end }}
+  snapshot.py: |-
+{{ .Values.grafanaSnapshots.snapshots.snapshotPy | indent 4 }}

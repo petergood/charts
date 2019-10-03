@@ -1,0 +1,8 @@
+global:
+  # TODO: Find a way to eliminate necessity for region and tld values
+  # to make deployment cluster independent
+  releaseNameOverride: develop
+  region: dev
+  tld: onedata.uk.to
+  imagePullPolicy: "Always"
+  #hostNetwork: true

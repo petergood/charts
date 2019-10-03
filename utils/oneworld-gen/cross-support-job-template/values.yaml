@@ -1,0 +1,19 @@
+# Default values for cross-support-job
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image: onedata/rest-cli:18.02.0-rc2
+imagePullPolicy: IfNotPresent
+
+wait_for:
+  image: onedata/k8s-wait-for:v1.2
+  imagePullPolicy: IfNotPresent
+
+# You can enable automatic deployment od the environment
+# that this chart initializes
+onedata-template:
+  enabled: true
+
+# Or manually specify a helm release name of the already
+# deployed environment
+# releaseName: dev

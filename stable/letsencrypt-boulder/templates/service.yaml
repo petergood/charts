@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "fullname" . }}
+  labels:
+    app: {{ template "fullname" . }}
+    chart: {{ .Chart.Name }}
+    release: {{ template "releaseName" . }}
+    heritage: {{ .Release.Service }}
+    component: {{ .Chart.Name }}
+  annotations:
+    version: "{{ .Chart.Version }}"
+spec:
+  type: {{ .Values.serviceType }}
+  clusterIP: None
+  ports:
+    - name: acme
+      port: 4000
+    - name: acmev2
+      port: 4001
+    - name: ocsp1
+      port: 4002
+    - name: ocsp2
+      port: 4003
+    - name: acmeviahttps
+      port: 4430
+    - name: acmev2viahttps
+      port: 4431
+    - name: dns-test-srvupdates
+      port: 8055
+  selector:
+    app: {{ template "fullname" . }}

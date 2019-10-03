@@ -1,0 +1,9 @@
+__lookup_mime_type() {
+    local mime_type=$1
+
+    if [[ ${mime_type_abbreviations[$mime_type]} ]]; then
+        echo ${mime_type_abbreviations[$mime_type]}
+    else
+        echo $1
+    fi
+}

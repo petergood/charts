@@ -120,6 +120,7 @@ spec:
                done ;
              fi
              echo "[{{ $user.name }}] Provider host=$ONECLIENT_PROVIDER_HOST id=$ONECLIENT_PROVIDER_ID is on the list of effective providers=$all_{{ $user.name }}_providers of user={{ $user.name }}" ;
+             echo "Waiting for 2 mins more" ; sleep 120 ; 
              echo "[{{ $user.name }}] Mounting oneclient in $2 for user={{ $user.name }}, from idp=$3, using TOKEN=$1.";
              while ! mount | grep -q "$2" ; do
                oneclient -t $1 {{ $.Values.oneclientFlags }} "$2";
@@ -158,6 +159,8 @@ spec:
                   {{- if .Values.directIO.nfs.enabled }}
                   umount -f {{ .Values.directIO.nfs.mount_path }} ;
                   {{- end }}
+#                  mount | grep fuse.oneclient | cut -d ' ' -f3- | rev | cut -d ' '  -f4- | rev | while read mountPath ; do echo "$mountPath" ; echo fusermount -uz "$mountPath" ; done ;
+
         volumeMounts:
           - mountPath: /oneclient-mount.sh
             subPath: oneclient-mount.sh

@@ -151,8 +151,8 @@ spec:
           image: {{ .Values.wait_for.image }}
           imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
           args:
-            - "pod"
-            - "-lapp={{ template "onezone_name" . }}"
+            - "job"
+            - "{{ template "onezone_name" . }}-ready-check"
       {{- end }}
     {{- if .Values.global.alpha }}
       {{- if and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled }}
@@ -166,10 +166,16 @@ spec:
             - "/bin/sh"
             - "-c"
             - >
+              failedOnce="" ;
+              while true ; do
               userId=$(onezone-rest-cli -k -u {{ index (first .Values.onepanel_admin_users) "name" }}:{{ index (first .Values.onepanel_admin_users) "password" }} -v getCurrentUser | jq -r ".userId") ;
               echo "userId=$userId for user={{ index (first .Values.onepanel_admin_users) "name" }} with password={{ index (first .Values.onepanel_admin_users) "password" }}" ;
-              providerRegistrationToken=$(curl -k -vv -sS --tlsv1.2 -u {{ index (first .Values.onepanel_admin_users) "name" }}:{{ index (first .Values.onepanel_admin_users) "password" }} -X POST  -H 'content-type: application/json' "https://{{ template "onezone_name" . }}/api/v3/onezone/user/clusters/provider_registration_token" | jq -r ".token") ;
+              providerRegistrationTokenRequest=$(curl -k -vv -sS --tlsv1.2 -u {{ index (first .Values.onepanel_admin_users) "name" }}:{{ index (first .Values.onepanel_admin_users) "password" }} -X POST  -H 'content-type: application/json' "https://{{ template "onezone_name" . }}/api/v3/onezone/user/clusters/provider_registration_token") ;
+              providerRegistrationToken=$(echo "$providerRegistrationTokenRequest" | jq -r ".token") ;
               echo "Provider registration token=$providerRegistrationToken for user user={{ index (first .Values.onepanel_admin_users) "name" }}" ;
+              if [ "$providerRegistrationToken" = "" ]; then echo "$providerRegistrationToken=providerRegistrationToken empty, unable to acquire registration token! sleeping 1 sec " ; failedOnce="1" ; sleep 1 ; else break ; fi ; 
+              done ;
+              if [ "$failedOnce" != "" ]; then exit 1 ; fi ;
               echo "$providerRegistrationToken" >> /onezone-registration-token/token ;
           volumeMounts:
             - mountPath: /onezone-registration-token
@@ -229,11 +235,7 @@ spec:
                 - "sh"
                 - "-c"
                 - >
-                  umount {{ index .Values "volume-nfs" "container_mount_path" }} ;
-                  op_panel stop ;
-                  op_worker stop ;
-                  cluster_manager stop ;
-                  /etc/init.d/couchbase-server stop ;
+                  umount -f {{ index .Values "volume-nfs" "container_mount_path" }} ;
         readinessProbe:
           exec:
             command:
@@ -359,8 +361,7 @@ spec:
                   {{- if $volume.readOnly }}
                   mount -o remount,rw /{{ $volume.name }} ;
                   {{- end }}
-                  umount /{{ $volume.name }};
-                  umount /{{ $volume.name }};
+                  umount -fl /{{ $volume.name }};
         volumeMounts:
           - mountPath: /{{ $volume.name }}:shared
             name: {{ $volume.name }}

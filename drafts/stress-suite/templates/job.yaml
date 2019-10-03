@@ -1,0 +1,369 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ template "fullname" . }}"
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    component: "{{ .Chart.Name }}"
+    part-of: {{ template "groupingLabel" . }}
+  annotations:
+    version: "{{ .Chart.Version }}"
+spec:
+  parallelism: 1
+  backoffLimit: 1
+  template:
+    metadata:
+      name: "{{ template "releaseName" . }}"
+      labels:
+        app: {{ template "fullname" . }}
+        chart: "{{ .Chart.Name }}"
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
+        component: "{{ .Chart.Name }}"
+        part-of: {{ template "groupingLabel" . }}
+      annotations:
+        version: "{{ .Chart.Version }}"
+    spec:
+      restartPolicy: Never
+      {{- if .Values.affinity }}
+      affinity:
+{{ toYaml .Values.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      {{- end }}
+      containers:
+    {{- range $job := .Values.jobs }}
+      - name: {{ $job.name }}
+        image: {{ $.Values.jobController.image }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" $ "context" $.Values.jobController }}
+        env:
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+        command:
+          - "/usr/bin/env"
+          - "bash"
+          - "-c"
+          - >
+          {{- if $.Values.jobController.additionalChartRepository }}
+            {{/* Add onedata repo and list available charts  */ -}}
+            helm repo add {{ $.Values.jobController.additionalChartRepository.name }} {{ $.Values.jobController.additionalChartRepository.url }} ;
+          {{- end }}
+            helm search stress ;
+            {{/* Clean previous job */ -}}
+            jobChart="{{ $.Values.jobController.jobChart }}" ; jobChartName=${jobChart##*/} ;
+            helm delete --purge "{{ $.Release.Name }}-{{ $job.name }}" ;
+            {{/* Deploy new a job and print it's final configuration */ -}}
+            helm install -f /global-environment.config -f /job-environment.config -f /job.config --set groupingLabel="{{ template "groupingLabel" $ }}" --namespace ${MY_POD_NAMESPACE} --name "{{ $.Release.Name }}-{{ $job.name }}" --debug --version "{{ $.Values.jobController.jobChartVersion }}" "$jobChart" | tee helm.log ;
+            {{/* Label the job with the name of this suite */ -}}
+            kubectl -n kube-system label cm -lNAME={{ $.Release.Name }}-{{ $job.name }} app.kubernetes.io/part-of="{{ template "groupingLabel" $ }}" --overwrite ;
+            {{/* Save the job submission time in a format expected by grafana dashboard url */ -}}
+            date +"%Y%m%dT%H%M%S" > /results/{{ $job.name }}-submission-time.log ;
+            {{/* Copy job dashboards to a shared volume  */ -}}
+            cp /{{ $job.name }}-dashboard-*.json /snapshots/ ;
+            {{/* Copy job panels to a shared volume  */ -}}
+            cp /{{ $job.name }}-dashboard-*.panel /panels/ ;
+            {{/* Wait for a job to finish  */ -}}
+            until kubectl describe job -lapp={{ $.Release.Name }}-{{ $job.name }}-${jobChartName},component=results  | grep "Pods Statuses:[[:blank:]]\+0 Running / [[:digit:]]\+ Succeeded / 0 Failed" ; do sleep 1 ; done ;
+            {{/* Save the job completion time in a format expected by grafana dashboard url */ -}}
+            date +"%Y%m%dT%H%M%S" > /results/{{ $job.name }}-completion-time.log ;
+            {{/* Save job results logs and signalize that all the logs were successfully dumped */ -}}
+            kubectl logs -ljob-name={{ $.Release.Name }}-{{ $job.name }}-${jobChartName}-results -c results >> /results/{{ $job.name }}.log ;
+            echo 1 > /monitor/{{ $job.name }}-logs-written ;
+            {{/* For debug purposes print the results */ -}}
+            echo "Results:" ;
+            cat /results/{{ $job.name }}.log ;
+        volumeMounts:
+          - name: persistence
+            mountPath: /persistence/
+          - name: results
+            mountPath: /results/
+          - name: config-map
+            mountPath: /job.config
+            subPath: {{ $job.name }}
+          - name: config-map
+            mountPath: /job-environment.config
+            subPath: {{ $job.name }}-job-environment
+          - name: config-map
+            mountPath: /global-environment.config
+            subPath: {{ $job.name }}-global-environment
+        {{- range $i, $dashboard := $job.dashboards }}
+          - name: config-map
+            mountPath: /{{ $job.name }}-dashboard-{{ $i }}.json
+            subPath: {{ $job.name }}-dashboard-{{ $i }}
+          {{- range $j, $panel := $dashboard.panels }}
+          - name: config-map
+            mountPath: /{{ $job.name }}-dashboard-{{ $i }}-panel-{{ $j }}-name.panel
+            subPath: {{ $job.name }}-dashboard-{{ $i }}-panel-{{ $j }}-name
+          - name: config-map
+            mountPath: /{{ $job.name }}-dashboard-{{ $i }}-panel-{{ $j }}-id.panel
+            subPath: {{ $job.name }}-dashboard-{{ $i }}-panel-{{ $j }}-id
+          {{- end }}
+        {{- end }}
+        {{- range $i, $dashboard := $job.config.dashboards }}
+          - name: config-map
+            mountPath: /{{ $job.name }}-dashboard-hack-{{ $i }}.json
+            subPath: {{ $job.name }}-dashboard-hack-{{ $i }}
+          {{- range $j, $panel := $dashboard.panels }}
+          - name: config-map
+            mountPath: /{{ $job.name }}-dashboard-hack-{{ $i }}-panel-{{ $j }}-name.panel
+            subPath: {{ $job.name }}-dashboard-hack-{{ $i }}-panel-{{ $j }}-name
+          - name: config-map
+            mountPath: /{{ $job.name }}-dashboard-hack-{{ $i }}-panel-{{ $j }}-id.panel
+            subPath: {{ $job.name }}-dashboard-hack-{{ $i }}-panel-{{ $j }}-id
+          {{- end }}
+        {{- end }}
+          - name: monitor
+            mountPath: /monitor/
+          - name: snapshots
+            mountPath: /snapshots
+          - name: panels
+            mountPath: /panels
+    {{- end }}
+    {{- if .Values.grafanaSnapshots.enabled }}
+      - name: selenium
+        image: {{ .Values.grafanaSnapshots.selenium.image }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" $.Values.grafanaSnapshots.selenium }}
+        command:
+          - "/usr/bin/env"
+          - "bash"
+          - "-c"
+          - >
+            {{/* Start a default selenium point in background */ -}}
+            /opt/bin/entry_point.sh &
+            {{/* Wait until selenium is no longer needed and exit the container */ -}}
+            while [ ! -f /monitor/all_snapshots_have_been_created ] ; do sleep 3 ; done ;
+            exit 0 ;
+        ports:
+          - containerPort: 5900
+          - containerPort: 4444
+        volumeMounts:
+          - name: monitor
+            mountPath: /monitor/
+      - name: snapshots
+        image: {{ .Values.grafanaSnapshots.snapshots.image }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" $.Values.grafanaSnapshots.snapshots }}
+        command:
+          - "/usr/bin/env"
+          - "bash"
+          - "-c"
+          - >
+            {{/* TODO: create new container with dependencies */ -}}
+            pip install selenium ;
+            {{/* Wait for selenium to start */ -}}
+            while ! timeout 1 bash -c "echo > /dev/tcp/localhost/4444"; do echo "Waiting for Selenium to start" ; sleep 2; done ;
+            {{/* Setup directory which will work as a queue of snapshots requests form results container */ -}}
+            mkdir -p /snapshots/snapshotRequests ;
+            {{/* A hack of do while loop for bash */ -}}
+            do_a_break="" ;
+            while : ; do 
+              for dashboard in /snapshots/snapshotRequests/* ; do 
+                {{/* If the above regexp does not match anything then continue */ -}}
+                [ -e "$dashboard" ] || continue ;
+                username="" ; password="" ; url="" ; read username password url <"$dashboard" ;
+                {{/* Invoke a selenium script that creates a snapshot */ -}}
+                echo "Submitting snapshot of dashboard $url" ;
+                snapshotUrl=$(python /script/snapshot.py "$username" "$password" "${url}") ;
+                echo "Submitted snapshot $snapshotUrl" ;
+                {{/* Remove processed dashboard and save a snapshot url */ -}}
+                rm "$dashboard" ;  echo "$snapshotUrl" > /snapshots/${dashboard#/snapshots/snapshotRequests/*}.snapshotUrl ;
+              done ;
+              echo "Waiting for snapshots to be submitted." ; sleep 2 ;
+              {{/* If all snapshots have been submitted do one more scan for snapshot requests */ -}}
+              if [ "$do_a_break" != "" ] ; then break ; fi ;
+              [ ! -f /monitor/all_snapshots_have_been_submitted ] || do_a_break=1 ;
+            done ;
+            echo "All snapshots have been submitted. Exiting." ;
+            {{/* Signal that snapshot processing is done */ -}}
+            echo 1 > /monitor/all_snapshots_have_been_created ;
+        volumeMounts:
+          - name: snapshot-py
+            mountPath: /script
+          - name: persistence
+            mountPath: /persistence
+          - name: monitor
+            mountPath: /monitor
+          - name: snapshots
+            mountPath: /snapshots
+    {{- end }}
+      - name: results
+        image: {{ .Values.results.image }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" $.Values.results }}
+        env:
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: resultsPath
+            value: "/results.log"
+          - name: clone_destination_dir
+            value: "/git_repo"
+        command:
+          - "/usr/bin/env"
+          - "sh"
+          - "-c"
+          - >
+            set -e ;
+            {{/* TODO: create new container with dependencies */ -}}
+            apk update; apk add jq curl curl-dev dateutils;
+          {{- if .Values.results.git.enabled }}
+            {{/* Clone using private key */ -}}
+            echo "Cloning results repo {{ .Values.results.git.repository }}" ;
+            export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no -i /root/.ssh/id_rsa" ;
+            git clone "{{ .Values.results.git.repository }}" "$clone_destination_dir";
+          {{- end }}
+            {{/* GENERATE SUITE REPORT */ -}}
+            (echo "## {{ .Values.name }} (${MY_POD_NAME})" ; echo "" ;) >> $resultsPath ;
+            echo "Suite global configuration:" >> $resultsPath ;
+            oneprovider_version=$(curl -k -s -X GET 'https://{{ .Values.environment.jobEnvironment.oneclient.provider_host }}/configuration' -k | jq -r '"Oneprovider: version[\(.version)] | build[\(.build)]"');
+            (echo "" ; echo "~~~" ;
+            echo 'Oneprovider name: {{ .Values.environment.jobEnvironment.oneclient.provider_host }}' ;
+            echo "$oneprovider_version" ; 
+            echo 'Oneclient image: {{ .Values.environment.jobEnvironment.oneclient.image }}' ;
+            echo 'Grafana address: {{ .Values.environment.jobEnvironment.oneclient.grafanaUrl }}' ;
+            echo 'Graphite prefix: {{ .Values.environment.jobEnvironment.oneclient.graphite_prefix }}' ;
+            echo "~~~" ; echo "" ;  ) >> $resultsPath ;
+            echo "Oneprovider version acquired: $oneprovider_version" ;
+            {{/* GENERATE SUITE REPORT */ -}}
+          {{- if .Values.grafanaSnapshots.enabled }}
+            {{/* Create grafana directories for dashboards */ -}}
+            dashboardsDir=/snapshots/snapshotRequests ;
+            mkdir -p "$dashboardsDir" ;
+            grafanaFolder="{{ $.Values.grafanaSnapshots.grafanaDashboardFolder }}" ;
+            folderId=$(curl -v -H "Authorization: Bearer {{ $.Values.grafanaSnapshots.grafanaAPIKey }}" http://{{ $.Values.grafanaSnapshots.grafanaGUIUrl }}/api/folders | jq --arg grafanaFolder "$grafanaFolder" '.[] | select(.title==$grafanaFolder) | .id') ;
+            if [ "$folderId" = "" ] ; then
+              echo "Folder '$grafanaFolder' does not exist in grafana. Creating..." ;
+              folderId=$(curl -v -H "Content-Type: application/json" --data "{\"title\":\"$grafanaFolder\"}" -H "Authorization: Bearer {{ $.Values.grafanaSnapshots.grafanaAPIKey }}" http://{{ $.Values.grafanaSnapshots.grafanaGUIUrl }}/api/folders | jq -r '.id') ;
+            fi ;
+            if [ "$folderId" = "" ] ; then echo "Error: failed to create grafana directory" ; exit 1 ; else echo "Grafana folderId=$folderId" ; fi ;
+          {{- end }}
+          {{- range $job := .Values.jobs }}
+            echo "Processing job: {{ $job.name }}" ;
+            while [ ! -f "/monitor/{{ $job.name }}-logs-written" ] ; do echo "Waiting for {{ $job.name }} to finish." ; sleep 2 ; done ;
+            echo "{{ $job.name }} finished." ;
+          {{- end }}
+          {{- if $.Values.grafanaSnapshots.enabled }}
+            echo "All jobs finished. Waiting for {{ $.Values.grafanaSnapshots.delayTime }} seconds for data to appear in grafana." ;
+            sleep {{ $.Values.grafanaSnapshots.delayTime }} ;
+          {{- end }}
+        {{- range $job := .Values.jobs }}
+            (echo "### {{ $job.name }}" ; echo "" ;) >> $resultsPath ;
+            echo "Got results of job: {{ $job.name }}" ;
+          {{- if $.Values.grafanaSnapshots.enabled }}
+            {{/* Create grafana directories for dashboards */ -}}
+            submission_time=$(cat /results/{{ $job.name }}-submission-time.log) ;
+            completion_time=$(cat /results/{{ $job.name }}-completion-time.log) ;
+            echo "Creating grafana dashboards for job: {{ $job.name }}" ;
+            (echo "##### Grafana Dashboards:"; echo "" ;)>> $resultsPath ;
+            for dashboard in /snapshots/{{ $job.name }}-dashboard-*.json; do
+              echo "Processing dashboard: $dashboard" ;
+              sed -i -e "s/CHANGE_ME_FROM_TIME/$submission_time/" -e "s/CHANGE_ME_TO_TIME/$completion_time/" -e "s/CHANGE_ME_FOLDER_ID/$folderId/" $dashboard ; 
+              echo "Submitting a dashboard $dashboard to grafana into folder $grafanaFolder(id=$folderId)" ;
+              dashboardUrl=$(curl -v -H "Content-Type: application/json" -H "Authorization: Bearer {{ $.Values.grafanaSnapshots.grafanaAPIKey }}" --data @${dashboard} http://{{ $.Values.grafanaSnapshots.grafanaGUIUrl }}/api/dashboards/db) ;
+              echo "Grafana response: $dashboardUrl" ;
+              dashboardUrl=$(echo "$dashboardUrl" | jq -r ".url") ;
+              echo "Submitted a dashboard under url $dashboardUrl" ;
+              printf "%s %s %s" {{ $.Values.grafanaSnapshots.username }} {{ $.Values.grafanaSnapshots.password }} "http://{{ $.Values.grafanaSnapshots.grafanaGUIUrl }}${dashboardUrl}?orgId=1&from=${submission_time}&to=${completion_time}" > $dashboardsDir/${dashboard#/snapshots/*} ;
+              while [ ! -f "${dashboard}.snapshotUrl" ] ; do echo "Waiting for dashboard to be snapshotted ${dashboard}.snapshotUrl ; $dashboardsDir/${dashboard#/snapshots/*}..." ; sleep 2 ; done ;
+              snapshotUrl="$(cat ${dashboard}.snapshotUrl)";
+              echo "- $snapshotUrl" >> $resultsPath ;
+              dashboardName=${dashboard#/snapshots/*}
+              panelSnapshotUrl=$(echo "$snapshotUrl" | sed "s#/dashboard/snapshot#/dashboard-solo/snapshot#g") ;
+              for panel in /panels/${dashboardName%%.json}-panel*id.panel; do
+                panelId="$(cat $panel)" ;
+                panelName="$(cat ${panel%%id.panel}name.panel)" ;
+                echo "$panelName" >> $resultsPath ;
+                printf '<iframe src="%s?panelId=%s" width="450" height="200" frameborder="0"></iframe>' "$panelSnapshotUrl" "$panelId" >> $resultsPath ;
+                echo "";
+                echo "";
+              done ;
+            done ;
+          {{- end }}
+            echo "" >> $resultsPath ;
+            echo "" >> $resultsPath ;
+            cat "/results/{{ $job.name }}.log" >> $resultsPath ;
+            echo "" >> $resultsPath ;
+        {{- end }}
+          {{- if .Values.grafanaSnapshots.enabled }}
+            echo 1 > /monitor/all_snapshots_have_been_submitted ;
+          {{- end }}
+          {{- if .Values.results.git.enabled }}
+            mkdir -p $clone_destination_dir/{{ .Values.results.resultsDirectoryRoot }} ;
+            cp $resultsPath $clone_destination_dir/{{ .Values.results.resultsDirectoryRoot }}/$(date +%s)-${MY_POD_NAME}.md ;
+            cd $clone_destination_dir ;
+            git add -A ; 
+            git -c user.name="{{ .Values.results.git.userName }}" -c user.email="{{ .Values.results.git.userEmail }}" commit -a {{ if .Values.results.git.commitAuthor }}--author="{{ .Values.results.git.author }}"{{ end }} -m "{{ .Values.results.git.commitMessage }}" || echo "There was noting to commit." ;
+            git push ;
+          {{- else }}
+            cat $resultsPath ;
+          {{- end }}
+        volumeMounts:
+          - name: persistence
+            mountPath: /persistence
+          - name: results
+            mountPath: /results
+          - name: monitor
+            mountPath: /monitor
+          - name: snapshots
+            mountPath: /snapshots
+          - name: panels
+            mountPath: /panels
+        {{- if .Values.results.git.enabled }}
+          - name: ssh-secret
+            mountPath: /root/.ssh/id_rsa
+            subPath: id_rsa
+        {{- end }}
+      volumes:
+      {{- if .Values.results.git.enabled }}
+        {{/* git ssh private key  */ -}}
+        - name: ssh-secret
+          secret:
+            secretName: {{ template "fullname" . }}
+            items:
+            - key: sshPrivateKey
+              path: id_rsa
+              mode: 0600
+      {{- end }}
+        - name: config-map
+          configMap:
+            name: {{ template "fullname" . }}
+            defaultMode: 0600
+      {{- if .Values.grafanaSnapshots.enabled }}
+        {{/* script for dashboard snapshoting  */ -}}
+        - name: snapshot-py
+          configMap:
+            name: {{ template "fullname" . }}
+            items:
+              - key: snapshot.py
+                path: snapshot.py
+                mode: 0777
+      {{- end }}
+        - name: persistence
+        {{- if .Values.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.persistence.claimName }}
+        {{- else }}
+          emptyDir: {}
+        {{- end }}
+        {{/* Partial results from all the containers */ -}}
+        - name: results
+          emptyDir: {}
+        {{/* Inter-container synchronization  */ -}}
+        - name: monitor
+          emptyDir: {}
+        {{/* Inter-container synchronization  */ -}}
+        - name: snapshots
+          emptyDir: {}
+        {{/* Inter-container synchronization  */ -}}
+        - name: panels
+          emptyDir: {}

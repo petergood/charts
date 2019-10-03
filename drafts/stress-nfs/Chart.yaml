@@ -1,0 +1,12 @@
+name: stress-nfs
+version: 0.1.0
+description: Persistent volume claim for nfs backed
+keywords:
+  - onedata
+  - nfs
+  - pvc
+  - storage
+maintainers:
+  - name: Michal Orzechowski
+    email: orzechowski.michal@gmail.com
+engine: gotpl

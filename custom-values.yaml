@@ -1,0 +1,62 @@
+job_replicas: 10 
+
+grafanaPrefix:
+  experiment: orzech-test
+  release: "release18020-beta1"
+  dc: cyf
+
+oneclient: 
+  image: docker.onedata.org/oneclient:ID-0edc4939a0
+  accessToken: "MDAxNWxvY2F00aW9uIG9uZXpvbmUKMDAzMGlkZW500aWZpZXIgNGI5ZDdjZWQ4MmRmYzhlNTMwM2MyNGUzOTk2NjVmNTUKMDAxYWNpZCB00aW1lIDwgMTU1MDkyMDI4NgowMDJmc2lnbmF00dXJlILboSyLWtNOD2taLCdZqsDbtNoyA02KLilwUqV8frqwbTCg"
+  provider_host: demo-oneprovider-krakow.demo.svc.dev.onedata.uk.to
+  grafanaUrl: go-carbon.mon.svc.dev.onedata.uk.to
+
+# Compute container
+compute:
+  image: severalnines/sysbench:latest
+  prepare_args: --test=fileio --file-num=1 --file-block-size=1M --file-total-size=100M --file-test-mode=seqrd --file-io-mode=sync prepare
+  compute_args: --test=fileio --file-num=1 --file-block-size=1M --file-total-size=100M --file-test-mode=seqrd --file-io-mode=sync run
+  clean_args: ""
+  spaceName: "krk-3"
+  command:
+    - "sh"
+    - "-c"
+    - >
+      work_dir="$dataMountPoint/$spaceName" ;
+      prepare() {
+        echo "Changing working directo  ry to: $work_dir" ;
+        cd "$work_dir" ;
+        pwd ;
+        printf "$(date) " ; echo "Starting sysbench prep." ;
+        sysbench $prepare_args ;
+        printf "$(date) " ; echo "sysbench prep end" ;
+      } ;
+      compute() {
+        printf "$(date)" ; echo "Starting computation sysbench run." ;
+        sysbench $compute_args ;
+        printf "$(date) " ; echo "sysbench compute end" ;
+      } ;
+      clean() {
+        printf "$(date)" ; echo "Starting cleaning." ;
+        echo "No cleaning needed." ;
+        printf "$(date) " ; echo "clean end" ;
+      } ;
+      echo "Waiting for oneclient..." ;
+      while [ ! -f /monitor/oneclient-started ] ; do sleep 1 ; done ;
+      echo "Oneclient ready." ;
+      echo "Reached compute point." ;
+      echo "Waiting for all other jobs to reach this point before running sysbench prepare." ;
+      echo 1 > /monitor/wait-for-compute-prep-barrier ;
+      while [ ! -f /monitor/wait-for-all-jobs-prep-barrier ] ; do sleep 1 ; done ;
+      prepare ;
+      echo "Waiting for all other jobs to reach this point before running sysbench run." ;
+      echo 1 > /monitor/wait-for-compute-run-barrier ;
+      while [ ! -f /monitor/wait-for-all-jobs-run-barrier ] ; do sleep 1 ; done ;
+      compute ;
+      echo "Waiting for all other jobs to reach this point before running cleaning procedure." ;
+      echo 1 > /monitor/wait-for-compute-clean-barrier ;
+      while [ ! -f /monitor/wait-for-all-jobs-clean-barrier ] ; do sleep 1 ; done ;
+      clean ;
+      printf "$(date)" ; echo "The compute container finished." ;
+      printf "$(date)" ; echo "Signaling oneclient to finish." ;
+      echo 1 > /monitor/oneclient-can-exit ;

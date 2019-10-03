@@ -1,0 +1,21 @@
+# Default values for nfs-storage
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+global: {}
+
+storage: 2Gi
+
+# Override the default values of a parent keycloak
+# chart to make. So it plays nicely with Onedata charts.
+stress-nfs-volume:
+  tolerations:
+  - key: node-role.kubernetes.io/master
+    effect: NoSchedule
+
+  persistentVolumeReclaimPolicy: Delete
+  persistence:
+    enabled: true
+    hostPath: /opt/onedata/nfs-bench
+  nodeSelector:
+    node-role.kubernetes.io/master: ""

@@ -1,0 +1,9 @@
+dependencies:
+- name: onedata-chart-utils
+  repository: https://onedata.github.io/charts/
+  version: 0.2.10
+- name: volume-nfs
+  repository: https://onedata.github.io/charts/
+  version: 0.2.9
+digest: sha256:cf9644363dcba0c78d5df321f40af7b02c1c0adf4b9d9153fae1a3652289d7de
+generated: 2018-08-27T01:50:22.274189886+02:00

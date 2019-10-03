@@ -1,0 +1,65 @@
+{{- if .Values.deployNFS.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "{{ template "fullname" . }}-nfs"
+  labels:
+    app: {{ template "fullname" . }}
+    chart: "{{ .Chart.Name }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+    component: "{{ .Chart.Name }}-nfs"
+    part-of: {{ template "groupingLabel" . }}
+  annotations:
+    version: "{{ .Chart.Version }}"
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  parallelism: 1
+  backoffLimit: 1
+  template:
+    metadata:
+      name: "{{ template "releaseName" . }}-nfs"
+      labels:
+        app: {{ template "fullname" . }}
+        chart: "{{ .Chart.Name }}"
+        release: "{{ .Release.Name }}"
+        heritage: "{{ .Release.Service }}"
+        component: "{{ .Chart.Name }}-nfs"
+        part-of: {{ template "groupingLabel" . }}
+      annotations:
+        version: "{{ .Chart.Version }}"
+    spec:
+      restartPolicy: Never
+      {{- if .Values.affinity }}
+      affinity:
+{{ toYaml .Values.affinity | indent 8 }}
+      {{- end }}
+      {{- if .Values.tolerations }}
+      tolerations:
+{{ toYaml .Values.tolerations | indent 8 }}
+      {{- end }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+      {{- end }}
+      containers:
+      - name: deploy-nfs
+        image: {{ .Values.deployNFS.image }}
+        imagePullPolicy: {{ .Values.deployNFS.imagePullPolicy | default "IfNotPresent" }}
+        env:
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+        command:
+          - "sh"
+          - "-c"
+          - >
+            {{/* Add onedata repo and list available charts  */ -}}
+            {{- if .Values.deployNFS.additionalChartRepository }}
+            helm repo add {{ .Values.deployNFS.additionalChartRepository.name }} {{ .Values.deployNFS.additionalChartRepository.url }} ;
+            {{- end }}
+            helm search stress ;
+            helm upgrade  -i --namespace ${MY_POD_NAMESPACE} --debug --version "{{ .Values.deployNFS.chartVersion }}" "{{ .Values.deployNFS.releaseNameOverride }}" {{ .Values.deployNFS.chart }} ;
+{{- end }}

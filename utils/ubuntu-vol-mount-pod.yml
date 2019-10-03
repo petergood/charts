@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: cc
+spec:
+  nodeSelector:
+    kubernetes.io/hostname: k8s-cyfronet-1-node-18
+  tolerations:
+  - key: "onedata.org/service.logs"
+    effect: "PreferNoSchedule"
+  containers:
+  - image: ubuntu
+    name: c
+    command:
+      - sleep
+      - infinity
+    volumeMounts:
+    - mountPath: /data-volume:shared
+      name: data
+      mountPropagation: HostToContainer
+  - image: onedata/eo-data-mock:Landsat-5-sample-latest
+    name: e
+    command:
+      - sleep
+      - "36000"
+    volumeMounts:
+    - mountPath: /data-volume:shared
+      name: data
+      #mountPropagation: HostToContainer
+      mountPropagation: Bidirectional
+    securityContext:
+      privileged: true
+      capabilities:
+        add:
+          - SYS_ADMIN
+    imagePullPolicy: IfNotPresent
+  restartPolicy: Always
+  volumes:
+  - name: data
+    emptyDir: {}
