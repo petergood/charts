@@ -62,8 +62,6 @@ spec:
         env:
           - name: ONEZONE_HOST
             value: "https://{{ template "releaseName" . }}-onezone.{{ template "service_namespace_domain" . }}"
-          - name: ONEZONE_API_KEY
-            value: "supplied_at_runtime"
         command:
           - "bash"
           - "-c"
@@ -81,11 +79,9 @@ spec:
             {{- if (hasKey .user.idps "keycloak")}}{{ if (.user.idps.keycloak.enabled) }}
             idp=keycloak-{{ template "keycloak_idpName_template" $ }};
             {{- end -}}{{- end -}}
-            export ONEZONE_API_KEY=$(curl --silent -k -u {{ .user.name }}:{{ .user.password }} http://{{ template "token-dispenser_name" $ }}/api/v1.0/token/$idp);
-            echo "Got token for idp=$idp user={{ .user.name }}, token=$ONEZONE_API_KEY" ;
             echo "Create space and request support" ;
             echo "Creating space {{ $space.name }}" ;
-            export SPACE_ID="$(onezone-rest-cli -vvv  createUserSpace name=='{{ $space.name }}' 2>&1 | grep -i 'location:' | sed -nr 's#.*/spaces/(.*)#\1#p' | tr -d ' \r')" ;
+            export SPACE_ID="$(onezone-rest-cli -vvv -u {{ .user.name }}:{{ .user.password }} createUserSpace name=='{{ $space.name }}' 2>&1 | grep -i 'location:' | sed -nr 's#.*/spaces/(.*)#\1#p' | tr -d ' \r')" ;
             echo "Space SPACE_ID=$SPACE_ID created" ;
             {{- range $space.users }}
             {{ $user := .user }}
