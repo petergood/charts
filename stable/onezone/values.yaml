@@ -137,6 +137,12 @@ generate-certificates:
 persistence:
   enabled: false
   size: 20Gi
+  accessModes:
+    - ReadWriteOnce
+  cleanUpJob:
+    enabled: true
+    image: onedata/k8s-wait-for:v1.2
+    imagePullPolicy: IfNotPresent
 
 # If set true, onezone will not be deployed on the same node as other onezones
 # or oneproviders that are part of this deployment
@@ -169,7 +175,7 @@ onepanel_users: []
 saml-idp:
   enabled: false
 
-keycloak: &keycloak
+keycloak:
   idpName: rhea
   displayName: Onedata Keycloak
   tokenPrefix: onedata

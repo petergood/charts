@@ -274,11 +274,6 @@ spec:
             name: config-map
             readOnly: true
       volumes:
-    {{- if .Values.persistence.enabled }}
-      - name: persistence
-        persistentVolumeClaim:
-          claimName: {{ template "fullname" . }}-persistence-pvc
-    {{- end }}
       - name: config-map
         configMap:
           name: {{ template "fullname" . }}-config
@@ -296,3 +291,22 @@ spec:
           - key: saml.config
             path: saml.config
     {{- end }}
+  {{- if .Values.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: persistence
+        labels:
+          app: {{ template "fullname" . }}
+          chart: {{ .Chart.Name }}
+          release: {{ template "releaseName" . }}
+          heritage: {{ .Release.Service }}
+          component: {{ .Chart.Name }}
+      spec:
+        accessModes:
+        {{- range .Values.persistence.accessModes }}
+          - {{ . | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size | quote }}
+  {{- end }}

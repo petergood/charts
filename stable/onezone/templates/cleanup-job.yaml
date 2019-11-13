@@ -1,0 +1,41 @@
+{{- if (and .Values.persistence.cleanUpJob.enabled .Values.persistence.enabled) }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "fullname" . }}-cleanup
+  labels:
+    app: {{ template "fullname" . }}
+    chart: {{ .Chart.Name }}
+    release: {{ template "releaseName" . }}
+    heritage: {{ .Release.Service }}
+    component: {{ .Chart.Name }}-cleanup
+  annotations:
+    "helm.sh/hook": post-delete
+    "helm.sh/hook-delete-policy": hook-succeeded
+    version: "{{ .Chart.Version }}"
+spec:
+  template:
+    metadata:
+      labels:
+        app: {{ template "fullname" . }}
+        chart: {{ .Chart.Name }}
+        release: {{ template "releaseName" . }}
+        heritage: {{ .Release.Service }}
+        component: {{ .Chart.Name }}-cleanup
+      annotations:
+        version: "{{ .Chart.Version }}"
+    spec:
+      restartPolicy: Never
+      hostNetwork: {{ template "hostNetwork" . }}
+{{ include "imagePullSecrets" . | indent 6 }}
+      containers:
+      - name: clean-up-pvc
+        image: {{ .Values.persistence.cleanUpJob.image }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.persistence.cleanUpJob }}
+        command:
+          - "sh"
+          - "-c"
+          - >
+            kubectl delete pvc -l app={{ template "fullname" . }} ;
+{{- end }}
