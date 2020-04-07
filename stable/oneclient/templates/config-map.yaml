@@ -23,7 +23,8 @@ data:
       export ONEZONE_API_KEY=$(curl -k -u {{ $user.name }}:{{ $user.password }} http://{{ template "token-dispenser_name" $ }}/api/v1.0/token/$idp);
       echo "Got token for $idp user={{ $user.name }}, token=$ONEZONE_API_KEY" ;
       mkdir -p "/mnt/oneclient/{{ $user.name }}";
-      oneclient -t $ONEZONE_API_KEY {{ $.Values.oneclientFlags }} $* "/mnt/oneclient/{{ $user.name }}";
+      mkdir -p "/tmp/oneclient/{{ $user.name }}";
+      oneclient -t $ONEZONE_API_KEY {{ $.Values.oneclientFlags }} --log-dir "/tmp/oneclient/{{ $user.name }}" $* "/mnt/oneclient/{{ $user.name }}";
       echo "Mounted oneclient in '/mnt/oneclient/{{ $user.name }}' for user={{ $user.name }}, from idp=$idp, using TOKEN=$ONEZONE_API_KEY";
     }
     {{ end }}{{ end }}
