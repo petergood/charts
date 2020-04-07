@@ -89,7 +89,7 @@ spec:
             echo "ONEZONE_API_KEY=$ONEZONE_API_KEY" ;
             realmId={{ template "keycloak_realmId_template" $ }} ;
           {{- range .Values.users }}{{ if (hasKey . "idps"  )}}{{ if (hasKey .idps "keycloak" )}}{{ if and .idps.keycloak.enabled .idps.keycloak.onezoneLogin }}
-            idp=keycloak-{{ template "keycloak_idpName_template" $ }};
+            idp=keycloak-{{ template "onedata-chart-utils.keycloak_idpName_template" $ }};
             echo "Loging keycloak user={{ .name }} with password={{ .password }} to Onezone. User info from Onezone is: " ;
             TOKEN="$(curl -k --silent -u {{ .name }}:{{ .password }} http://{{ template "token-dispenser_name" $ }}/api/v1.0/token/$idp)" ;
             echo "Onezone api access TOKEN=$TOKEN" ;
@@ -100,7 +100,7 @@ spec:
             idp=onepanel;
             {{- end }}{{ end }}
             {{- if (hasKey $user.idps "keycloak")}}{{ if ($user.idps.keycloak.enabled) }}
-            idp=keycloak-{{ template "keycloak_idpName_template" $ }};
+            idp=keycloak-{{ template "onedata-chart-utils.keycloak_idpName_template" $ }};
             {{- end -}}{{- end -}}
             userId=$(curl --silent -k -u {{ $user.name }}:{{ $user.password }} http://{{ template "token-dispenser_name" $ }}/api/v1.0/onezone/uid/$idp) ;
             {{- $parent := . -}}

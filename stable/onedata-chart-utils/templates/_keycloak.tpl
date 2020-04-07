@@ -82,5 +82,45 @@ saving groupIds in bash variables which names are randomly generated.
 {{- end }}
 
 {{- define "onedata-chart-utils.createKeycloakToken" -}}
-$(curl --silent --max-time 10 --retry 5 --retry-delay 2 --retry-max-time 32 -X POST "$keycloak_url/auth/realms/master/protocol/openid-connect/token" -H "Content-Type: application/x-www-form-urlencoded" -d "username={{ template "admin_username_template" . }}" -d "password={{ template "admin_password_template" . }}" -d 'grant_type=password' -d 'client_id=admin-cli' | jq -r '.access_token')
+$(curl --silent --max-time 10 --retry 5 --retry-delay 2 --retry-max-time 32 -X POST "$keycloak_url/auth/realms/master/protocol/openid-connect/token" -H "Content-Type: application/x-www-form-urlencoded" -d "username={{ template "onedata-chart-utils.keycloak_adminUsername_template" . }}" -d "password={{ template "onedata-chart-utils.keycloak_adminPassword_template" . }}" -d 'grant_type=password' -d 'client_id=admin-cli' | jq -r '.access_token')
 {{- end }}
+
+{{- define "onedata-chart-utils.keycloak_realmId_template" -}}
+{{- if hasKey (index .Values "global") "keycloakInstance" -}}
+{{- (index .Values "global" "keycloakInstance" "init" "realmId") }}
+{{- else -}}
+{{- printf "%s" "UNINITIALIZED" }}
+{{- end -}}
+{{- end -}}
+
+{{- define "onedata-chart-utils.keycloak_adminUsername_template" -}}
+{{- if hasKey (index .Values "global") "keycloakInstance" -}}
+{{- (index .Values "global" "keycloakInstance" "init" "adminUsername") }}
+{{- else -}}
+{{- printf "%s" "UNINITIALIZED" }}
+{{- end -}}
+{{- end -}}
+
+{{- define "onedata-chart-utils.keycloak_adminPassword_template" -}}
+{{- if hasKey (index .Values "global") "keycloakInstance" -}}
+{{- (index .Values "global" "keycloakInstance" "init" "adminPassword") }}
+{{- else -}}
+{{- printf "%s" "UNINITIALIZEDD" }}
+{{- end -}}
+{{- end -}}
+
+{{- define "onedata-chart-utils.keycloak_idpName_template" -}}
+{{- if hasKey (index .Values "global") "keycloakInstance" -}}
+{{- (index .Values "global" "keycloakInstance" "idpName") }}
+{{- else -}}
+{{- printf "%s" "UNINITIALIZED" }}
+{{- end -}}
+{{- end -}}
+
+{{- define "onedata-chart-utils.keycloak_tokenPrefix_template" -}}
+{{- if hasKey (index .Values "global") "keycloakInstance" -}}
+{{- (index .Values "global" "keycloakInstance" "tokenPrefix") }}
+{{- else -}}
+{{- printf "%s" "UNINITIALIZED" }}
+{{- end -}}
+{{- end -}}

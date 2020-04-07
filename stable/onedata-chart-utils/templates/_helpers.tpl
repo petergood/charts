@@ -136,3 +136,35 @@ HostNetwork template
 {{- define "hostNetwork" -}}
   {{- include "_hostNetwork" . | default false }}
 {{- end -}}
+
+{{- define "admin_username_template" -}}
+{{- if hasKey (index .Values "global") "onezoneMainAdmin" -}}
+{{- (index .Values "global" "onezoneMainAdmin" "name") }}
+{{- else -}}
+{{- printf "%s" "UNINITIALIZED" }}
+{{- end -}}
+{{- end -}}
+
+{{- define "admin_password_template" -}}
+{{- if hasKey (index .Values "global") "onezoneMainAdmin" -}}
+{{- (index .Values "global" "onezoneMainAdmin" "password") }}
+{{- else -}}
+{{- printf "%s" "UNINITIALIZED" }}
+{{- end -}}
+{{- end -}}
+
+{{- define "onepanel_emergency_username_template" -}}
+{{- if hasKey (index .Values "global") "onepanelEmergencyAccount" -}}
+{{- (index .Values "global" "onepanelEmergencyAccount" "name") }}
+{{- else -}}
+{{- printf "%s" "UNINITIALIZED" }}
+{{- end -}}
+{{- end -}}
+
+{{- define "onepanel_emergency_password_template" -}}
+{{- if hasKey (index .Values "global") "onepanelEmergencyAccount" -}}
+{{- (index .Values "global" "onepanelEmergencyAccount" "password") }}
+{{- else -}}
+{{- printf "%s" "UNINITIALIZED" }}
+{{- end -}}
+{{- end -}}

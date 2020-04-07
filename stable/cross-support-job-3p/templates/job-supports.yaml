@@ -78,7 +78,7 @@ spec:
             idp=onepanel;
             {{- end }}{{ end }}
             {{- if (hasKey .user.idps "keycloak")}}{{ if (.user.idps.keycloak.enabled) }}
-            idp=keycloak-{{ template "keycloak_idpName_template" $ }};
+            idp=keycloak-{{ template "onedata-chart-utils.keycloak_idpName_template" $ }};
             {{- end -}}{{- end -}}
             echo "Getting token..." ;
             export ONEZONE_API_KEY=$(curl --silent -k -u {{ .user.name }}:{{ .user.password }} http://{{ template "token-dispenser_name" $ }}/api/v1.0/token/$idp);
