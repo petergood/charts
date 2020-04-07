@@ -109,7 +109,7 @@ spec:
             );
             echo "$keycloak_create_realm_json" | curl --silent -X POST "$keycloak_url/auth/admin/realms" -H 'Content-Type: application/json' -H "Authorization: Bearer $KEYCLOAK_TOKEN" -d @- ;
             echo "Created a realm realmId=$realmId";
-            [ "$realmId" = "" ]] && exit 1 ;
+            [ "$realmId" = "" ] && exit 1 ;
             
             keycloak_create_client_json=$(cat <<EEOF
             
