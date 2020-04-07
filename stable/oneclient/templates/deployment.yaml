@@ -79,6 +79,16 @@ spec:
       - name: {{ .Chart.Name }}
         image: {{ .Values.image }}
         imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
+        {{- if or .Values.cpu .Values.memory }}
+        resources:
+          requests:
+          {{- if .Values.cpu }}
+            cpu: {{ .Values.cpu }}
+          {{- end }}
+          {{- if .Values.memory }}
+            memory: {{ .Values.memory }}
+          {{- end }}
+        {{- end }}
         env:
           - name: ONECLIENT_INSECURE
             value: "true"

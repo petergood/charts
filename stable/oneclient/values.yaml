@@ -53,6 +53,10 @@ tolerations: {}
 # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
 nodeSelector: {}
 
+# Resources requested by oneprovider
+cpu: 0.2
+memory: 0.5Gi
+
 # Those options will be passed to oneclient executable
 oneclientFlags: ""
 
