@@ -91,7 +91,6 @@ spec:
          - "sh"
          - "-c"
          - >
-           apt update; apt install -y curl;
            echo "-k" > ~/.curlrc ;
            ONECLIENT_PROVIDER_ID="$(curl -k https://$ONECLIENT_PROVIDER_HOST/configuration 2>/dev/null | tr ',' '\n' | grep 'providerId' | tr -d '"' | cut -d ':' -f 2)";
            echo "[main process] Connecting users to Oneprovider host=$ONECLIENT_PROVIDER_HOST id=$ONECLIENT_PROVIDER_ID";
@@ -111,7 +110,7 @@ spec:
                echo "[{{ .Values.user.name }}] Waiting for id=$ONECLIENT_PROVIDER_ID to appear on the list of effective providers=$all_{{ .Values.user.name }}_providers for the user={{ .Values.user.name }}" ;
                sleep 2 ;
                all_{{ .Values.user.name }}_providers=$(curl  -k -sS --tlsv1.2 -H "X-Auth-Token: $ONECLIENT_ACCESS_TOKEN" -X GET "https://{{ template "onezone_name" $ }}/api/v3/onezone/user/effective_providers") ;
-             done ;
+             done ; 
            fi ;
            echo "[{{ .Values.user.name }}] Provider host=$ONECLIENT_PROVIDER_HOST id=$ONECLIENT_PROVIDER_ID is on the list of effective providers=$all_{{ .Values.user.name }}_providers of user={{ .Values.user.name }}" ;
            echo "Uploading notebook file={{ .Values.demoFiles.thumbnailDemo }} to the space SPACE_NAME=$SPACE_NAME" ;
