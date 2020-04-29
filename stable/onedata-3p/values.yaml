@@ -41,31 +41,6 @@ webdav_enabled: &webdav_enabled false
 
 volume_data_sync_enabled: &volume_data_sync_enabled false
 
-# Those variables are the unfortunate necessity of an issue discussed here:
-# https://github.com/kubernetes/helm/issues/2479
-saml-idp:
-  enabled: *idp_enabled
-luma:
-  enabled: *luma_enabled
-oneclient:
-  enabled: *oneclients_enabled
-onedata-cli:
-  enabled: *onedata_cli_enabled
-volume-s3:
-  enabled: *s3_enabled
-volume-ceph:
-  enabled: *ceph_enabled
-volume-nfs:
-  enabled: *nfs_enabled
-volume-gluster:
-  enabled: *gluster_enabled
-volume-swift:
-  enabled: *swift_enabled
-volume-webdav:
-  enabled: *webdav_enabled
-volume-data-sync:
-  enabled: *volume_data_sync_enabled
-
 # Global luma configuration shared among providers
 luma: &luma_global
   enabled: *luma_enabled
@@ -339,3 +314,28 @@ oneprovider-lisbon:
     enabled: *webdav_enabled
     suffix: *op3s
     luma-enabled: *luma_enabled_webdav
+
+# Those variables are the unfortunate necessity of an issue discussed here:
+# https://github.com/kubernetes/helm/issues/2479
+saml-idp:
+  enabled: *idp_enabled
+luma:
+  enabled: *luma_enabled
+oneclient:
+  enabled: *oneclients_enabled
+onedata-cli:
+  enabled: *onedata_cli_enabled
+volume-s3:
+  enabled: *s3_enabled
+volume-ceph:
+  enabled: *ceph_enabled
+volume-nfs:
+  enabled: *nfs_enabled
+volume-gluster:
+  enabled: *gluster_enabled
+volume-swift:
+  enabled: *swift_enabled
+volume-webdav:
+  enabled: *webdav_enabled
+volume-data-sync:
+  enabled: *volume_data_sync_enabled
