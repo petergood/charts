@@ -166,17 +166,6 @@ spec:
           {{- end }}
             cp /etc/oz_worker/auth.config.orig /etc/oz_worker/auth.config ;
             /root/onezone.sh ;
-        lifecycle:
-          preStop:
-            exec:
-              command:
-                - "sh"
-                - "-c"
-                - >
-                  oz_panel stop ;
-                  oz_worker stop ;
-                  cluster_manager stop ;
-                  /etc/init.d/couchbase-server stop ;
         readinessProbe:
           initialDelaySeconds: 0
           periodSeconds: 1
