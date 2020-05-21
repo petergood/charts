@@ -1,9 +1,9 @@
 dependencies:
 - name: keycloak
-  repository: https://kubernetes-charts.storage.googleapis.com
-  version: 3.1.0
+  repository: https://codecentric.github.io/helm-charts
+  version: 6.0.3
 - name: onedata-chart-utils
   repository: file://../onedata-chart-utils
   version: 0.2.13
-digest: sha256:c0e0363f58a6bf324449acba9fb7bdbbd8b5047efaa70e06817457d7e1766f25
-generated: 2019-06-04T16:36:15.96569+02:00
+digest: sha256:278942d967f13f549093c69e227eb0184f0e4368560e4dcd85ddf139dcd14cb1
+generated: 2019-11-12T21:17:52.195123+01:00

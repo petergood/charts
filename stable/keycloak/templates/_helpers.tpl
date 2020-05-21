@@ -16,3 +16,21 @@ We truncate to 20 characters because this is used to set the node identifier in 
 {{- define "keycloak.fullname" -}}
 {{ template "fullname" . }}
 {{- end -}}
+
+{{/*
+Create common labels.
+*/}}
+{{- define "keycloak.commonLabels" -}}
+app: {{ include "keycloak.name" . }}
+chart: {{ .Chart.Name }}
+release: {{ .Release.Name }}
+heritage: {{ .Release.Service }}
+component: {{ .Chart.Name }}
+{{- end -}}
+
+{{/*
+Create selector labels.
+*/}}
+{{- define "keycloak.selectorLabels" -}}
+{{- include "keycloak.commonLabels" . }}
+{{- end -}}

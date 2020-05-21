@@ -1,6 +1,9 @@
 # Default values for keycloak
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+# global:
+#   keycloakInstance:
+#     init: *init
 
 wait_for:
   image: onedata/k8s-wait-for:v1.2
@@ -15,12 +18,12 @@ wait_for_keycloak:
 # a initialization job. The format of this list must leave place
 # for other possible idps. Hence the list and an enable flag
 # of idps that can create a suer.
-init:
+init: #&init
   # Disable initialization job
   enabled: true
   # Keycloak admin credentials
-  adminUsername: admin
-  adminPassword: password
+  adminUsername: &adminUsername admin 
+  adminPassword: &adminPassword password
   # Realm and open-id client
   realmId: onedata
   clientName: onedata
@@ -75,9 +78,9 @@ groups:
 keycloak:
   keycloak:
     image:
-      tag: 4.0.0.Final
-    username: admin
-    password: password
+      tag: 7.0.0
+    username: *adminUsername
+    password: *adminPassword
     persistence:
       deployPostgres: false
     extraEnv: |-
