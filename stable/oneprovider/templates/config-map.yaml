@@ -213,8 +213,8 @@ data:
       name: {{ template "fullname" . }}
       {{- end }}
       # Depending on Onedata version, one of 2 keys below will be used
-      redirectionPoint: https://{{ template "service_url" . }}
-      domain: {{ template "service_url" . }} # OR IP ADDRESS
+      redirectionPoint: https://{{ template "oneprovider_service_url" . }}
+      domain: {{ template "oneprovider_service_url" . }} # OR IP ADDRESS
 {{- if .Values.global.alpha }}
       # Oneprovider Registration token acquired in runtime from Onezone
       token: ONEPROVIDER_REGISTRATION_TOKEN_SUPPLIED_AT_RUNTIME

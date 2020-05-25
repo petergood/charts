@@ -256,7 +256,7 @@ spec:
           - name: ONEPANEL_GENERATE_TEST_WEB_CERT
             value: {{ default "false" .Values.onepanel_generate_test_web_cert | quote }}
           - name: ONEPANEL_GENERATED_CERT_DOMAIN
-            value: "{{ template "service_url" . | default .Values.onepanel_generated_cert_domain }}"
+            value: "{{ template "oneprovider_service_url" . | default .Values.onepanel_generated_cert_domain }}"
           - name: ONEPANEL_TRUST_TEST_CA
             value: {{ default "false" .Values.onepanel_trust_test_ca | quote }}
           - name: ONEPANEL_BATCH_MODE
