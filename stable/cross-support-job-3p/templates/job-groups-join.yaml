@@ -61,8 +61,6 @@ spec:
         env:
           - name: ONEZONE_HOST
             value: "https://{{ template "onezone_name" . }}"
-          - name: ONEZONE_API_KEY
-            value: "supplied_at_runtime"
           - name: ONEPANEL_BASIC_AUTH
             value: "{{ template "onepanel_emergency_username_template" . }}:{{ template "onepanel_emergency_password_template" . }}"
           - name: ONEPROVIDER_HOST
@@ -79,14 +77,9 @@ spec:
           - >
             set -e;
             echo "-k" > ~/.curlrc ; echo "-f" >> ~/.curlrc ;
-            echo "Getting token:" ;
-            export ONEZONE_API_KEY="$(curl --silent -k -u $ONEPANEL_BASIC_AUTH -X POST -d '' -H 'content-type: application/json' $ONEZONE_HOST/api/v3/onezone/user/client_tokens)" ;
             echo "Curl output:" ;
-            echo "$ONEZONE_API_KEY" ;
-            export ONEZONE_API_KEY="$(echo "$ONEZONE_API_KEY" | jq -r .token)" ;
             echo "ONEZONE_HOST=$ONEZONE_HOST" ;
             echo "ONEPANEL_BASIC_AUTH=$ONEPANEL_BASIC_AUTH" ;
-            echo "ONEZONE_API_KEY=$ONEZONE_API_KEY" ;
             realmId={{ template "keycloak_realmId_template" $ }} ;
           {{- range .Values.users }}{{ if (hasKey . "idps"  )}}{{ if (hasKey .idps "keycloak" )}}{{ if and .idps.keycloak.enabled .idps.keycloak.onezoneLogin }}
             idp=keycloak-{{ template "onedata-chart-utils.keycloak_idpName_template" $ }};
