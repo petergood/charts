@@ -79,7 +79,7 @@ onepanel_batch_mode_enabled: true
 #   existing certs will be backed up and placed in the same directory.
 # WARNING: This functionality is devised for test purposes and must not
 #   be used in production.
-onepanel_generate_test_web_cert: false
+onepanel_generate_test_web_cert: true
 
 # The generated test web cert will be issued for below domain.
 onepanel_generated_cert_domain: ""
@@ -88,7 +88,7 @@ onepanel_generated_cert_domain: ""
 #   the OnedataTestWebServerCa.
 # WARNING: This functionality is devised for test purposes and must not
 #   be used in production.
-onepanel_trust_test_ca: false
+onepanel_trust_test_ca: true
 
 # When true, all GUIs hosted in this cluster will print
 # debug logs to browser console.

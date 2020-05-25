@@ -40,7 +40,7 @@ onepanel_batch_mode_enabled: true
 #   existing certs will be backed up and placed in the same directory.
 # WARNING: This functionality is devised for test purposes and must not
 #   be used in production.
-onepanel_generate_test_web_cert: false
+onepanel_generate_test_web_cert: true
 
 # The generated test web cert will be issued for below domain.
 onepanel_generated_cert_domain: "xx"
@@ -49,7 +49,7 @@ onepanel_generated_cert_domain: "xx"
 #   the OnedataTestWebServerCa.
 # WARNING: This functionality is devised for test purposes and must not
 #   be used in production.
-onepanel_trust_test_ca: false
+onepanel_trust_test_ca: true
 
 # Indicates policy enforced during provider registration. Possible options are:
 #  open - anyone can acquire a registration token and register a new Oneprovider
