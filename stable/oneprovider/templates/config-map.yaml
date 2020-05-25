@@ -217,7 +217,11 @@ data:
       domain: {{ template "oneprovider_service_url" . }} # OR IP ADDRESS
 {{- if .Values.global.alpha }}
       # Oneprovider Registration token acquired in runtime from Onezone
+      {{- if (index .Values "onezone-registration-token" "enabled") }}
       token: ONEPROVIDER_REGISTRATION_TOKEN_SUPPLIED_AT_RUNTIME
+      {{- else }}
+      token: {{ (index $.Values "onezone-registration-token" "value") }}
+      {{- end }}
 {{- end }}
       # Subdomain feature is currently not supported in k8s
       subdomainDelegation: false
