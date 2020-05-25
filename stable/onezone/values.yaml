@@ -43,7 +43,7 @@ onepanel_batch_mode_enabled: true
 onepanel_generate_test_web_cert: true
 
 # The generated test web cert will be issued for below domain.
-onepanel_generated_cert_domain: "xx"
+onepanel_generated_cert_domain: ""
 
 # If enabled, onepanel will trust any server that has a cert signed by
 #   the OnedataTestWebServerCa.
