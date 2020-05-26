@@ -80,15 +80,6 @@ spec:
             value: "supplied_at_runtime"
           - name: TERM # otherwise zsh and bash autocompletion used in this container tends to go crazy
             value: "xterm-256color"
-            # add users
-            # add users credentials:
-            #  per provider (not luma)
-            #  per storage
-
-            # add groups
-            #   per user
-            #   per provider (not luma)
-            #   per space
         command:
           - "bash"
           - "-c"

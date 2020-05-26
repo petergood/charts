@@ -75,7 +75,7 @@ spec:
           - "bash"
           - "-c"
           - >
-            set -e;
+            set -e ;
             echo "-k" > ~/.curlrc ; echo "-f" >> ~/.curlrc ;
             echo "Curl output:" ;
             echo "ONEZONE_HOST=$ONEZONE_HOST" ;
