@@ -80,7 +80,6 @@ spec:
             echo "Curl output:" ;
             echo "ONEZONE_HOST=$ONEZONE_HOST" ;
             echo "ONEPANEL_BASIC_AUTH=$ONEPANEL_BASIC_AUTH" ;
-            realmId={{ template "keycloak_realmId_template" $ }} ;
           {{- range .Values.users }}{{ if (hasKey . "idps"  )}}{{ if (hasKey .idps "keycloak" )}}{{ if and .idps.keycloak.enabled .idps.keycloak.onezoneLogin }}
             idp=keycloak-{{ template "onedata-chart-utils.keycloak_idpName_template" $ }};
             echo "Loging keycloak user={{ .name }} with password={{ .password }} to Onezone. User info from Onezone is: " ;
