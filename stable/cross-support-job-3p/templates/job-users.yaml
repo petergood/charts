@@ -97,7 +97,6 @@ spec:
             echo "] Success." ;
             {{- /* TODO: Fix this onepanel user propagation hack */ -}}
             echo "Propagating onepanel user={{ .name }} to onezone" ;
-            {{- /* TODO: Because of an error in swagger in coresponding invocation in onezone-rest-cli, I use curl here */ -}}
             onezone-rest-cli -u {{ .name }}:{{ .password }} getCurrentUser ;
         {{- end }}
         {{- end }}{{- end }}{{- end }}
