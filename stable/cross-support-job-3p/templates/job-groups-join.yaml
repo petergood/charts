@@ -94,6 +94,7 @@ spec:
             {{- if (hasKey $user.idps "keycloak")}}{{ if ($user.idps.keycloak.enabled) }}
             idp=keycloak-{{ template "onedata-chart-utils.keycloak_idpName_template" $ }};
             {{- end -}}{{- end -}}
+            echo "Getting userId for user={{ $user.name }} with password={{ $user.password }}" ;
             {{- if $.Values.global.alpha }}
             userId=$(curl --silent -k -u {{ $user.name }}:{{ $user.password }} http://{{ template "token-dispenser_name" $ }}/api/v2.0/onezone/uid/$idp) ;
             {{- else -}}
@@ -101,6 +102,7 @@ spec:
             {{- end -}}
             {{- $parent := . -}}
             {{- range .groups }}
+            echo "Getting groupId for group={{ .group.name }} using user={{ template "admin_username_template" $ }} with password={{ template "admin_password_template" $ }}" ;
             groupId=$(onezone-rest-cli -u {{ template "admin_username_template" $ }}:{{ template "admin_password_template" $ }} getGroup | jq -r '.groups[]' | while read -r group_id ; do onezone-rest-cli -u {{ template "admin_username_template" $ }}:{{ template "admin_password_template" $ }} getGroup id=$group_id ; done | jq -r 'select(.name=="{{ .group.name }}").groupId') ;
             printf "Adding user {{ $parent.name }}($userId) to group {{ .group.name }}($groupId). [response: " ;
             onezone-rest-cli -u {{ template "admin_username_template" $ }}:{{ template "admin_password_template" $ }} -w "'%{http_code}'" {{ template "json_quoted_list" dict "name" "privileges" "list" .privileges -}} -H "'Content-type: application/json'" addGroupUser id=$groupId uid=$userId ;
