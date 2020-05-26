@@ -168,7 +168,8 @@ spec:
             - >
               userId=$(onezone-rest-cli -k -u {{ index (first .Values.onepanel_admin_users) "name" }}:{{ index (first .Values.onepanel_admin_users) "password" }} -v getCurrentUser | jq -r ".userId") ;
               echo "userId=$userId for user={{ index (first .Values.onepanel_admin_users) "name" }} with password={{ index (first .Values.onepanel_admin_users) "password" }}" ;
-              providerRegistrationToken=$(curl -k -vv -sS --tlsv1.2 -u {{ index (first .Values.onepanel_admin_users) "name" }}:{{ index (first .Values.onepanel_admin_users) "password" }} -X POST  -H 'content-type: application/json' "https://{{ template "onezone_name" . }}/api/v3/onezone/user/clusters/provider_registration_token" | jq -r ".token") ;
+              providerRegistrationTokenRequest=$(curl -k -vv -sS --tlsv1.2 -u {{ index (first .Values.onepanel_admin_users) "name" }}:{{ index (first .Values.onepanel_admin_users) "password" }} -X POST  -H 'content-type: application/json' "https://{{ template "onezone_name" . }}/api/v3/onezone/user/clusters/provider_registration_token") ;
+              providerRegistrationToken=$(echo "$providerRegistrationTokenRequest" | jq -r ".token") ;
               echo "Provider registration token=$providerRegistrationToken for user user={{ index (first .Values.onepanel_admin_users) "name" }}" ;
               echo "$providerRegistrationToken" >> /onezone-registration-token/token ;
           volumeMounts:
