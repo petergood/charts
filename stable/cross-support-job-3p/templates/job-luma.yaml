@@ -106,8 +106,12 @@ spec:
             {{- if (hasKey $user.idps "keycloak")}}{{ if ($user.idps.keycloak.enabled) }}
             idp=keycloak-{{ template "onedata-chart-utils.keycloak_idpName_template" $ }};
             {{- end -}}{{- end -}}
+            {{- if $.Values.global.alpha }}
+            userId=$(curl --silent -k -u {{ $user.name }}:{{ $user.password }} http://{{ template "token-dispenser_name" $ }}/api/v2.0/onezone/uid/$idp) ;
+            {{- else -}}
             userId=$(curl --silent -k -u {{ $user.name }}:{{ $user.password }} http://{{ template "token-dispenser_name" $ }}/api/v1.0/onezone/uid/$idp) ;
-            lumaUserId="$(curl --silent -k -u {{ $user.name }}:{{ $user.password }} http://{{ template "token-dispenser_name" $ }}/api/v1.0/user/info/$idp | sed -e 's/{"userId":/{"id":/g' | luma-rest-cli -v addUserDetails - 2>&1 | grep 'Location:' | sed -ne 's#^.*/\(.*\)$#\1#p' | tr -d $'\r' )" ;
+            {{- end -}}
+            lumaUserId="$(curl --silent -k -u {{ $user.name }}:{{ $user.password }} http://{{ template "token-dispenser_name" $ }}/api/v1.0/user/info/$idp | sed -e 's/"userId":/"id":/g' | luma-rest-cli -v addUserDetails - 2>&1 | grep 'Location:' | sed -ne 's#^.*/\(.*\)$#\1#p' | tr -d $'\r' )" ;
             printf " Success idp=$idp user {{ $user.name }}($userId), created as luma user {{ $user.name }}($lumaUserId)." ;
             echo "" ;
             {{- range .storages }}
