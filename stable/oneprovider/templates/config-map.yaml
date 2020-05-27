@@ -11,8 +11,26 @@ metadata:
   annotations:
     version: "{{ .Chart.Version }}"
 data:
+{{- if .Values.graphite.enabled }}
+  date: {{ now | date "2006-01-02_15:04:05" }}
+{{- end }}
   panel-overlay.config: {{ toYaml .Values.panelOverlayConfig | indent 2 }}
+{{- if .Values.graphite.enabled}}
+  worker-overlay.config: |-
+      [{cluster_worker, [
+        {graphite_host, "{{ .Values.graphite.host }}"},
+        {graphite_api_key, "{{ .Values.graphite.apiKey }}"},
+        {integrate_with_graphite, {{ .Values.graphite.enabled }} },
+        {graphite_prefix, "GRAPHITE_PREFIX_SUPPLIED_AT_RUNTIME"}
+      ]}
+      {{- if not (empty ( .Values.workerOverlayConfig | trimPrefix "[" | trimSuffix "." | trimSuffix "]" ) ) }}
+      ,
+      {{- end -}}
+      {{ .Values.workerOverlayConfig | trimPrefix "[" | trimSuffix "." | trimSuffix "]" | indent 2 }}
+      ].
+{{- else }}
   worker-overlay.config: {{ toYaml .Values.workerOverlayConfig | indent 2 }}
+{{- end }}
   ONEPROVIDER_CONFIG: |-
     cluster:
       domainName: "{{ template "service_url" . }}"

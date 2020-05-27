@@ -68,7 +68,7 @@ spec:
 {{ toYaml .Values.nodeSelector | indent 8 }}
       {{- end }}
 {{ include "imagePullSecrets" . | indent 6 }}
-      {{- if or (eq (int .Values.oneprovider_nodes_count) 1) (or (index .Values "volume-s3" "enabled")) (or (index .Values "volume-ceph" "enabled") (or (index .Values "volume-gluster" "enabled") (or (index .Values "volume-swift" "enabled") (or (index .Values "generate-certificates" "enabled") (index .Values "wait-for-onezone" "enabled"))))) }}
+      {{- if or (eq (int .Values.oneprovider_nodes_count) 1) (or (index .Values "volume-s3" "enabled")) (or (index .Values "volume-ceph" "enabled") (or (index .Values "volume-gluster" "enabled") (or (index .Values "volume-swift" "enabled") (or (index .Values "generate-certificates" "enabled") (or (index .Values "graphite" "enabled") (index .Values "wait-for-onezone" "enabled")))))) }}
       initContainers:
       {{- end }}
       {{- if (index .Values "generate-certificates" "enabled") }}
@@ -151,8 +151,46 @@ spec:
           image: {{ .Values.wait_for.image }}
           imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
           args:
-            - "pod"
-            - "-lapp={{ template "onezone_name" . }}"
+            - "job"
+            - "{{ template "onezone_name" . }}-ready-check"
+      {{- end }}
+      {{- if (index .Values "graphite" "enabled") }}
+        - name: graphite-prefix-init
+          image: {{ .Values.wait_for.image }}
+          imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
+          env:
+          - name: experiment
+            value: {{ .Values.graphite.prefixVariables.experiment }}
+          - name: date
+            valueFrom:
+              configMapKeyRef:
+                name: {{ template "fullname" . }}-config
+                key: date
+          - name: release
+            value: {{ .Values.graphite.prefixVariables.release }}
+          - name: dc
+            value: {{ .Values.graphite.prefixVariables.dc }}
+          - name: cluster
+            value: {{ .Values.graphite.prefixVariables.cluster }}
+          - name: NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          command:
+            - "/bin/sh"
+            - "-c"
+            - >
+              echo "Setting a graphite prefix in a config map {{ template "fullname" . }}-config" ;
+              graphite_prefix=$(echo " {{ .Values.graphite.graphitePrefix }}") ;
+              kubectl get cm {{ template "fullname" . }}-config -o yaml | sed "s/GRAPHITE_PREFIX_SUPPLIED_AT_RUNTIME/$graphite_prefix/" | kubectl apply -f - ;
       {{- end }}
     {{- if .Values.global.alpha }}
       {{- if and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled }}

@@ -152,6 +152,27 @@ generate-certificates:
   image: onedata/certificate-init-container:8434eb0
   imagePullPolicy: IfNotPresent
 
+# Sending monitoring to Grafana/Graphite
+graphite:
+  enabled: false
+  host: go-carbon.mon.svc.dev.onedata.uk.to
+  # Depending on grafana configuration it's not necessary
+  apiKey: ""
+  # Template prefix, with values evaluated in runtime
+  graphitePrefix: exper.${experiment}.date.${date}.args.${args}.release.${release}.dc.${dc}.cluster.${cluster}.host.${NODE_NAME}.pod.${NAMESPACE}-${POD_NAME}.container.oneprovider.uid.0
+
+  # Static variables for a graphitePrefix
+  prefixVariables:
+    experiment: r19021
+    # date: # computed by helm in the format 2018-02-21_11:41:14
+    # args computed in the pod's entry point
+    release: "r19021"
+    dc: cyf
+    cluster: k8s
+    # host from fieldPath
+    # k8s_pod from fieldPath
+    # computation: oneprovider
+
 # Create a PVC and persist /volumes/persistence
 # Atm. PVC expects to find a matching PV, which is assumed is 
 # to be local persistent volume. Those should be created and managed using this:
