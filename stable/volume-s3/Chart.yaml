@@ -1,5 +1,5 @@
 name: volume-s3
-version: 0.2.9
+version: 0.2.10
 description: Minio object storage service, suitable for testing purposes.
 keywords:
   - onedata

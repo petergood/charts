@@ -3,7 +3,7 @@ dependencies:
   repository: https://codecentric.github.io/helm-charts
   version: 6.0.3
 - name: onedata-chart-utils
-  repository: file://../onedata-chart-utils
-  version: 0.2.13
-digest: sha256:278942d967f13f549093c69e227eb0184f0e4368560e4dcd85ddf139dcd14cb1
-generated: 2019-11-12T21:17:52.195123+01:00
+  repository: https://onedata.github.io/charts/
+  version: 0.2.14
+digest: sha256:3aea8e37843acd91c96ae962d27745895ac60ef995f4256173101ae2b668eadc
+generated: 2020-05-27T16:15:04.454729+02:00

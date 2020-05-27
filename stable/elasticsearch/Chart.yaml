@@ -1,5 +1,5 @@
 name: elasticsearch
-version: 0.1.0
+version: 0.1.1
 description: Extension of the stable/elasticsearch chart
 home: https://github.com/onedata/charts/stable/elasticsearch
 sources:
