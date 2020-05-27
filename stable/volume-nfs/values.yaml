@@ -2,7 +2,7 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-image: gcr.io/google-samples/nfs-server:1.1
+image: onedata/nfs-server-alpine:7509026
 imagePullPolicy: IfNotPresent
 serviceType: ClusterIP
 
@@ -26,9 +26,26 @@ cleanUpJob:
   image: onedata/k8s-wait-for:v1.2
   imagePullPolicy: IfNotPresent
 
-persistence:
-  enabled: false
-  hostPath: /tmp/nfs-onedata
+# NFS cannot export default docker overlay filesystem.
+# By default the exports that:
+# - do not include image field, have assigned empty volume (memory)
+#   what bypasses the compatibility problem
+# - include image field, will work only if the whole nfs-volume service
+#   is scheduled on a node were docker is configured with file system
+#   that NFS can expose: eg. zfs, btrfs.
+exports:
+  - name: empty
+# # Example of exports entry that exposes a data containers:
+#   - name: covid-data-10k
+#     luma-enabled: false
+#     image: onedata/data-container:covid-data-10k-e6e426ada046c65552ca41fe20f8d55d
+#     imagePullPolicy: IfNotPresent
+#     dataPath: /data
+#     readOnly: false
+#     mountPermissions: 777
+#     permissions: 
+#       - path: /
+#         mask: 777
 
 # The generalization of nodeSelector.
 # Allows for more fine grained controls over which

@@ -1,25 +1,7 @@
 {{- if (index .Values "volume-nfs" "enabled") }}
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: {{ template "fullname" . }}-nfs-pvc
-  labels:
-    app: {{ template "fullname" . }}
-    chart: {{ .Chart.Name }}
-    release: {{ template "releaseName" . }}
-    heritage: {{ .Release.Service }}
-    component: "oneprovider"
-    type: nfs
-  annotations:
-    version: "{{ .Chart.Version }}"
-spec:
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: {{ index .Values "volume-nfs" "storage_claim" }}
-  selector: 
-    matchLabels:
-      type: nfs
-      owner: {{ .Values.suffix }}
+  {{ if (index .Values "volume-nfs" "exports") }}
+    {{- range $export := (index .Values "volume-nfs" "exports" ) }}
+      {{- template "pvc-generate" dict "root" $ "export" $export }}
+    {{- end }}
+  {{- end }}
 {{- end }}

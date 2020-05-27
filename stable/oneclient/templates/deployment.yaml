@@ -164,19 +164,19 @@ spec:
                 - "sh"
                 - "-c"
                 - >
-                  {{- range $user := .Values.users }}{{ if hasKey . "oneclient"  }}{{ if has $.Values.suffix $user.oneclient }}{{ if .idps }}
-                  fusermount -uz "/mnt/oneclient/{{ $user.name }}" ; 
-                  {{- end }}{{- end }}{{- end }}{{- end }}
-                  {{- if .Values.directIO.nfs.enabled }}
-                  umount -f {{ .Values.directIO.nfs.mount_path }} ;
-                  {{- end }}
+                  mount | grep fuse.oneclient | cut -d ' ' -f3- | rev | cut -d ' '  -f4- | rev | while read mountPath ; do echo "Umounting $mountPath" ; fusermount -uz "$mountPath" ; done ;
+                  {{- if .Values.directIO.nfs.enabled }}{{- range $mount := .Values.directIO.nfs.mounts }}
+                  umount -f /volumes/{{ $mount.name }} ;
+                  {{- end }}{{- end }}
         volumeMounts:
           - mountPath: /oneclient-mount.sh
             subPath: oneclient-mount.sh
             name: oneclient-mount
       {{- if .Values.directIO.nfs.enabled }}
-          - mountPath: {{ .Values.directIO.nfs.mount_path }}
-            name: nfs
+        {{- range $mount := .Values.directIO.nfs.mounts }}
+          - mountPath: /volumes/{{ $mount.name }}
+            name: nfs-{{ $mount.name }}
+        {{- end }}
       {{- end }}
     {{- if (index .Values "jupyter" "enabled") }}
           - mountPath: /mnt/oneclient:shared
@@ -198,8 +198,10 @@ spec:
       - name: oneclient-mount
         configMap:
           name: {{ template "fullname" . }}-config
-    {{- if .Values.directIO.nfs.enabled }}
-      - name: nfs
+  {{- if .Values.directIO.nfs.enabled }}
+    {{- range $mount := .Values.directIO.nfs.mounts }}
+      - name: nfs-{{ $mount.name }}
         persistentVolumeClaim:
-          claimName: {{ template "releaseName" . }}-oneprovider-{{ .Values.suffix }}-nfs-pvc
+          claimName: {{ template "releaseName" $ }}-oneprovider-{{ $.Values.suffix }}-nfs-{{ $mount.name }}-pvc
     {{- end }}
+  {{- end }}

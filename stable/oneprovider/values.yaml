@@ -191,7 +191,7 @@ oneclient:
   directIO:
     nfs:
       enable: true
-      mount_path: *container_mount_path
+      mounts: *nfs-exports
   token_dispenser_service_url:
     type: auto-generate
     disableSuffix: true
@@ -292,10 +292,13 @@ volume-ceph:
 
 # Create NFS storage server and connect with oneprovider with tested default values
 volume-nfs:
-  enabled: false
+  enabled: true
   suffix: *providerSuffix
-  container_mount_path: &container_mount_path /volumes/nfs
-  storage_claim: 1T
+  exports: &nfs-exports
+  - name: empty
+    luma-enabled: *luma_enabled_nfs
+    readOnly: false
+    storageClaim: 1T
   mount_options:
     - soft
     - intr
@@ -304,7 +307,6 @@ volume-nfs:
   deployAsPreInstallHook: true
   cleanUpJob:
     enabled: true
-  luma-enabled: *luma_enabled_nfs
   readOnly: false
 
 # Create gluster storage server and connect with oneprovider with tested default values

@@ -53,6 +53,27 @@ spec:
       - name: {{ .Chart.Name }}
         image: {{ .Values.image }}
         imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
+        command:
+          - "/bin/bash"
+          - "-c"
+          - >
+        {{- if (index .Values "exports") }}
+          {{- range $export := (index .Values "exports" ) }}
+            {{- if $export.image }}
+            while [ ! -d "/exports/{{ $export.name }}" ] ; do "Waiting for /exports/{{ $export.name }} to be created." ; sleep 1 ; done ; 
+            while [ -z "$(ls -A /exports/{{ $export.name }})" ]; do echo "Waiting for /exports/{{ $export.name }} to be mounted." ; sleep 1 ; done ;
+            {{- end }}
+          {{- end }}
+        {{- end }}
+            mkdir -p /exports ;
+        {{- if (index .Values "exports") }}
+          {{- range $export := (index .Values "exports" ) }}
+            {{- if not $export.image }}
+            mkdir -p /exports/{{ $export.name }} ;
+            {{- end }}
+          {{- end }}
+        {{- end }}
+            /usr/bin/nfsd.sh ;
         ports:
           - name: nfs
             containerPort: 2049
@@ -60,16 +81,98 @@ spec:
             containerPort: 20048
           - name: rpcbind
             containerPort: 111
+        env:
+          - name: SHARED_DIRECTORY
+            value: /exports 
+      {{- if (index .Values "exports") }}
+        {{- range $i := (until (len (index .Values "exports" ) ) ) }}
+          - name: EXTRA_SHARED_DIRECTORY_{{ add $i 1 }}
+            value: /exports/{{ (first ( slice (index $.Values "exports" ) $i (add $i 1) ) ).name }}
+        {{- end }}
+      {{- end -}}
+          {{- range $key, $value := $.Values.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+        lifecycle:
+          preStop:
+            exec:
+              command:
+              - sh
+              - -c
+              - |
+              {{- range $export := (index $.Values "exports" ) }}{{ if $export.image }}
+                umount -fl /exports/{{ $export.name }};
+              {{- end }}{{- end }}
+                pkill nfsd ;
         securityContext:
           privileged: true
         volumeMounts:
         - mountPath: /exports
-          name: persistence
+          name: exports
+    {{- if (index .Values "exports") }}
+      {{- range $export := (index .Values "exports" ) }}
+        {{- if $export.image }}
+        - name: {{ $export.name }}
+          mountPath: /exports/{{ $export.name }}:shared
+        {{- else }}
+        - name: {{ $export.name }}
+          mountPath: /exports/{{ $export.name }}
+        {{- end }}
+      {{- end }}
+    {{- end -}}
+  {{ if (index .Values "exports") }}
+    {{- range $export := (index .Values "exports" ) }}{{ if $export.image }}
+      - name: {{ $export.name }}
+        image: {{ $export.image }}
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" $ "context" $export }}
+        command:
+          - "/bin/sh"
+          - "-c"
+          - >
+            mount -o bind {{ $export.dataPath }} /{{ $export.name }} ;
+            {{- if $export.readOnly }}
+            mount -o remount,ro /{{ $export.name }} ;
+            {{- end }}
+            {{- if $export.mountPermissions }}
+            chmod {{ $export.mountPermissions }} /{{ $export.name }} ;
+            {{- end }}
+            {{- range $a_permission := $export.permissions }}
+            {{- if $a_permission.user }}
+            chown -R {{ $a_permission.user }}{{- if $a_permission.group }}:{{ $a_permission.group }}{{- end }} {{ $export.dataPath }}/{{ $a_permission.path }} ;
+            {{- end }}
+            {{- if $a_permission.mask }}
+            chmod -R {{ $a_permission.mask }} {{ $export.dataPath }}/{{ $a_permission.path }} ;
+            {{- end }}
+            {{- end }}
+            while true ; do sleep 1 ; done ;
+        lifecycle:
+          preStop:
+            exec:
+              command:
+                - "sh"
+                - "-c"
+                - >
+                  {{- if $export.readOnly }}
+                  echo "mount -o remount,rw /{{ $export.name }}" ;
+                  {{- end }}
+                  umount -fl /{{ $export.name }};
+        volumeMounts:
+          - mountPath: /{{ $export.name }}:shared
+            name: {{ $export.name }}
+        securityContext:
+          privileged: true
+          capabilities:
+            add:
+              - SYS_ADMIN
+    {{- end }}{{- end }}
+  {{- end }}
       volumes:
-        - name: persistence
-      {{- if .Values.persistence.enabled }}
-          hostPath:
-            path: {{ .Values.persistence.hostPath | quote }}
-      {{ else }}
+        - name: exports
           emptyDir: {}
-      {{ end }}
+      {{- if (index .Values "exports") }}
+        {{- range $export := (index .Values "exports" ) }}
+        - name: {{ $export.name }}
+          emptyDir: {}
+        {{- end }}
+      {{- end -}}

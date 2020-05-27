@@ -76,16 +76,18 @@ data:
         {{- end }}
       {{- end }}
       {{- if (index .Values "volume-nfs" "enabled") }}
-        nfs:
+        {{- if (index .Values "volume-nfs" "exports") }}{{- range $export := (index .Values "volume-nfs" "exports" ) }}
+        nfs-{{ $export.name }}:
           type: posix
-          mountPoint: {{ index .Values "volume-nfs" "container_mount_path" }}
-          readonly: {{ index .Values "volume-nfs" "readOnly" }}
-        {{- if (index .Values "volume-nfs" "luma-enabled") }}
-          lumaEnabled: {{ .Values.luma.enabled }}
-          lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
-          lumaCacheTimeout: {{ .Values.luma.lumaCacheTimeout }}
-          lumaApiKey: {{ .Values.luma.lumaApiKey }}
+          mountPoint: /volumes/nfs-{{ $export.name }}
+          readonly: {{ index $export "readOnly" }}
+        {{- if (index $export "luma-enabled") }}
+          lumaEnabled: {{ $.Values.luma.enabled }}
+          lumaUrl: http://{{ template "luma_name" $ }}/api/v3/luma
+          lumaCacheTimeout: {{ $.Values.luma.lumaCacheTimeout }}
+          lumaApiKey: {{ $.Values.luma.lumaApiKey }}
         {{- end }}
+        {{- end }}{{- end }}
       {{- end }}
       {{- if (index .Values "volume-s3" "enabled") }}
         s3:

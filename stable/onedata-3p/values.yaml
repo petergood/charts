@@ -160,7 +160,11 @@ oneprovider-krakow:
   volume-nfs:
     enabled: *nfs_enabled
     suffix: *op1s
-    luma-enabled: *luma_enabled_nfs
+    exports: &op1s-nfs-exports
+    - name: empty
+      luma-enabled: *luma_enabled_nfs
+      readOnly: false
+      storageClaim: 1T
   volume-gluster:
     enabled: *gluster_enabled
     suffix: *op1s
@@ -230,6 +234,11 @@ oneprovider-paris:
   volume-nfs:
     enabled: *nfs_enabled
     suffix: *op2s
+    exports: &op2s-nfs-exports
+    - name: empty
+      luma-enabled: *luma_enabled_nfs
+      readOnly: false
+      storageClaim: 1T
     luma-enabled: *luma_enabled_nfs
   volume-gluster:
     enabled: *gluster_enabled
@@ -301,7 +310,11 @@ oneprovider-lisbon:
   volume-nfs:
     enabled: *nfs_enabled
     suffix: *op3s
-    luma-enabled: *luma_enabled_nfs
+    exports: &op3s-nfs-exports
+    - name: empty
+      luma-enabled: *luma_enabled_nfs
+      readOnly: false
+      storageClaim: 1T
   volume-gluster:
     enabled: *gluster_enabled
     suffix: *op3s

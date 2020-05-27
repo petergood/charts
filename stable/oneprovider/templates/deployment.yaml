@@ -222,6 +222,7 @@ spec:
             /root/oneprovider.sh ;
         securityContext:
           privileged: true
+      {{- if (index .Values "volume-nfs" "enabled") }}
         lifecycle:
           preStop:
             exec:
@@ -229,11 +230,8 @@ spec:
                 - "sh"
                 - "-c"
                 - >
-                  umount {{ index .Values "volume-nfs" "container_mount_path" }} ;
-                  op_panel stop ;
-                  op_worker stop ;
-                  cluster_manager stop ;
-                  /etc/init.d/couchbase-server stop ;
+                  umount -f {{ index .Values "volume-nfs" "container_mount_path" }} ;
+      {{- end }}
         readinessProbe:
           exec:
             command:
@@ -309,8 +307,13 @@ spec:
             readOnly: true
       {{- end }}
       {{- if (index .Values "volume-nfs" "enabled") }}
-          - mountPath: {{ index .Values "volume-nfs" "container_mount_path" }}
-            name: nfs
+        {{- if (index .Values "volume-nfs" "exports") }}{{- range $export := (index .Values "volume-nfs" "exports" ) }}
+          - mountPath: /volumes/nfs-{{ $export.name }}
+            name: nfs-{{ $export.name }}
+        {{- end }}{{- end }}
+      {{- end }}
+      {{- if (index .Values "external-volumes") }}
+{{ toYaml (index .Values "external-volumes") | indent 10 }}
       {{- end }}
       {{- if and (index .Values "volume-data-sync" "enabled") (eq (int .Values.oneprovider_nodes_count) 1) }}
         {{- range $volume := (index .Values "volume-data-sync" "volumes") }}
@@ -359,8 +362,7 @@ spec:
                   {{- if $volume.readOnly }}
                   mount -o remount,rw /{{ $volume.name }} ;
                   {{- end }}
-                  umount /{{ $volume.name }};
-                  umount /{{ $volume.name }};
+                  umount -fl /{{ $volume.name }};
         volumeMounts:
           - mountPath: /{{ $volume.name }}:shared
             name: {{ $volume.name }}
@@ -387,9 +389,14 @@ spec:
           secretName: {{ template "fullname" . }}-secret-tls
     {{- end }}
     {{- if (index .Values "volume-nfs" "enabled") }}
-      - name: nfs
+      {{- if (index .Values "volume-nfs" "exports") }}{{- range $export := (index .Values "volume-nfs" "exports" ) }}
+      - name: nfs-{{ $export.name }}
         persistentVolumeClaim:
-          claimName: {{ template "fullname" . }}-nfs-pvc
+          claimName: {{ template "fullname" $ }}-nfs-{{ $export.name }}-pvc
+      {{- end }}{{- end }}
+    {{- end }}
+    {{- if (index .Values "external-persistent-volume-claims") }}
+{{ toYaml (index .Values "external-persistent-volume-claims") | indent 6 }}
     {{- end }}
       {{- if and (index .Values "volume-data-sync" "enabled") (eq (int .Values.oneprovider_nodes_count) 1) }}
         {{- range $volume := (index .Values "volume-data-sync" "volumes") }}

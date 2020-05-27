@@ -62,11 +62,11 @@ oneclientFlags: ""
 
 # Atm. this only controls NFS
 directIO:
-  # Should the same NFS PVC as used by the oneprovider that this oneclient
-  # connects to be mounted in this oneclient
+  # Should the same NFS PVC as used by the oneprovider that oneclient connects
   nfs:
     enabled: false
-    mount_path: /volumes/nfs
+    mounts:
+      - name: empty
 
 # If token dispenser is used it's url should not have
 # the oneprovider suffix prepended
