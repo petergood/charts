@@ -100,7 +100,7 @@ spec:
             userId=$(curl --silent -k -u {{ $user.name }}:{{ $user.password }} http://{{ template "token-dispenser_name" $ }}/api/v1.0/onezone/uid/$idp) ;
             {{- end -}}
             printf "Admin user {{ template "admin_username_template" $ }} is joining user {{ .user.name }}($userId) to space {{ $space.name }}($SPACE_ID). with privileges(empty means default): {{ template "json_quoted_list" dict "name" "privileges" "list" .privileges -}} [response: " ;
-            onezone-rest-cli -w "'%{http_code}'" -u {{ template "admin_username_template" $ }}:{{ template "admin_password_template" $ }} {{ template "json_quoted_list" dict "name" "privileges" "list" .privileges -}} addUserToSpace id=$SPACE_ID uid=$userId ;
+            onezone-rest-cli -w "'%{http_code}'" -u {{ template "admin_username_template" $ }}:{{ template "admin_password_template" $ }} {{ template "json_quoted_list" dict "name" "privileges" "list" .privileges -}} addSpaceUser id=$SPACE_ID uid=$userId ;
             echo "]. Success." ;
             {{- end -}}
             {{- range $space.groups }}
