@@ -37,6 +37,66 @@ wait_for_spaces:
 # that this chart initializes
 onedata-3p:
   enabled: true
+  posix_enabled: &posix_enabled true
+  s3_enabled: &s3_enabled true
+  ceph_enabled: &ceph_enabled true
+  nfs_enabled: &nfs_enabled true
+  gluster_enabled: &gluster_enabled true
+  swift_enabled: &swift_enabled false
+  webdav_enabled: &webdav_enabled false
+  dcache_enabled: &dcache_enabled false
+  
+  token_dispenser_enabled: &token_dispenser_enabled true
+
+  oneprovider-krakow:
+    posix:
+      enabled: *posix_enabled
+    volume-s3:
+      enabled: *s3_enabled
+    volume-ceph:
+      enabled: *ceph_enabled
+    volume-nfs:
+      enabled: *nfs_enabled
+    volume-gluster:
+      enabled: *gluster_enabled
+
+  oneprovider-paris:
+    posix:
+      enabled: *posix_enabled
+    volume-s3:
+      enabled: *s3_enabled
+    volume-ceph:
+      enabled: *ceph_enabled
+    volume-nfs:
+      enabled: *nfs_enabled
+    volume-gluster:
+      enabled: *gluster_enabled
+      
+  oneprovider-lisbon:
+    posix:
+      enabled: *posix_enabled
+    volume-s3:
+      enabled: *s3_enabled
+    volume-ceph:
+      enabled: *ceph_enabled
+    volume-nfs:
+      enabled: *nfs_enabled
+    volume-gluster:
+      enabled: *gluster_enabled
+
+# Those variables are the unfortunate necessity of an issue discussed here:
+# https://github.com/kubernetes/helm/issues/2479]
+token-dispenser:
+  enabled: *token_dispenser_enabled
+volume-s3:
+  enabled: *s3_enabled
+volume-ceph:
+  enabled: *ceph_enabled
+volume-nfs:
+  enabled: *nfs_enabled
+volume-gluster:
+  enabled: *gluster_enabled
+  
 
 # Or manually specify a helm release name of the already
 # deployed environment
