@@ -372,11 +372,6 @@ spec:
         {{- end }}
       {{- end }}
       volumes:
-    # {{- if .Values.persistence.enabled }}
-    #   - name: persistence
-    #     persistentVolumeClaim:
-    #       claimName: {{ template "fullname" . }}-persistence-pvc
-    # {{- end }}
   {{- if .Values.global.alpha }}
     {{- if (index .Values "onezone-registration-token" "enabled") }}
       - name: onezone-registration-token
