@@ -102,6 +102,9 @@ onezone:
   workerOverlayConfig: |-
     [].
 
+  token-dispenser:
+    enabled: &token_dispenser_enabled true
+
 # What follows are the providers configurations for providers designated as:
 # krakow, paris, and lisbon
 oneprovider-krakow:
@@ -330,6 +333,8 @@ oneprovider-lisbon:
 
 # Those variables are the unfortunate necessity of an issue discussed here:
 # https://github.com/kubernetes/helm/issues/2479
+token-dispenser:
+  enabled: *token_dispenser_enabled
 saml-idp:
   enabled: *idp_enabled
 luma:
