@@ -76,7 +76,6 @@ data:
       {{- end }}
       builtInDnsServer: false
     {{- if or .Values.onepanelAdminUsers .Values.onepanel_users }}
-  {{- if .Values.global.alpha }}
       users:
         {{- range .Values.onezone_admin_users }}
         - username: {{ .name }}
@@ -92,39 +91,15 @@ data:
         {{- end }}
     onepanel:
       guiDebugMode: {{ .Values.guiDebugMode }}
-  {{- else }}
-    onepanel:
-      users:
-        {{- range .Values.onezone_admin_users }}
-        {{ .name }}:
-          password: {{ .password }}
-          userRole: admin
-        {{- end }}
-        {{- range .Values.onepanel_users }}
-        {{- if (hasKey .idps "onepanel") }}{{- if (hasKey .idps.onepanel "mode" ) }}{{- if and .idps.onepanel.enabled (eq .idps.onepanel.mode "config") }}
-        {{ .name }}:
-          password: {{ .password }}
-          userRole: {{ if .idps.onepanel.type -}}{{- .idps.onepanel.type -}}{{- else -}}regular{{- end -}}
-        {{- end }}{{- end }}{{- end }}
-        {{- end }}
     {{- end }}
-  {{- end }}
 
   auth.config: |-
         %% Default auth.config file, only onepanelAuth login is enabled. Please refer
         %% to ./template.auth.config or Onedata documentation (https://onedata.org)
         %% for information how to fill out this config.
         #{
-          {{- if .Values.global.alpha }}
             version => 3,
-          {{- else }}
-            version => 2,
-          {{- end }}
-          {{- if .Values.global.alpha }}
             basicAuthConfig => #{
-          {{- else }}
-            onepanelAuthConfig => #{
-          {{- end }}
                 enabled => true
             },
             samlConfig => #{
@@ -159,13 +134,8 @@ data:
                     % attributes.
                     attributeMapping => #{
                         subjectId => {required, "sub"},
-                      {{- if .Values.global.alpha }}
                         fullName => {optional, {any, ["name", "displayName", "fullName"]}},
                         username => {optional, "username"},
-                      {{- else }}
-                        name => {optional, {any, ["name", "login"]}},
-                        alias => {optional, "username"},
-                      {{- end }}
                         emails => {optional, "email"},
                         entitlements => {optional, {any, [
                             {append, ["groups", "roles"]},
@@ -198,7 +168,6 @@ data:
                 % 'onepanel' is a special id for onepanel login. The key name 'onepanel'
                 % cannot be changed or used for any other IdP for the Onezone GUI to
                 % work correctly.
-              {{- if .Values.global.alpha }}
                 {basicAuth, #{
                     % Configuration of the login page button
                     displayName => "username & password",
@@ -219,23 +188,6 @@ data:
                     % valid one for basicAuth IdP.
                     protocol => basicAuth
                 }}
-              {{- else }}
-                {onepanel, #{
-                    % Configuration of the login page button
-                    displayName => "Onepanel account",
-                    % Some predefined icons are available built-in into the GUI app.
-                    % Their paths start with /assets/images/auth-providers.
-                    iconPath => "/assets/images/auth-providers/onepanel.svg",
-                    % Background color is useful for icons with transparency. Moreover,
-                    % after selecting an IdP, its icon disappears and a spinner is shown -
-                    % hence background color should be kept the same as icon's background
-                    % color (if any).
-                    iconBackgroundColor => "#4BD187",
-                    % Which protocol is used for this IdP - onepanelAuth is the only
-                    % valid one for onepanel IdP.
-                    protocol => onepanelAuth
-                }}
-              {{- end }}
                 {{- if (index .Values "keycloak" "enabled") }}
                 ,{ {{- .Values.keycloak.idpName }}, #{
                     % Configuration of the login page button

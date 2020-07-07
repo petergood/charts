@@ -95,11 +95,7 @@ spec:
             idp=keycloak-{{ template "onedata-chart-utils.keycloak_idpName_template" $ }};
             {{- end -}}{{- end -}}
             echo "Getting userId for user={{ $user.name }} with password={{ $user.password }}" ;
-            {{- if $.Values.global.alpha }}
             userId=$(curl --silent -k -u {{ $user.name }}:{{ $user.password }} http://{{ template "token-dispenser_name" $ }}/api/v2.0/onezone/uid/$idp) ;
-            {{- else -}}
-            userId=$(curl --silent -k -u {{ $user.name }}:{{ $user.password }} http://{{ template "token-dispenser_name" $ }}/api/v1.0/onezone/uid/$idp) ;
-            {{- end -}}
             {{- $parent := . -}}
             {{- range .groups }}
             echo "Getting groupId for group={{ .group.name }} using user={{ template "admin_username_template" $ }} with password={{ template "admin_password_template" $ }}" ;

@@ -192,7 +192,6 @@ spec:
               graphite_prefix=$(echo " {{ .Values.graphite.graphitePrefix }}") ;
               kubectl get cm {{ template "fullname" . }}-config -o yaml | sed "s/GRAPHITE_PREFIX_SUPPLIED_AT_RUNTIME/$graphite_prefix/" | kubectl apply -f - ;
       {{- end }}
-    {{- if .Values.global.alpha }}
       {{- if and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled }}
         - name: onezone-registration-token
           image: {{ .Values.onedata_cli.image }}
@@ -214,7 +213,6 @@ spec:
             - mountPath: /onezone-registration-token
               name: onezone-registration-token
       {{- end }}
-    {{- end }}
       containers:
       - name: oneprovider
         image: {{ .Values.image }}
@@ -243,13 +241,11 @@ spec:
             echo "Creating directory for POSIX storage: {{ index .Values "posix" "storagePath" }}" ;
             mkdir -p {{ index .Values "posix" "storagePath" }} ;
           {{- end }}
-          {{- if .Values.global.alpha }}
           {{- if and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled }}
             echo "Onezone registration token:" ;
             cat /onezone-registration-token/token ;
             ONEPROVIDER_REGISTRATION_TOKEN=$(cat /onezone-registration-token/token) ;
             export ONEPROVIDER_CONFIG=$(echo "$ONEPROVIDER_CONFIG" | sed "s/ONEPROVIDER_REGISTRATION_TOKEN_SUPPLIED_AT_RUNTIME/$ONEPROVIDER_REGISTRATION_TOKEN/g") ;
-          {{- end }}
           {{- end }}
             echo {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ;
             if [[ "$HOSTNAME" != {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ]]; then export ONEPANEL_BATCH_MODE="false" ; fi ;
@@ -305,10 +301,8 @@ spec:
               configMapKeyRef:
                 name: {{ template "fullname" . }}-config
                 key: ONEPROVIDER_CONFIG
-          {{- if .Values.global.alpha }}
           - name: ONEPANEL_EMERGENCY_PASSPHRASE
             value:  {{ .Values.onepanel_emergency_account.password }}
-          {{- end }}
         volumeMounts:
     {{- if .Values.persistence.enabled }}
           - name: persistence
@@ -360,12 +354,10 @@ spec:
             name: {{ $volume.name }}
         {{- end }}
       {{- end }}
-    {{- if .Values.global.alpha }}
       {{- if (index .Values "onezone-registration-token" "enabled") }}
           - mountPath: /onezone-registration-token
             name: onezone-registration-token
       {{- end }}
-    {{- end }}
       {{- if and (index .Values "volume-data-sync" "enabled") (eq (int .Values.oneprovider_nodes_count) 1) }}
         {{- range $volume := (index .Values "volume-data-sync" "volumes") }}
       - name: {{ $volume.name }}
@@ -413,12 +405,10 @@ spec:
         {{- end }}
       {{- end }}
       volumes:
-  {{- if .Values.global.alpha }}
     {{- if (index .Values "onezone-registration-token" "enabled") }}
       - name: onezone-registration-token
         emptyDir: {}
     {{- end }}
-  {{- end }}
       - name: config-map
         configMap:
           name: {{ template "fullname" . }}-config

@@ -203,10 +203,8 @@ spec:
               configMapKeyRef:
                 name: {{ template "fullname" . }}-config
                 key: ONEZONE_CONFIG
-          {{- if .Values.global.alpha }}
           - name: ONEPANEL_EMERGENCY_PASSPHRASE
             value:  {{ .Values.onepanel_emergency_account.password }}
-          {{- end }}
         volumeMounts:
     {{- if .Values.persistence.enabled }}
           - name: persistence
@@ -221,11 +219,7 @@ spec:
             subPath:  worker-overlay.config
       {{- if (index .Values "keycloak" "enabled") }}
           - name: config-map
-          {{- if .Values.global.alpha }}
             mountPath: /var/www/html/oz_worker/custom/keycloak.svg
-          {{- else }}
-            mountPath: /var/www/html/custom/oz_worker/keycloak.svg
-          {{- end }}
             subPath:  keycloak.svg
       {{- end }}
       {{- if (index .Values "generate-certificates" "enabled") }}

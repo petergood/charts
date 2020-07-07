@@ -233,14 +233,12 @@ data:
       # Depending on Onedata version, one of 2 keys below will be used
       redirectionPoint: https://{{ template "oneprovider_service_url" . }}
       domain: {{ template "oneprovider_service_url" . }} # OR IP ADDRESS
-{{- if .Values.global.alpha }}
       # Oneprovider Registration token acquired in runtime from Onezone
       {{- if (index .Values "onezone-registration-token" "enabled") }}
       token: ONEPROVIDER_REGISTRATION_TOKEN_SUPPLIED_AT_RUNTIME
       {{- else }}
       token: {{ (index $.Values "onezone-registration-token" "value") }}
       {{- end }}
-{{- end }}
       # Subdomain feature is currently not supported in k8s
       subdomainDelegation: false
       adminEmail: {{ .Values.adminEmail }}
@@ -251,20 +249,3 @@ data:
     # instead of FQDN
     onezone:
       domainName: {{ template "onezone_service_url" . }}
-    {{- if not .Values.global.alpha }}
-    onepanel:
-      guiDebugMode: {{ .Values.guiDebugMode }}
-    {{- if or .Values.onepanel_emergency_account .Values.onepanel_users }}
-      users:
-        {{- range .Values.onepanel_admin_users }}
-        {{ .name }}:
-          password: {{ .password }}
-          userRole: admin
-        {{- end }}
-        {{- range .Values.onepanel_users }}
-        {{ .name }}:
-          password: {{ .password }}
-          userRole: regular
-        {{- end }}
-    {{- end }}
-    {{- end }}
