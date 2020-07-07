@@ -255,7 +255,7 @@ data:
         {{- if $.Values.global.v20 }}{{- if (index .Values "volume-dcache" "importedStorage") }}
           importedStorage: {{ index .Values "volume-dcache" "importedStorage" }}
         {{- end }}{{- end }}
-        {{- if (index .Values "volume-swift" "luma-enabled") }}
+        {{- if (index .Values "volume-dcache" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
           lumaCacheTimeout: {{ .Values.luma.lumaCacheTimeout }}
