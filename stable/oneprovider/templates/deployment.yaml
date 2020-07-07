@@ -189,7 +189,7 @@ spec:
             - "-c"
             - >
               echo "Setting a graphite prefix in a config map {{ template "fullname" . }}-config" ;
-              graphite_prefix=$(echo " {{ .Values.graphite.graphitePrefix }}") ;
+              graphite_prefix=$(echo "{{ .Values.graphite.graphitePrefix }}") ;
               kubectl get cm {{ template "fullname" . }}-config -o yaml | sed "s/GRAPHITE_PREFIX_SUPPLIED_AT_RUNTIME/$graphite_prefix/" | kubectl apply -f - ;
       {{- end }}
       {{- if and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled }}
