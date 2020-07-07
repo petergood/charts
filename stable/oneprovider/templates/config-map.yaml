@@ -90,6 +90,9 @@ data:
         {{- else }}
           readonly: {{ index .Values "posix" "readOnly" }}
         {{- end }}
+        {{- if $.Values.global.v20 }}{{- if (index .Values "posix" "importedStorage") }}
+          importedStorage: {{ index .Values "posix" "importedStorage" }}
+        {{- end }}{{- end }}
         {{- if (index .Values "posix" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
@@ -107,6 +110,9 @@ data:
         {{- else }}
           readonly: {{ index $export "readOnly" }}
         {{- end }}
+        {{- if $.Values.global.v20 }}{{- if (index $export "image") }}
+          importedStorage: true
+        {{- end }}{{- end }}
         {{- if (index $export "luma-enabled") }}
           lumaEnabled: {{ $.Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" $ }}/api/v3/luma
@@ -128,6 +134,9 @@ data:
           readonly: {{ index .Values "volume-s3" "readOnly" }}
         {{- end }}
           insecure: {{ index .Values "volume-s3" "insecure" }}
+        {{- if $.Values.global.v20 }}{{- if (index .Values "volume-s3" "importedStorage") }}
+          importedStorage: {{ index .Values "volume-s3" "importedStorage" }}
+        {{- end }}{{- end }}
         {{- if (index .Values "volume-s3" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
@@ -149,6 +158,9 @@ data:
           readonly: {{ index .Values "volume-ceph" "readOnly" }}
         {{- end }}
           insecure: {{ index .Values "volume-ceph" "insecure" }}
+        {{- if $.Values.global.v20 }}{{- if (index .Values "volume-ceph" "importedStorage") }}
+          importedStorage: {{ index .Values "volume-ceph" "importedStorage" }}
+        {{- end }}{{- end }}
         {{- if (index .Values "volume-ceph" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
@@ -168,6 +180,9 @@ data:
           readonly: {{ index .Values "volume-gluster" "readOnly" }}
         {{- end }}
           insecure: {{ index .Values "volume-gluster" "insecure" }}
+        {{- if $.Values.global.v20 }}{{- if (index .Values "volume-gluster" "importedStorage") }}
+          importedStorage: {{ index .Values "volume-gluster" "importedStorage" }}
+        {{- end }}{{- end }}
         {{- if (index .Values "volume-gluster" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
@@ -189,6 +204,9 @@ data:
           readonly: {{ index .Values "volume-swift" "readOnly" }}
         {{- end }}
           insecure: {{ index .Values "volume-swift" "insecure" }}
+        {{- if $.Values.global.v20 }}{{- if (index .Values "volume-swift" "importedStorage") }}
+          importedStorage: {{ index .Values "volume-swift" "importedStorage" }}
+        {{- end }}{{- end }}
         {{- if (index .Values "volume-swift" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
@@ -210,6 +228,9 @@ data:
           readonly: {{ index .Values "volume-webdav" "readOnly" }}
         {{- end }}
           insecure: {{ index .Values "volume-webdav" "insecure" }}
+        {{- if $.Values.global.v20 }}{{- if (index .Values "volume-webdav" "importedStorage") }}
+          importedStorage: {{ index .Values "volume-webdav" "importedStorage" }}
+        {{- end }}{{- end }}
         {{- if (index .Values "volume-swift" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
@@ -231,6 +252,9 @@ data:
           readonly: {{ index .Values "volume-dcache" "readOnly" }}
         {{- end }}
           insecure: {{ index .Values "volume-dcache" "insecure" }}
+        {{- if $.Values.global.v20 }}{{- if (index .Values "volume-dcache" "importedStorage") }}
+          importedStorage: {{ index .Values "volume-dcache" "importedStorage" }}
+        {{- end }}{{- end }}
         {{- if (index .Values "volume-swift" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
@@ -247,6 +271,9 @@ data:
           skipStorageDetection: {{ $volume.readOnly }}
         {{- else }}
           readonly: {{ $volume.readOnly }}
+        {{- end }}
+        {{- if $.Values.global.v20 }}
+          importedStorage: true
         {{- end }}
         {{- if (index . "luma-enabled") }}
           lumaEnabled: {{ $.Values.luma.enabled }}

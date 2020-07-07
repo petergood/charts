@@ -101,7 +101,9 @@ spec:
               "token": "$SPACE_TOKEN",
               "size": {{ .size | quote }},
               "storageId": "$STORAGE_ID"
+            {{- if not $.Values.global.v20 }}
               {{ if .mountInRoot -}} ,"mountInRoot": {{ .mountInRoot | quote }} {{- end }}
+            {{- end }}
               {{ if .import -}}
                 ,"storageImport": {
                   {{ if .import.strategy -}} "strategy": {{ .import.strategy | quote }} {{- end }}
