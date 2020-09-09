@@ -182,6 +182,9 @@ spec:
           - mountPath: /mnt/oneclient:shared
             name: oneclient
     {{- end }}
+    {{- if (index .Values "external-volume-mounts") }}
+{{ toYaml (index .Values "external-volume-mounts") | indent 10 }}
+    {{- end }}
     {{- if (index .Values "jupyter" "enabled") }}
       - name: jupyter
         image: {{ .Values.jupyter.image }}
@@ -205,3 +208,9 @@ spec:
           claimName: {{ template "releaseName" $ }}-oneprovider-{{ $.Values.suffix }}-nfs-{{ $mount.name }}-pvc
     {{- end }}
   {{- end }}
+    {{- if (index .Values "external-volumes") }}
+{{ toYaml (index .Values "external-volumes") | indent 6 }}
+    {{- end }}
+    {{- if (index .Values "external-persistent-volume-claims") }}
+{{ toYaml (index .Values "external-persistent-volume-claims") | indent 6 }}
+    {{- end }}

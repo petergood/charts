@@ -189,3 +189,12 @@ token-dispenser:
 
 elasticsearch:
   enabled: false
+
+# Add additional volume mounts definition to onezone container
+external-volume-mounts: {}
+
+# Add additional volumes definition
+external-volumes: {}
+
+# Add additional persistent volumes claim templates definition
+external-persistent-volume-claims-templates: {}

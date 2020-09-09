@@ -380,3 +380,12 @@ volume-dcache:
 # cluster configuration
 # avoid storage names: posix, nfs, ceph, s3, gluster, swift
 external-storages: {}
+
+# Add additional volume mounts definition to oneprovider container
+external-volume-mounts: {}
+
+# Add additional volume mounts definition
+external-volumes: {}
+
+# Add additional persistent volumes claim templates definition
+external-persistent-volume-claims-templates: {}

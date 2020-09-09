@@ -89,3 +89,12 @@ users:
     # an empty element as an temporary solution    
     oneclient:
       - ""
+
+# Add additional volume mounts definition to oneclient container
+external-volume-mounts: {}
+
+# Add additional volumes definition
+external-volumes: {}
+
+# Add additional persistent volumes claim definition
+external-persistent-volume-claims: {}

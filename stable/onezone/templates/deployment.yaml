@@ -256,6 +256,9 @@ spec:
             subPath: auth.config
             name: config-map
             readOnly: true
+      {{- if (index .Values "external-volume-mounts") }}
+{{ toYaml (index .Values "external-volume-mounts") | indent 10 }}
+      {{- end }}
       volumes:
       - name: config-map
         configMap:
@@ -274,8 +277,16 @@ spec:
           - key: saml.config
             path: saml.config
     {{- end }}
-  {{- if .Values.persistence.enabled }}
+    {{- if (index .Values "external-volumes") }}
+{{ toYaml (index .Values "external-volumes") | indent 6 }}
+    {{- end }}
+{{- if or .Values.persistence.enabled (index .Values "external-persistent-volume-claims-templates") }}
   volumeClaimTemplates:
+{{- end }}
+    {{- if (index .Values "external-persistent-volume-claims-templates") }}
+{{ toYaml (index .Values "external-persistent-volume-claims-templates") | indent 4 }}
+    {{- end }}
+  {{- if .Values.persistence.enabled }}
     - metadata:
         name: persistence
         labels:

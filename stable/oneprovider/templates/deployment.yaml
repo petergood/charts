@@ -345,8 +345,8 @@ spec:
             name: nfs-{{ $export.name }}
         {{- end }}{{- end }}
       {{- end }}
-      {{- if (index .Values "external-volumes") }}
-{{ toYaml (index .Values "external-volumes") | indent 10 }}
+      {{- if (index .Values "external-volume-mounts") }}
+{{ toYaml (index .Values "external-volume-mounts") | indent 10 }}
       {{- end }}
       {{- if and (index .Values "volume-data-sync" "enabled") (eq (int .Values.oneprovider_nodes_count) 1) }}
         {{- range $volume := (index .Values "volume-data-sync" "volumes") }}
@@ -424,8 +424,8 @@ spec:
           claimName: {{ template "fullname" $ }}-nfs-{{ $export.name }}-pvc
       {{- end }}{{- end }}
     {{- end }}
-    {{- if (index .Values "external-persistent-volume-claims") }}
-{{ toYaml (index .Values "external-persistent-volume-claims") | indent 6 }}
+    {{- if (index .Values "external-volumes") }}
+{{ toYaml (index .Values "external-volumes") | indent 6 }}
     {{- end }}
       {{- if and (index .Values "volume-data-sync" "enabled") (eq (int .Values.oneprovider_nodes_count) 1) }}
         {{- range $volume := (index .Values "volume-data-sync" "volumes") }}
@@ -433,8 +433,13 @@ spec:
         emptyDir: {}
         {{- end }}
       {{- end }}
-  {{- if .Values.persistence.enabled }}
+{{- if or .Values.persistence.enabled (index .Values "external-persistent-volume-claims-templates") }}
   volumeClaimTemplates:
+{{- end }}
+    {{- if (index .Values "external-persistent-volume-claims-templates") }}
+{{ toYaml (index .Values "external-persistent-volume-claims-templates") | indent 4 }}
+    {{- end }}
+  {{- if .Values.persistence.enabled }}
     - metadata:
         name: persistence
         labels:
