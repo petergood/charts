@@ -102,8 +102,7 @@ spec:
               "size": {{ .size | quote }},
               "storageId": "$STORAGE_ID"
             {{- if not $.Values.global.v20 }}
-              {{ if .mountInRoot -}} ,"mountInRoot": {{ .mountInRoot | quote }} {{- end }}
-            {{- end }}
+              {{- if .mountInRoot -}} ,"mountInRoot": {{ .mountInRoot | quote }} {{- end }}
               {{ if .import -}}
                 ,"storageImport": {
                   {{ if .import.strategy -}} "strategy": {{ .import.strategy | quote }} {{- end }}
@@ -121,6 +120,21 @@ spec:
                   {{- if .update.syncAcl -}} ,"syncAcl": {{ .update.syncAcl | quote }} {{- end }}
               }
               {{- end }}
+            {{- else }}
+              {{ if .import -}}{{- if or .import.mode (or .import.continuousScan (or .import.scanInterval (or .import.detectModifications .import.detectDeletions ))) -}}
+                ,"storageImport": {
+                  {{- if .import.mode -}} "mode": {{ .import.mode | quote }} {{- end }}
+                  {{- if or .import.continuousScan (or .import.scanInterval (or .import.detectModifications .import.detectDeletions )) -}}
+                  "autoStorageImportConfig": {
+                    {{ if .import.continuousScan -}} "continuousScan": {{ .import.continuousScan | quote }} {{- end }}
+                    {{- if .import.scanInterval -}} ,"scanInterval": {{ .import.scanInterval | quote }} {{- end }}
+                    {{- if .import.detectModifications -}} ,"detectModifications": {{ .import.detectModifications | quote }} {{- end }}
+                    {{- if .import.detectDeletions -}} ,"detectDeletions": {{ .import.detectDeletions | quote }} {{- end }}
+                  }
+                  {{- end }}
+                }
+              {{- end }}{{- end }}
+            {{- end }}
             }
 
             EEOF
