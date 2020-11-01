@@ -24,7 +24,10 @@ wait_for=${wait_fors[$i]}
 cat <<EOF>> $FILENAME
 
 {{- define "${service}_name" -}}
-  {{- \$releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+  {{- \$releaseName := .Release.Name | toString -}}
+  {{- if .Values.global }}
+    {{- \$releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+  {{- end -}}
   {{- if .Values.${service/-/_}_service_url -}}
     {{- if eq .Values.${service/-/_}_service_url.type "auto-generate" -}}
       {{- if .Values.${service/-/_}_service_url.disableSuffix -}}

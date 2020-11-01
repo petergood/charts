@@ -11,7 +11,10 @@ Expand the name of the chart.
 Allows to override the release name.
 */}}
 {{- define "releaseName" -}}
+  {{- $releaseName := .Release.Name | toString -}}
+  {{- if .Values.global }}
   {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+  {{- end -}}
   {{- printf "%s" $releaseName | trunc 63 -}}
 {{- end -}}
 
@@ -23,7 +26,10 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- define "fullname" -}}
   {{- $name := default .Chart.Name .Values.nameOverride -}}
   {{- $suffix := default "" .Values.suffix | toString -}}
-  {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+  {{- $releaseName := .Release.Name | toString -}}
+  {{- if .Values.global }}
+    {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+  {{- end -}}
   {{- printf "%s-%s-%s" $releaseName $name $suffix | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
