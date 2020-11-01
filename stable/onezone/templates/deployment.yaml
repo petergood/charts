@@ -217,7 +217,7 @@ spec:
           - name: config-map
             mountPath: /etc/oz_worker/overlay.config
             subPath:  worker-overlay.config
-      {{- if (index .Values "keycloak" "enabled") }}
+      {{- if or (index .Values "keycloak" "enabled") (index .Values "keycloak" "icon-enabled") }}
           - name: config-map
             mountPath: /var/www/html/oz_worker/custom/keycloak.svg
             subPath:  keycloak.svg

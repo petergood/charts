@@ -183,6 +183,7 @@ keycloak:
   voGroupId: Onedata-Keycloak-1
   superGroup: onedataKeycloakAdmins
   enabled: false
+  icon-enabled: false
 
 token-dispenser:
   enabled: false
