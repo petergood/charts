@@ -104,6 +104,9 @@ data:
                 enabled => false
             },
             
+            {{- if (index .Values "auth-conf" "openIdConfig") }}
+            {{- (index .Values "auth-conf" "openIdConfig") | nindent 12 }}
+            {{- else }}
             openidConfig => #{
                 % Enable OpenID login protocol - if disabled, all OpenID IdPs will be
                 % hidden from the login page.
@@ -161,7 +164,7 @@ data:
                     }
                 }
             },
-            
+            {{- end }}
             supportedIdps => [
                 % 'onepanel' is a special id for onepanel login. The key name 'onepanel'
                 % cannot be changed or used for any other IdP for the Onezone GUI to
@@ -217,6 +220,9 @@ data:
                         }
                     }
                 }}
+                {{- end }}
+                {{- if (index .Values "auth-conf" "extraIdps") }}
+                {{- (index .Values "auth-conf" "extraIdps") | nindent 14 }}
                 {{- end }}
             ]
         }.

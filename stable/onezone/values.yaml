@@ -190,6 +190,10 @@ token-dispenser:
 elasticsearch:
   enabled: false
 
+auth-conf:
+  openIdConfig: ""
+  extraIdps: ""
+
 # Add additional volume mounts definition to onezone container
 external-volume-mounts: {}
 
