@@ -315,7 +315,7 @@ spec:
           - name: config-map
             mountPath: /etc/op_worker/overlay.config
             subPath:  worker-overlay.config
-      {{- if (index .Values "generate-certificates" "enabled") }}
+      {{- if or (index .Values "generate-certificates" "enabled") (index .Values "certificates-from-a-secret" "enabled") }}
           - mountPath: /etc/op_panel/certs/web_key.pem
             subPath: tls.key
             name: tls
@@ -412,7 +412,7 @@ spec:
       - name: config-map
         configMap:
           name: {{ template "fullname" . }}-config
-    {{- if (index .Values "generate-certificates" "enabled") }}
+    {{- if or (index .Values "generate-certificates" "enabled") (index .Values "certificates-from-a-secret" "enabled") }}
       - name: tls
         secret:
           secretName: {{ template "fullname" . }}-secret-tls
