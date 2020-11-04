@@ -22,7 +22,7 @@ affinity: {}
 # List of taints which are tolerated by the pods 
 # when nodes are selected by a kubernetes scheduler
 # https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-tolerations: {}
+tolerations: []
 
 # Specify a map of key-value pairs. For the pod 
 # to be eligible to run on a node, the node 
