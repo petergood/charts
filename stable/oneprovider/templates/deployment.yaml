@@ -241,12 +241,6 @@ spec:
             echo "Creating directory for POSIX storage: {{ index .Values "posix" "storagePath" }}" ;
             mkdir -p {{ index .Values "posix" "storagePath" }} ;
           {{- end }}
-          {{- if and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled }}
-            echo "Onezone registration token:" ;
-            cat /onezone-registration-token/token ;
-            ONEPROVIDER_REGISTRATION_TOKEN=$(cat /onezone-registration-token/token) ;
-            export ONEPROVIDER_CONFIG=$(echo "$ONEPROVIDER_CONFIG" | sed "s/ONEPROVIDER_REGISTRATION_TOKEN_SUPPLIED_AT_RUNTIME/$ONEPROVIDER_REGISTRATION_TOKEN/g") ;
-          {{- end }}
             echo {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ;
             if [[ "$HOSTNAME" != {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ]]; then export ONEPANEL_BATCH_MODE="false" ; fi ;
             env ;
@@ -257,8 +251,10 @@ spec:
             /root/oneprovider.sh ;
         securityContext:
           privileged: true
-      {{- if (index .Values "volume-nfs" "enabled") }}
+      {{- if or (index .Values "volume-nfs" "enabled") (and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled) }}
         lifecycle:
+      {{- end }}
+      {{- if (index .Values "volume-nfs" "enabled") }}{{- if (index .Values "volume-nfs" "exports") }}
           preStop:
             exec:
               command:
@@ -284,6 +280,8 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
+          - name: ONEZONE_HOST
+            value: "https://{{ template "onezone_service_url" . }}"
           - name: ONEPANEL_LOG_LEVEL
             value: {{ default "info" .Values.log_level | quote }}
           - name: ONEPANEL_DEBUG_MODE
@@ -354,10 +352,6 @@ spec:
             name: {{ $volume.name }}
         {{- end }}
       {{- end }}
-      {{- if (index .Values "onezone-registration-token" "enabled") }}
-          - mountPath: /onezone-registration-token
-            name: onezone-registration-token
-      {{- end }}
       {{- if and (index .Values "volume-data-sync" "enabled") (eq (int .Values.oneprovider_nodes_count) 1) }}
         {{- range $volume := (index .Values "volume-data-sync" "volumes") }}
       - name: {{ $volume.name }}
@@ -405,10 +399,6 @@ spec:
         {{- end }}
       {{- end }}
       volumes:
-    {{- if (index .Values "onezone-registration-token" "enabled") }}
-      - name: onezone-registration-token
-        emptyDir: {}
-    {{- end }}
       - name: config-map
         configMap:
           name: {{ template "fullname" . }}-config

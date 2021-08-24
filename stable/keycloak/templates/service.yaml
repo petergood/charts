@@ -19,8 +19,8 @@ spec:
   type: "{{ .Values.serviceType }}"
   ports:
     - name: http
-      port: {{ .Values.keycloak.keycloak.service.httpPort }}
+      port: {{ .Values.keycloak.service.port }}
       targetPort: http
       protocol: TCP
   selector:
-    app: {{ template "fullname" . }}
+    app: {{ .Release.Name }}-keycloak
