@@ -311,5 +311,7 @@ data:
     # TODO: make it possible for onedata services to communicate using 
     # system configured DNS. this will allow to put here just service name
     # instead of FQDN
+    {{- if not $.Values.global.v20 }}
     onezone:
       domainName: {{ template "onezone_service_url" . }}
+    {{- end }}
