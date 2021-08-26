@@ -26,7 +26,7 @@ cat <<EOF>> $FILENAME
 {{- define "${service}_name" -}}
   {{- \$releaseName := .Release.Name | toString -}}
   {{- if .Values.global }}
-    {{- \$releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+    {{- \$releaseName = default .Release.Name .Values.global.releaseNameOverride | toString -}}
   {{- end -}}
   {{- if .Values.${service/-/_}_service_url -}}
     {{- if eq .Values.${service/-/_}_service_url.type "auto-generate" -}}

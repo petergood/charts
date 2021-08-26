@@ -13,7 +13,7 @@ Allows to override the release name.
 {{- define "releaseName" -}}
   {{- $releaseName := .Release.Name | toString -}}
   {{- if .Values.global }}
-  {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+    {{- $releaseName = default .Release.Name .Values.global.releaseNameOverride | toString -}}
   {{- end -}}
   {{- printf "%s" $releaseName | trunc 63 -}}
 {{- end -}}
@@ -28,7 +28,7 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
   {{- $suffix := default "" .Values.suffix | toString -}}
   {{- $releaseName := .Release.Name | toString -}}
   {{- if .Values.global }}
-    {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+    {{- $releaseName = default .Release.Name .Values.global.releaseNameOverride | toString -}}
   {{- end -}}
   {{- printf "%s-%s-%s" $releaseName $name $suffix | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
@@ -36,8 +36,20 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{/*
 Logic for generating service urls
 */}}
-{{define "global_region"}}{{required "A non empty region name is required!" .Values.global.region}}{{end}}
-{{define "global_tld"}}{{required "A non empty top level domain name is required!" .Values.global.tld}}{{end}}
+{{- define "global_region" -}}
+{{- if .Values.global -}}
+  {{- required "A non empty region name is required!" .Values.global.region -}}
+{{- else -}}
+  {{- required "A non empty region name is required!" "" -}}
+{{- end -}}
+{{- end -}}
+{{- define "global_tld" -}}
+{{- if .Values.global -}}
+  {{- required "A non empty top level domain name is required!" .Values.global.tld -}}
+{{- else -}}
+  {{- required "A non empty top level domain name is required!" "" -}}
+{{- end -}}
+{{- end -}}
 {{- define "cluster_domain" -}}{{template "global_region" .}}.{{template "global_tld" .}}{{end}}
 {{- define "service_domain" -}}svc.{{template "cluster_domain" .}}{{end}}
 {{- define "service_namespace_domain" -}}{{.Release.Namespace}}.svc.{{template "cluster_domain" .}}{{end}}

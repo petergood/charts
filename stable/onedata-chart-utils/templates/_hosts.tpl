@@ -3,7 +3,7 @@
 {{- define "volume-s3_name" -}}
   {{- $releaseName := .Release.Name | toString -}}
   {{- if .Values.global }}
-    {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+    {{- $releaseName = default .Release.Name .Values.global.releaseNameOverride | toString -}}
   {{- end -}}
   {{- if .Values.volume_s3_service_url -}}
     {{- if eq .Values.volume_s3_service_url.type "auto-generate" -}}
@@ -52,7 +52,7 @@
 {{- define "volume-nfs_name" -}}
   {{- $releaseName := .Release.Name | toString -}}
   {{- if .Values.global }}
-    {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+    {{- $releaseName = default .Release.Name .Values.global.releaseNameOverride | toString -}}
   {{- end -}}
   {{- if .Values.volume_nfs_service_url -}}
     {{- if eq .Values.volume_nfs_service_url.type "auto-generate" -}}
@@ -101,7 +101,7 @@
 {{- define "volume-ceph_name" -}}
   {{- $releaseName := .Release.Name | toString -}}
   {{- if .Values.global }}
-    {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+    {{- $releaseName = default .Release.Name .Values.global.releaseNameOverride | toString -}}
   {{- end -}}
   {{- if .Values.volume_ceph_service_url -}}
     {{- if eq .Values.volume_ceph_service_url.type "auto-generate" -}}
@@ -150,7 +150,7 @@
 {{- define "volume-gluster_name" -}}
   {{- $releaseName := .Release.Name | toString -}}
   {{- if .Values.global }}
-    {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+    {{- $releaseName = default .Release.Name .Values.global.releaseNameOverride | toString -}}
   {{- end -}}
   {{- if .Values.volume_gluster_service_url -}}
     {{- if eq .Values.volume_gluster_service_url.type "auto-generate" -}}
@@ -199,7 +199,7 @@
 {{- define "volume-swift_name" -}}
   {{- $releaseName := .Release.Name | toString -}}
   {{- if .Values.global }}
-    {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+    {{- $releaseName = default .Release.Name .Values.global.releaseNameOverride | toString -}}
   {{- end -}}
   {{- if .Values.volume_swift_service_url -}}
     {{- if eq .Values.volume_swift_service_url.type "auto-generate" -}}
@@ -248,7 +248,7 @@
 {{- define "volume-webdav_name" -}}
   {{- $releaseName := .Release.Name | toString -}}
   {{- if .Values.global }}
-    {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+    {{- $releaseName = default .Release.Name .Values.global.releaseNameOverride | toString -}}
   {{- end -}}
   {{- if .Values.volume_webdav_service_url -}}
     {{- if eq .Values.volume_webdav_service_url.type "auto-generate" -}}
@@ -297,7 +297,7 @@
 {{- define "volume-dcache_name" -}}
   {{- $releaseName := .Release.Name | toString -}}
   {{- if .Values.global }}
-    {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+    {{- $releaseName = default .Release.Name .Values.global.releaseNameOverride | toString -}}
   {{- end -}}
   {{- if .Values.volume_dcache_service_url -}}
     {{- if eq .Values.volume_dcache_service_url.type "auto-generate" -}}
@@ -346,7 +346,7 @@
 {{- define "oneprovider_name" -}}
   {{- $releaseName := .Release.Name | toString -}}
   {{- if .Values.global }}
-    {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+    {{- $releaseName = default .Release.Name .Values.global.releaseNameOverride | toString -}}
   {{- end -}}
   {{- if .Values.oneprovider_service_url -}}
     {{- if eq .Values.oneprovider_service_url.type "auto-generate" -}}
@@ -395,7 +395,7 @@
 {{- define "onezone_name" -}}
   {{- $releaseName := .Release.Name | toString -}}
   {{- if .Values.global }}
-    {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+    {{- $releaseName = default .Release.Name .Values.global.releaseNameOverride | toString -}}
   {{- end -}}
   {{- if .Values.onezone_service_url -}}
     {{- if eq .Values.onezone_service_url.type "auto-generate" -}}
@@ -444,7 +444,7 @@
 {{- define "saml-idp_name" -}}
   {{- $releaseName := .Release.Name | toString -}}
   {{- if .Values.global }}
-    {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+    {{- $releaseName = default .Release.Name .Values.global.releaseNameOverride | toString -}}
   {{- end -}}
   {{- if .Values.saml_idp_service_url -}}
     {{- if eq .Values.saml_idp_service_url.type "auto-generate" -}}
@@ -493,7 +493,7 @@
 {{- define "keycloak_name" -}}
   {{- $releaseName := .Release.Name | toString -}}
   {{- if .Values.global }}
-    {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+    {{- $releaseName = default .Release.Name .Values.global.releaseNameOverride | toString -}}
   {{- end -}}
   {{- if .Values.keycloak_service_url -}}
     {{- if eq .Values.keycloak_service_url.type "auto-generate" -}}
@@ -542,7 +542,7 @@
 {{- define "luma_name" -}}
   {{- $releaseName := .Release.Name | toString -}}
   {{- if .Values.global }}
-    {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+    {{- $releaseName = default .Release.Name .Values.global.releaseNameOverride | toString -}}
   {{- end -}}
   {{- if .Values.luma_service_url -}}
     {{- if eq .Values.luma_service_url.type "auto-generate" -}}
@@ -591,7 +591,7 @@
 {{- define "token-dispenser_name" -}}
   {{- $releaseName := .Release.Name | toString -}}
   {{- if .Values.global }}
-    {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+    {{- $releaseName = default .Release.Name .Values.global.releaseNameOverride | toString -}}
   {{- end -}}
   {{- if .Values.token_dispenser_service_url -}}
     {{- if eq .Values.token_dispenser_service_url.type "auto-generate" -}}
@@ -689,7 +689,7 @@
 {{- define "_name" -}}
   {{- $releaseName := .Release.Name | toString -}}
   {{- if .Values.global }}
-    {{- $releaseName := default .Release.Name .Values.global.releaseNameOverride | toString -}}
+    {{- $releaseName = default .Release.Name .Values.global.releaseNameOverride | toString -}}
   {{- end -}}
   {{- if .Values._service_url -}}
     {{- if eq .Values._service_url.type "auto-generate" -}}
