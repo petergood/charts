@@ -214,9 +214,19 @@ spec:
           - name: config-map
             mountPath: /etc/oz_panel/overlay.config
             subPath: panel-overlay.config
+      {{- range $fileName, $config := (index .Values "panelExtraOverlayConfigs") }}
+          - name: config-map
+            mountPath: /etc/oz_panel/config.d/{{ $fileName }}
+            subPath: panel-{{ $fileName }}
+      {{- end }}
           - name: config-map
             mountPath: /etc/oz_worker/overlay.config
             subPath:  worker-overlay.config
+      {{- range $fileName, $config := (index .Values "workerExtraOverlayConfigs") }}
+          - name: config-map
+            mountPath: /etc/oz_worker/config.d/{{ $fileName }}
+            subPath: worker-{{ $fileName }}
+      {{- end }}
       {{- if or (index .Values "keycloak" "enabled") (index .Values "keycloak" "icon-enabled") }}
           - name: config-map
             mountPath: /var/www/html/oz_worker/custom/keycloak.svg

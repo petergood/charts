@@ -323,9 +323,19 @@ spec:
           - name: config-map
             mountPath: /etc/op_panel/overlay.config
             subPath: panel-overlay.config
+      {{- range $fileName, $config := (index .Values "panelExtraOverlayConfigs") }}
+          - name: config-map
+            mountPath: /etc/op_panel/config.d/{{ $fileName }}
+            subPath: panel-{{ $fileName }}
+      {{- end }}
           - name: config-map
             mountPath: /etc/op_worker/overlay.config
             subPath:  worker-overlay.config
+      {{- range $fileName, $config := (index .Values "workerExtraOverlayConfigs") }}
+          - name: config-map
+            mountPath: /etc/op_worker/config.d/{{ $fileName }}
+            subPath: worker-{{ $fileName }}
+      {{- end }}
       {{- if or (index .Values "generate-certificates" "enabled") (index .Values "certificates-from-a-secret" "enabled") }}
           - mountPath: /etc/op_panel/certs/web_key.pem
             subPath: tls.key

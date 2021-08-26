@@ -13,6 +13,12 @@ metadata:
 data:
   panel-overlay.config: {{ toYaml .Values.panelOverlayConfig | indent 2 }}
   worker-overlay.config: {{ toYaml .Values.workerOverlayConfig | indent 2 }}
+{{- range $fileName, $config := (index .Values "panelExtraOverlayConfigs") }}
+  panel-{{ $fileName }}: {{ toYaml $config | indent 2 }}
+{{- end }}
+{{- range $fileName, $config := (index .Values "workerExtraOverlayConfigs") }}
+  worker-{{ $fileName }}: {{ toYaml $config | indent 2 }}
+{{- end }}
   ONEZONE_CONFIG: |-
     cluster:
       domainName: "{{ template "service_url" . }}"

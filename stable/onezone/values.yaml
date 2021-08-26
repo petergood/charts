@@ -106,6 +106,17 @@ panelOverlayConfig: |-
 workerOverlayConfig: |-
   [].
 
+# A map of Erlang configuration files that override
+# respected default values in the app.conf of Onepanel.
+# Example:
+# workerExtraOverlayConfigs:
+#   grafana.conf: |-
+#    [].
+workerExtraOverlayConfigs: []
+
+# Same story as above, just for worker service.
+panelExtraOverlayConfigs: []
+
 # The generalization of nodeSelector.
 # Allows for more fine grained controls over which
 # nodes are selected by a kubernetes scheduler
