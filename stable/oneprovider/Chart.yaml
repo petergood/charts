@@ -73,3 +73,8 @@ dependencies:
   version: 0.2.1
   repository: file://../jupyter-notebook
   condition: jupyter-notebook.enabled
+  
+- name: openfaas 
+  version: 7.3.1
+  repository:  file://../../../onedata/faas-netes/chart/openfaas
+  condition: openfaas.enabled

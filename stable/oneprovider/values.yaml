@@ -250,6 +250,22 @@ onedata-cli:
   suffix: *providerSuffix
   onezone_service_url: *onezone_service_url
 
+openfaas:
+  enabled: false
+  suffix: *providerSuffix
+  serviceType: ClusterIP
+  functionNamespace: ""
+  generateBasicAuth: false
+  gateway:
+    readTimeout : "14400s"
+    writeTimeout : "14400s"
+    upstreamTimeout : "14000s"
+  basic_auth: true
+  basicAuthPassword: password
+  faasnetes:
+    readTimeout : "14400s"
+    writeTimeout : "14400s"
+
 # Luma configuration shared among all the storages
 luma:
   enabled: false
