@@ -105,8 +105,8 @@ volume-gluster:
 # Run luma configuration job
 lumaJobEnabled: false
 
-# Set to {} to disable group creation job
-groups: {}
+# Set to [] to disable group creation job
+groups: []
 
 # Set to {} to disable user creation job
 users:
