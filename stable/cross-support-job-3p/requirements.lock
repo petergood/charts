@@ -1,9 +1,0 @@
-dependencies:
-- name: onedata-chart-utils
-  repository: https://onedata.github.io/charts/
-  version: 0.2.14
-- name: onedata-3p
-  repository: https://onedata.github.io/charts/
-  version: 0.2.15
-digest: sha256:0dfb69339d7573890c53bd77405c2a7d70d13db6712e6467870c8b2dba9e3b59
-generated: 2020-05-27T16:43:44.783163+02:00

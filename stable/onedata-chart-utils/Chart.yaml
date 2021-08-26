@@ -1,3 +1,4 @@
+apiVersion: v2
 name: onedata-chart-utils
 version: 0.2.14
 description: A set helper go templates functions for Onedata charts

@@ -1,3 +1,4 @@
+apiVersion: v2
 name: onedata-cli
 version: 0.2.15
 description: A set of CLI commands to interact with Onedata REST API.
@@ -10,3 +11,8 @@ maintainers:
     email: orzechowski.michal@gmail.com
 engine: gotpl
 appVersion: 19.02.1
+
+dependencies:
+- name: onedata-chart-utils
+  version: 0.2.14
+  repository: file://../onedata-chart-utils

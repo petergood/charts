@@ -1,3 +1,4 @@
+apiVersion: v2
 name: keycloak
 version: 0.1.5
 description: Extension of the incubator/keycloak chart
@@ -14,3 +15,7 @@ dependencies:
 - name: keycloak
   version: 6.0.3
   repository: "@codecentric"
+
+- name: onedata-chart-utils
+  version: 0.2.14
+  repository: file://../onedata-chart-utils

@@ -1,3 +1,4 @@
+apiVersion: v2
 name: volume-swift
 version: 0.2.8
 description: A single container swift setup, suitable for testing purposes.
@@ -13,3 +14,8 @@ maintainers:
     email: orzechowski.michal@gmail.com
 engine: gotpl
 appVersion: 2.14.0
+
+dependencies:
+- name: onedata-chart-utils
+  version: 0.2.14
+  repository: file://../onedata-chart-utils

@@ -1,3 +1,4 @@
+apiVersion: v2
 name: luma
 version: 0.2.8
 description: LUMA is a REST server that exposes simple REST API that can be used to map users (of any system/kind) to storage specific users, in the process authorizing them with the storage.
@@ -14,3 +15,8 @@ maintainers:
     email: orzechowski.michal@gmail.com
 engine: gotpl
 appVersion: 19.02.1
+
+dependencies:
+- name: onedata-chart-utils
+  version: 0.2.14
+  repository: file://../onedata-chart-utils

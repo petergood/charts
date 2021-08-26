@@ -1,3 +1,4 @@
+apiVersion: v2
 name: elasticsearch
 version: 0.1.1
 description: Extension of the stable/elasticsearch chart
@@ -9,3 +10,12 @@ maintainers:
     email: orzechowski.michal@gmail.com
 engine: gotpl
 appVersion: 6.6.0
+
+dependencies:
+- name: elasticsearch
+  version: 7.6.2
+  repository: "@elastic"
+
+- name: onedata-chart-utils
+  version: 0.2.14
+  repository: file://../onedata-chart-utils

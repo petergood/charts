@@ -1,3 +1,4 @@
+apiVersion: v2
 name: token-dispenser
 version: 0.1.4
 description: Proxy for requesting Onezone API tokens
@@ -10,3 +11,8 @@ maintainers:
     email: orzechowski.michal@gmail.com
 engine: gotpl
 appVersion: 0.1.0
+
+dependencies:
+- name: onedata-chart-utils
+  version: 0.2.14
+  repository: file://../onedata-chart-utils

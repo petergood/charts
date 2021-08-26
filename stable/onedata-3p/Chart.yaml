@@ -1,3 +1,4 @@
+apiVersion: v2
 name: onedata-3p
 version: 0.2.15
 description: Complex Onedata deployment with one Onezone, three Oneproviders and S3, CEPH, NFS, POSIX backends.
@@ -12,3 +13,26 @@ maintainers:
     email: orzechowski.michal@gmail.com
 engine: gotpl
 appVersion: 19.02.1
+
+dependencies:
+- name: onezone
+  version: 0.2.16
+  repository: file://../onezone
+
+- name: oneprovider
+  alias: oneprovider-krakow
+  version: 0.2.18
+  repository: file://../oneprovider
+  condition: oneprovider-krakow.enabled
+
+- name: oneprovider
+  alias: oneprovider-paris
+  version: 0.2.18
+  repository: file://../oneprovider
+  condition: oneprovider-paris.enabled
+
+- name: oneprovider
+  alias: oneprovider-lisbon
+  version: 0.2.18
+  repository: file://../oneprovider
+  condition: oneprovider-lisbon.enabled
