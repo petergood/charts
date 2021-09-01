@@ -7,6 +7,7 @@ op_image: &op_image onedata/oneprovider:19.02.1
 oc_image: &oc_image onedata/oneclient:19.02.1
 cli_image: &cli_image onedata/rest-cli:19.02.1
 luma_image: &luma_image onedata/luma:19.02.1
+odfsj_image: &odfsj_image onedata/onedatafs-jupyter:19.02.1
 
 log_level: &log_level "info"
 onepanel_batch_mode_enabled: &onepanel_batch_mode_enabled true
@@ -31,6 +32,8 @@ onedata_cli_enabled: &onedata_cli_enabled true
 
 luma_enabled: &luma_enabled false 
 
+jupyter_notebook_enabled: &jupyter_notebook_enabled true
+
 posix_enabled: &posix_enabled true
 s3_enabled: &s3_enabled false
 ceph_enabled: &ceph_enabled false
@@ -38,6 +41,7 @@ nfs_enabled: &nfs_enabled false
 gluster_enabled: &gluster_enabled false
 swift_enabled: &swift_enabled false
 webdav_enabled: &webdav_enabled false
+dcache_enabled: &dcache_enabled false
 
 volume_data_sync_enabled: &volume_data_sync_enabled false
 
@@ -79,6 +83,9 @@ luma: &luma_global
 
   webdav:
     enabled: &luma_enabled_webdav false
+
+  dcache:
+    enabled: &luma_enabled_dcache false
 
 # Onezone configuration
 onezone:
@@ -145,6 +152,10 @@ oneprovider-krakow:
     suffix: *op1s
     onedata_cli:
       image: *cli_image
+  jupyter-notebook:
+    image: *odfsj_image
+    enabled: *jupyter_notebook_enabled
+    suffix: *op1s
   onedata-cli:
     image: *cli_image
     enabled: *onedata_cli_enabled
@@ -180,6 +191,10 @@ oneprovider-krakow:
     enabled: *webdav_enabled
     suffix: *op1s
     luma-enabled: *luma_enabled_webdav
+  volume-dcache:
+    enabled: *dcache_enabled
+    suffix: *op1s
+    luma-enabled: *luma_enabled_dcache
 
 oneprovider-paris:
   suffix: &op2s paris
@@ -219,6 +234,10 @@ oneprovider-paris:
     suffix: *op2s
     onedata_cli:
       image: *cli_image
+  jupyter-notebook:
+    image: *odfsj_image
+    enabled: *jupyter_notebook_enabled
+    suffix: *op2s
   onedata-cli:
     image: *cli_image
     enabled: *onedata_cli_enabled
@@ -255,7 +274,10 @@ oneprovider-paris:
     enabled: *webdav_enabled
     suffix: *op2s
     luma-enabled: *luma_enabled_webdav
-
+  volume-dcache:
+    enabled: *dcache_enabled
+    suffix: *op2s
+    luma-enabled: *luma_enabled_dcache
 
 oneprovider-lisbon:
   suffix: &op3s lisbon
@@ -295,6 +317,10 @@ oneprovider-lisbon:
     suffix: *op3s
     onedata_cli:
       image: *cli_image
+  jupyter-notebook:
+    image: *odfsj_image
+    enabled: *jupyter_notebook_enabled
+    suffix: *op3s
   onedata-cli:
     image: *cli_image
     enabled: *onedata_cli_enabled
@@ -330,6 +356,10 @@ oneprovider-lisbon:
     enabled: *webdav_enabled
     suffix: *op3s
     luma-enabled: *luma_enabled_webdav
+  volume-dcache:
+    enabled: *dcache_enabled
+    suffix: *op3s
+    luma-enabled: *luma_enabled_dcache
 
 # Those variables are the unfortunate necessity of an issue discussed here:
 # https://github.com/kubernetes/helm/issues/2479
@@ -355,5 +385,7 @@ volume-swift:
   enabled: *swift_enabled
 volume-webdav:
   enabled: *webdav_enabled
+volume-dcache:
+  enabled: *dcache_enabled
 volume-data-sync:
   enabled: *volume_data_sync_enabled
