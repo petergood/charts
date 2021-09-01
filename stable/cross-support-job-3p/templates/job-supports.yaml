@@ -101,26 +101,6 @@ spec:
               "token": "$SPACE_TOKEN",
               "size": {{ .size | quote }},
               "storageId": "$STORAGE_ID"
-            {{- if not $.Values.global.v20 }}
-              {{- if .mountInRoot -}} ,"mountInRoot": {{ .mountInRoot | quote }} {{- end }}
-              {{ if .import -}}
-                ,"storageImport": {
-                  {{ if .import.strategy -}} "strategy": {{ .import.strategy | quote }} {{- end }}
-                  {{- if .import.maxDepth -}} ,"maxDepth": {{ .import.maxDepth | quote }} {{- end }}
-                  {{- if .import.syncAcl -}} ,"syncAcl": {{ .import.syncAcl | quote }} {{- end }}
-              }
-              {{- end }}
-              {{- if .update -}}
-                ,"storageUpdate": {
-                  {{ if .update.strategy -}} "strategy": {{ .update.strategy | quote }} {{- end }}
-                  {{- if .update.maxDepth -}} ,"maxDepth": {{ .update.maxDepth | quote }} {{- end }}
-                  {{- if .update.scanInterval -}} ,"scanInterval": {{ .update.scanInterval | quote }} {{- end }}
-                  {{- if .update.writeOnce -}} ,"writeOnce": {{ .update.writeOnce | quote }} {{- end }}
-                  {{- if .update.deleteEnable -}} ,"deleteEnable": {{ .update.deleteEnable | quote }} {{- end }}
-                  {{- if .update.syncAcl -}} ,"syncAcl": {{ .update.syncAcl | quote }} {{- end }}
-              }
-              {{- end }}
-            {{- else }}
               {{ if .import -}}{{- if or .import.mode (or .import.continuousScan (or .import.scanInterval (or .import.detectModifications .import.detectDeletions ))) -}}
                 ,"storageImport": {
                   {{- if .import.mode -}} "mode": {{ .import.mode | quote }} {{- end }}
@@ -134,7 +114,6 @@ spec:
                   {{- end }}
                 }
               {{- end }}{{- end }}
-            {{- end }}
             }
 
             EEOF

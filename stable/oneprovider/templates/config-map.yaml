@@ -105,14 +105,10 @@ data:
         posix:
           type: posix
           mountPoint: {{ index .Values "posix" "storagePath" }}
-        {{- if $.Values.global.v20 }}
           skipStorageDetection: {{ index .Values "posix" "readOnly" }}
-        {{- else }}
-          readonly: {{ index .Values "posix" "readOnly" }}
-        {{- end }}
-        {{- if $.Values.global.v20 }}{{- if (index .Values "posix" "importedStorage") }}
+        {{- if (index .Values "posix" "importedStorage") }}
           importedStorage: {{ index .Values "posix" "importedStorage" }}
-        {{- end }}{{- end }}
+        {{- end }}
         {{- if (index .Values "posix" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
@@ -125,14 +121,10 @@ data:
         nfs-{{ $export.name }}:
           type: posix
           mountPoint: /volumes/nfs-{{ $export.name }}
-        {{- if $.Values.global.v20 }}
           skipStorageDetection: {{ index $export "readOnly" }}
-        {{- else }}
-          readonly: {{ index $export "readOnly" }}
-        {{- end }}
-        {{- if $.Values.global.v20 }}{{- if (index $export "image") }}
+        {{- if (index $export "image") }}
           importedStorage: true
-        {{- end }}{{- end }}
+        {{- end }}
         {{- if (index $export "luma-enabled") }}
           lumaEnabled: {{ $.Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" $ }}/api/v3/luma
@@ -148,15 +140,11 @@ data:
           bucketName: {{ index .Values "volume-s3" "bucketName" }}
           accessKey: {{ index .Values "volume-s3" "key_id" }}
           secretKey: {{ index .Values "volume-s3" "access_key" }}
-        {{- if $.Values.global.v20 }}
           skipStorageDetection: {{ index .Values "volume-s3" "readOnly" }}
-        {{- else }}
-          readonly: {{ index .Values "volume-s3" "readOnly" }}
-        {{- end }}
           insecure: {{ index .Values "volume-s3" "insecure" }}
-        {{- if $.Values.global.v20 }}{{- if (index .Values "volume-s3" "importedStorage") }}
+        {{- if (index .Values "volume-s3" "importedStorage") }}
           importedStorage: {{ index .Values "volume-s3" "importedStorage" }}
-        {{- end }}{{- end }}
+        {{- end }}
         {{- if (index .Values "volume-s3" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
@@ -172,15 +160,11 @@ data:
           monitorHostname: {{ template "volume-ceph_name" . }}.{{ $.Release.Namespace }}
           clusterName: {{ index .Values "volume-ceph" "cluster_name" }}
           poolName: {{ index .Values "volume-ceph" "pool_name" }}
-        {{- if $.Values.global.v20 }}
           skipStorageDetection: {{ index .Values "volume-ceph" "readOnly" }}
-        {{- else }}
-          readonly: {{ index .Values "volume-ceph" "readOnly" }}
-        {{- end }}
           insecure: {{ index .Values "volume-ceph" "insecure" }}
-        {{- if $.Values.global.v20 }}{{- if (index .Values "volume-ceph" "importedStorage") }}
+        {{- if (index .Values "volume-ceph" "importedStorage") }}
           importedStorage: {{ index .Values "volume-ceph" "importedStorage" }}
-        {{- end }}{{- end }}
+        {{- end }}
         {{- if (index .Values "volume-ceph" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
@@ -194,15 +178,11 @@ data:
           hostname: {{ template "volume-gluster_name" . }}.{{ $.Release.Namespace }}
           volume: {{ index .Values "volume-gluster" "volumeName" }}
           transport: tcp
-        {{- if $.Values.global.v20 }}
           skipStorageDetection: {{ index .Values "volume-gluster" "readOnly" }}
-        {{- else }}
-          readonly: {{ index .Values "volume-gluster" "readOnly" }}
-        {{- end }}
           insecure: {{ index .Values "volume-gluster" "insecure" }}
-        {{- if $.Values.global.v20 }}{{- if (index .Values "volume-gluster" "importedStorage") }}
+        {{- if (index .Values "volume-gluster" "importedStorage") }}
           importedStorage: {{ index .Values "volume-gluster" "importedStorage" }}
-        {{- end }}{{- end }}
+        {{- end }}
         {{- if (index .Values "volume-gluster" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
@@ -218,15 +198,11 @@ data:
           containerName: {{ index .Values "volume-swift" "containerName" }}
           username: {{ index .Values "volume-swift" "username" }}
           password: {{ index .Values "volume-swift" "password" }}
-        {{- if $.Values.global.v20 }}
           skipStorageDetection: {{ index .Values "volume-swift" "readOnly" }}
-        {{- else }}
-          readonly: {{ index .Values "volume-swift" "readOnly" }}
-        {{- end }}
           insecure: {{ index .Values "volume-swift" "insecure" }}
-        {{- if $.Values.global.v20 }}{{- if (index .Values "volume-swift" "importedStorage") }}
+        {{- if (index .Values "volume-swift" "importedStorage") }}
           importedStorage: {{ index .Values "volume-swift" "importedStorage" }}
-        {{- end }}{{- end }}
+        {{- end }}
         {{- if (index .Values "volume-swift" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
@@ -242,15 +218,11 @@ data:
           credentialsType: {{ index .Values "volume-webdav" "credentialsType" }}
           rangeWriteSupport: {{ index .Values "volume-webdav" "rangeWriteSupport" }}
           verifyServerCertificate: {{ index .Values "volume-webdav" "verifyServerCertificate" }}
-        {{- if $.Values.global.v20 }}
           skipStorageDetection: {{ index .Values "volume-webdav" "readOnly" }}
-        {{- else }}
-          readonly: {{ index .Values "volume-webdav" "readOnly" }}
-        {{- end }}
           insecure: {{ index .Values "volume-webdav" "insecure" }}
-        {{- if $.Values.global.v20 }}{{- if (index .Values "volume-webdav" "importedStorage") }}
+        {{- if (index .Values "volume-webdav" "importedStorage") }}
           importedStorage: {{ index .Values "volume-webdav" "importedStorage" }}
-        {{- end }}{{- end }}
+        {{- end }}
         {{- if (index .Values "volume-swift" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
@@ -266,15 +238,11 @@ data:
           credentialsType: {{ index .Values "volume-dcache" "credentialsType" }}
           rangeWriteSupport: {{ index .Values "volume-dcache" "rangeWriteSupport" }}
           verifyServerCertificate: {{ index .Values "volume-dcache" "verifyServerCertificate" }}
-        {{- if $.Values.global.v20 }}
           skipStorageDetection: {{ index .Values "volume-dcache" "readOnly" }}
-        {{- else }}
-          readonly: {{ index .Values "volume-dcache" "readOnly" }}
-        {{- end }}
           insecure: {{ index .Values "volume-dcache" "insecure" }}
-        {{- if $.Values.global.v20 }}{{- if (index .Values "volume-dcache" "importedStorage") }}
+        {{- if (index .Values "volume-dcache" "importedStorage") }}
           importedStorage: {{ index .Values "volume-dcache" "importedStorage" }}
-        {{- end }}{{- end }}
+        {{- end }}
         {{- if (index .Values "volume-dcache" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
@@ -287,14 +255,8 @@ data:
         {{ $volume.name }}:
           type: posix
           mountPoint: /volumes/{{ $volume.name }}
-        {{- if $.Values.global.v20 }}
           skipStorageDetection: {{ $volume.readOnly }}
-        {{- else }}
-          readonly: {{ $volume.readOnly }}
-        {{- end }}
-        {{- if $.Values.global.v20 }}
           importedStorage: true
-        {{- end }}
         {{- if (index . "luma-enabled") }}
           lumaEnabled: {{ $.Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" $ }}/api/v3/luma
@@ -331,7 +293,3 @@ data:
     # TODO: make it possible for onedata services to communicate using 
     # system configured DNS. this will allow to put here just service name
     # instead of FQDN
-    {{- if not $.Values.global.v20 }}
-    onezone:
-      domainName: {{ template "onezone_service_url" . }}
-    {{- end }}
