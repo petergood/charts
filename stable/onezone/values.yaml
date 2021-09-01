@@ -192,7 +192,7 @@ onepanel_users: []
 saml-idp:
   enabled: false
 
-keycloak:
+keycloak: &keycloak
   idpName: rhea
   displayName: Onedata Keycloak
   tokenPrefix: onedata
@@ -201,6 +201,8 @@ keycloak:
   superGroup: onedataKeycloakAdmins
   enabled: false
   icon-enabled: false
+
+keycloak-workaround: *keycloak
 
 token-dispenser:
   enabled: false
