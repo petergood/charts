@@ -349,7 +349,7 @@ volume-ceph:
 
 # Create NFS storage server and connect with oneprovider with tested default values
 volume-nfs:
-  enabled: true
+  enabled: false
   suffix: *providerSuffix
   exports: &nfs-exports
   - name: empty
