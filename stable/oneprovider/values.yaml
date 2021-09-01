@@ -2,12 +2,12 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-image: onedata/oneprovider:19.02.1
+image: onedata/oneprovider:20.02.12
 imagePullPolicy: IfNotPresent
 serviceType: ClusterIP
 
 onedata_cli:
-  image: onedata/rest-cli:19.02.1
+  image: onedata/rest-cli:20.02.12
   imagePullPolicy: IfNotPresent
 
 wait_for:
