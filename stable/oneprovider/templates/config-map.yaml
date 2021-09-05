@@ -279,12 +279,22 @@ data:
       redirectionPoint: https://{{ template "oneprovider_service_url" . }}
       domain: {{ template "oneprovider_service_url" . }} # OR IP ADDRESS
       # Oneprovider Registration token acquired in runtime from Onezone
+{{- if .Values.global }}{{- if not (index .Values "global" "v21") }}
+      # Oneprovider Registration token acquired in runtime from Onezone
+      {{- if (index .Values "onezone-registration-token" "enabled") }}
+      token: ONEPROVIDER_REGISTRATION_TOKEN_SUPPLIED_AT_RUNTIME
+      {{- else }}
+      token: {{ (index $.Values "onezone-registration-token" "value") }}
+      {{- end }}
+{{- end }}{{- end }}
+{{- if .Values.global }}{{- if (index .Values "global" "v21") }}
       {{- if (index .Values "onezone-registration-token" "enabled") }}
       tokenProvisionMethod: fromFile
       tokenFile: /onezone-registration-token/token
       {{- else }}
       token: {{ (index $.Values "onezone-registration-token" "value") }}
       {{- end }}
+{{- end }}{{- end }}
       # Subdomain feature is currently not supported in k8s
       subdomainDelegation: false
       adminEmail: {{ .Values.adminEmail }}

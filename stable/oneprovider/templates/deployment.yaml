@@ -68,7 +68,7 @@ spec:
 {{ toYaml .Values.nodeSelector | indent 8 }}
       {{- end }}
 {{ include "imagePullSecrets" . | indent 6 }}
-      {{- if or (eq (int .Values.oneprovider_nodes_count) 1) (or (index .Values "volume-s3" "enabled")) (or (index .Values "volume-ceph" "enabled") (or (index .Values "volume-gluster" "enabled") (or (index .Values "volume-swift" "enabled") (or (index .Values "generate-certificates" "enabled") (or (index .Values "graphite" "enabled") (index .Values "wait-for-onezone" "enabled")))))) }}
+      {{- if or (eq (int .Values.oneprovider_nodes_count) 1) (or (index .Values "volume-s3" "enabled")) (or (index .Values "volume-ceph" "enabled") (or (index .Values "volume-gluster" "enabled") (or (index .Values "volume-swift" "enabled") (or (index .Values "generate-certificates" "enabled") (or (index .Values "graphite" "enabled") (or (index .Values "wait-for-onezone" "enabled") (and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled)))))))}}
       initContainers:
       {{- end }}
       {{- if (index .Values "generate-certificates" "enabled") }}
@@ -192,6 +192,30 @@ spec:
               graphite_prefix=$(echo "{{ .Values.graphite.graphitePrefix }}") ;
               kubectl get cm {{ template "fullname" . }}-config -o yaml | sed "s/GRAPHITE_PREFIX_SUPPLIED_AT_RUNTIME/$graphite_prefix/" | kubectl apply -f - ;
       {{- end }}
+      {{- if .Values.global }}{{- if not (index .Values "global" "v21") }}
+      {{- if and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled }}
+        - name: onezone-registration-token
+          image: {{ .Values.onedata_cli.image }}
+          imagePullPolicy: {{ template "imagePullPolicy" dict "root" . "context" .Values.wait_for }}
+          env:
+            - name: ONEZONE_HOST
+              value: "https://{{ template "onezone_name" . }}"
+          command:
+            - "/bin/sh"
+            - "-c"
+            - >
+              while [ "$deployed" != "true" ] ; do deployed="$(curl -k  -sS  -X GET 'https://{{ template "onezone_service_url" . }}:9443/configuration' | jq .'deployed')" ; echo "Waiting for https://{{ template "onezone_name" . }}:9443/configuration to return something..."  >> /onezone-registration-token/token-log ; echo "returned=$deployed"  >> /onezone-registration-token/token-log ; sleep 2 ; done ;
+              userId=$(onezone-rest-cli -k -u {{ index (first .Values.onepanel_admin_users) "name" }}:{{ index (first .Values.onepanel_admin_users) "password" }} -v getCurrentUser | jq -r ".userId") ;
+              echo "userId=$userId for user={{ index (first .Values.onepanel_admin_users) "name" }} with password={{ index (first .Values.onepanel_admin_users) "password" }}" ;
+              providerRegistrationTokenRequest=$(curl -k -vv -sS --tlsv1.2 -u {{ index (first .Values.onepanel_admin_users) "name" }}:{{ index (first .Values.onepanel_admin_users) "password" }} -X POST  -H 'content-type: application/json' "https://{{ template "onezone_name" . }}/api/v3/onezone/user/clusters/provider_registration_token") ;
+              providerRegistrationToken=$(echo "$providerRegistrationTokenRequest" | jq -r ".token") ;
+              echo "Provider registration token=$providerRegistrationToken for user user={{ index (first .Values.onepanel_admin_users) "name" }}" ;
+              echo "$providerRegistrationToken" >> /onezone-registration-token/token ;
+          volumeMounts:
+            - mountPath: /onezone-registration-token
+              name: onezone-registration-token
+      {{- end }}
+      {{- end }}{{- end }}
       containers:
       - name: oneprovider
         image: {{ .Values.image }}
@@ -220,6 +244,14 @@ spec:
             echo "Creating directory for POSIX storage: {{ index .Values "posix" "storagePath" }}" ;
             mkdir -p {{ index .Values "posix" "storagePath" }} ;
           {{- end }}
+          {{- if .Values.global }}{{- if not (index .Values "global" "v21") }}
+          {{- if and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled }}
+            echo "Onezone registration token:" ;
+            cat /onezone-registration-token/token ;
+            ONEPROVIDER_REGISTRATION_TOKEN=$(cat /onezone-registration-token/token) ;
+            export ONEPROVIDER_CONFIG=$(echo "$ONEPROVIDER_CONFIG" | sed "s/ONEPROVIDER_REGISTRATION_TOKEN_SUPPLIED_AT_RUNTIME/$ONEPROVIDER_REGISTRATION_TOKEN/g") ;
+          {{- end }}
+          {{- end }}{{- end }}
             echo {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ;
             if [[ "$HOSTNAME" != {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ]]; then export ONEPANEL_BATCH_MODE="false" ; fi ;
             env ;
@@ -227,9 +259,35 @@ spec:
             while [ ! -f /tmp/sources_ready.txt ]; do sleep 1; done ;
             export ONEPANEL_OVERRIDE=$(cat /tmp/sources_ready.txt) ;
           {{- end }}
+            getOneproviderRegistrationToken() {
+              if [ "$HOSTNAME" = "{{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }}" ]; then 
+              apt update ; apt install -y jq ;
+              deployed="";
+              mkdir -p /onezone-registration-token ;
+              while [ "$deployed" != "true" ] ; do deployed="$(curl -k  -sS  -X GET 'https://{{ template "onezone_service_url" . }}:9443/configuration' | jq .'deployed')" ; echo "Waiting for https://{{ template "onezone_name" . }}:9443/configuration to return something..."  >> /onezone-registration-token/token-log ; echo "returned=$deployed"  >> /onezone-registration-token/token-log ; sleep 2 ; done ;
+              userId=$(curl -k -sS --tlsv1.2 -u {{ index (first .Values.onepanel_admin_users) "name" }}:{{ index (first .Values.onepanel_admin_users) "password" }} "$ONEZONE_HOST/api/v3/onezone/user" | jq -r ".userId") ;
+              echo "userId=$userId for user={{ index (first .Values.onepanel_admin_users) "name" }} with password={{ index (first .Values.onepanel_admin_users) "password" }}" >> /onezone-registration-token/token-log ;
+              date="$(date +%s)" ;
+              providerRegistrationTokenRequest=$(curl -k -vvv -u {{ index (first .Values.onepanel_admin_users) "name" }}:{{ index (first .Values.onepanel_admin_users) "password" }} -H 'content-type: application/json' -X POST "$ONEZONE_HOST/api/v3/onezone/user/tokens/named" -d '{
+                "name": "prov-reg-tok-'"${POD_NAME}-${date}"'",
+                "type": {
+                  "inviteToken": {
+                    "inviteType": "registerOneprovider",
+                    "adminUserId": "'"$userId"'"
+                  }
+                }
+              }') >> /onezone-registration-token/token-log ;
+              echo "providerRegistrationTokenRequest=$providerRegistrationTokenRequest" >> /onezone-registration-token/token-log ;
+              providerRegistrationToken=$(echo "$providerRegistrationTokenRequest" | jq -r ".token") ;
+              echo "Provider registration token=$providerRegistrationToken for user user={{ index (first .Values.onepanel_admin_users) "name" }}" >> /onezone-registration-token/token-log ;
+              echo "$providerRegistrationToken" >> /onezone-registration-token/token ;
+            else
+              exit 0  ;
+            fi; } ;
+            if [ "$HOSTNAME" = "{{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }}" ]; then getOneproviderRegistrationToken & fi ;
             /root/oneprovider.sh ;
         securityContext:
-          privileged: true
+          privileged: {{ .Values.privileged }}
       {{- if or (index .Values "volume-nfs" "enabled") (and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled) }}
         lifecycle:
       {{- end }}
@@ -244,38 +302,6 @@ spec:
                   umount -f /volumes/nfs-{{ $export.name }} ;
                   {{- end }}
       {{- end }}{{- end }}
-      {{- if and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled }}
-          postStart:
-            exec:
-              command:
-                - "/bin/sh"
-                - "-c"
-                - >
-                  apt update ; apt install -y jq ;
-                  deployed="";
-                  mkdir -p /onezone-registration-token ;
-                  while [ "$deployed" != "true" ] ; do deployed="$(curl -k  -sS  -X GET 'https://{{ template "onezone_service_url" . }}:9443/configuration' | jq .'deployed')" ; echo "Waiting for https://{{ template "onezone_name" . }}:9443/configuration to return something..."  >> /onezone-registration-token/token-log ; echo "returned=$deployed"  >> /onezone-registration-token/token-log ; sleep 2 ; done ;
-                  userId=$(curl -k -sS --tlsv1.2 -u {{ index (first .Values.onepanel_admin_users) "name" }}:{{ index (first .Values.onepanel_admin_users) "password" }} "$ONEZONE_HOST/api/v3/onezone/user" | jq -r ".userId") ;
-                  echo "userId=$userId for user={{ index (first .Values.onepanel_admin_users) "name" }} with password={{ index (first .Values.onepanel_admin_users) "password" }}" >> /onezone-registration-token/token-log ;
-                {{- if $.Values.global.v20 }}
-                  date="$(date +%s)" ;
-                  providerRegistrationTokenRequest=$(curl -k -vvv -u {{ index (first .Values.onepanel_admin_users) "name" }}:{{ index (first .Values.onepanel_admin_users) "password" }} -H 'content-type: application/json' -X POST "$ONEZONE_HOST/api/v3/onezone/user/tokens/named" -d '{
-                    "name": "prov-reg-tok-'"${POD_NAME}-${date}"'",
-                    "type": {
-                      "inviteToken": {
-                        "inviteType": "registerOneprovider",
-                        "adminUserId": "'"$userId"'"
-                      }
-                    }
-                  }') >> /onezone-registration-token/token-log ;
-                {{- else }}
-                  providerRegistrationTokenRequest=$(curl -k -vvv -sS --tlsv1.2 -u {{ index (first .Values.onepanel_admin_users) "name" }}:{{ index (first .Values.onepanel_admin_users) "password" }} -X POST -H 'content-type: application/json' "$ONEZONE_HOST/api/v3/onezone/user/clusters/provider_registration_token") ;
-                {{- end }}
-                  echo "providerRegistrationTokenRequest=$providerRegistrationTokenRequest" >> /onezone-registration-token/token-log ;
-                  providerRegistrationToken=$(echo "$providerRegistrationTokenRequest" | jq -r ".token") ;
-                  echo "Provider registration token=$providerRegistrationToken for user user={{ index (first .Values.onepanel_admin_users) "name" }}" >> /onezone-registration-token/token-log ;
-                  echo "$providerRegistrationToken" >> /onezone-registration-token/token ;
-      {{- end }}
         readinessProbe:
           exec:
             command:
@@ -360,6 +386,12 @@ spec:
             name: tls
             readOnly: true
       {{- end }}
+    {{- if .Values.global }}{{- if not (index .Values "global" "v21") }}
+    {{- if and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled }}
+          - mountPath: /onezone-registration-token
+            name: onezone-registration-token
+    {{- end }}
+    {{- end }}{{- end }}
       {{- if (index .Values "volume-nfs" "enabled") }}
         {{- if (index .Values "volume-nfs" "exports") }}{{- range $export := (index .Values "volume-nfs" "exports" ) }}
           - mountPath: /volumes/nfs-{{ $export.name }}
@@ -425,6 +457,12 @@ spec:
       - name: config-map
         configMap:
           name: {{ template "fullname" . }}-config
+    {{- if .Values.global }}{{- if not (index .Values "global" "v21") }}
+    {{- if and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled }}
+      - name: onezone-registration-token
+        emptyDir: {}
+    {{- end }}
+    {{- end }}{{- end }}
     {{- if or (index .Values "generate-certificates" "enabled") (index .Values "certificates-from-a-secret" "enabled") }}
       - name: tls
         secret:
