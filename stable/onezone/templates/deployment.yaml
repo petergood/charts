@@ -167,8 +167,6 @@ spec:
             cp /etc/oz_worker/auth.config.orig /etc/oz_worker/auth.config ;
             /root/onezone.sh ;
         readinessProbe:
-          initialDelaySeconds: 0
-          periodSeconds: 1
           exec:
             # A hack, that makes sure that a pod reports ready when onezone has really started
             command:
@@ -177,6 +175,10 @@ spec:
               - >
                 onepanel_ready() { sleep 5 ; exit 0 ; } ;
                 if [[ "$HOSTNAME" == {{ template "fullname" . }}-{{ sub (.Values.onezone_nodes_count) 1 }} ]]; then exit 0 ; else onepanel_ready ; fi ;
+          failureThreshold: 6
+          periodSeconds: 1
+          successThreshold: 1
+          timeoutSeconds: 10
         env:
           - name: NAMESPACE
             valueFrom:
