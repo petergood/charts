@@ -1,0 +1,9 @@
+global: {}
+
+deployFromSources:
+  enabled: false
+
+image: petergood/cluster-worker
+
+cluster_worker_nodes_count: 2
+imagePullPolicy: Always

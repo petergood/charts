@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "fullname" . }}-config
+  labels:
+    app: {{ template "fullname" . }}
+    chart: {{ .Chart.Name }}
+    release: {{ template "releaseName" .  }}
+    heritage: {{ .Release.Service }}
+    component: "cluster-worker"
+  annotations:
+    version: "{{ .Chart.Version }}"
+data:
+  app.config: |-
+    [
+      % NOTE: this is needed to deploy oneprovider on distributed env on dockers
+      % Range of ports that will be used by erlang nodes to communicate
+      {kernel, [
+          {inet_dist_listen_min, 9100},
+          {inet_dist_listen_max, 9139}
+      ]},
+
+      %% SASL config
+      {sasl, [{sasl_error_logger, false}]},
+
+      %% logger configuration
+      {lager, [
+          {colored, true},
+          {log_root, "./log"},
+          {handlers, [
+              %% show info level or higher level logs at console
+              {lager_console_backend, [
+                  {level, info}, {formatter, lager_default_formatter},
+                  {formatter_config, [color, "[", sev, " ", time, " ", pid, "] ", message, "\e[0m\r\n"]}
+              ]},
+              %% rotate error log when it reaches 50 MB; keep 10 rotated logs
+              {lager_file_backend, [
+                  {file, "error.log"},
+                  {level, error},
+                  {size, 52428800},
+                  {count, 10},
+                  {formatter, lager_default_formatter},
+                  {formatter_config, ["[", sev, " ", date, " ", time, " ", pid, "] ", message, "\n"]}
+              ]},
+              %% rotate info log when it reaches 50 MB; keep 10 rotated logs
+              {lager_file_backend, [
+                  {file, "info.log"},
+                  {level, info},
+                  {size, 52428800},
+                  {count, 10},
+                  {formatter, lager_default_formatter},
+                  {formatter_config, ["[", sev, " ", date, " ", time, " ", pid, "] ", message, "\n"]}
+              ]},
+              %% rotate debug log when it reaches 50 MB; keep 10 rotated logs
+              {lager_file_backend, [
+                  {file, "debug.log"},
+                  {level, debug},
+                  {size, 52428800},
+                  {count, 10},
+                  {formatter, lager_default_formatter},
+                  {formatter_config, ["[", sev, " ", date, " ", time, " ", pid, "] ", message, "\n"]}
+              ]}
+          ]},
+          {error_logger_hwm, 200},
+          % When lager should change mode to synchronous (log queue is longer than async_threshold)
+          {async_threshold, 500},
+          % When lager should return from mode to synchronous (log queue is shorter than (async_threshold - async_threshold_window)
+          {async_threshold_window, 50}
+      ]},
+
+      {cluster_worker, [
+          {monitoring_log_file, "./log/node_manager_monitoring.log"},
+          {throttling_log_file, "./log/throttling_monitoring.log"},
+
+          %% ===================================================================
+          %% VIEW TRAVERSE
+          %% ===================================================================
+          {view_traverse_default_master_jobs_limit, 10},
+          {view_traverse_default_slave_jobs_limit, 20},
+          {view_traverse_default_parallelism_limit, 5},
+
+          %% ===================================================================
+          %% HA
+          %% ===================================================================
+          % Method of backup data propagation (see ha_datastore.hrl):
+          % cast - asynchronous method that give small overhead but does not provide guarantee that backup data
+          %    propagation is finished at the end of datastore operation
+          % call - synchronous method that give larger overhead but provides guarantee that backup data propagation
+          %    is finished at the end of datastore operation
+          {ha_propagation_method, cast},
+
+          {db_nodes, ['localhost:8091']},
+
+          {{- $r := . -}}
+          {cm_nodes, [
+            {{- range $i := until (int ($r.Values.cluster_worker_nodes_count)) }}
+              'cluster_manager@cluster-worker-cluster-worker-{{ $i }}.cluster-worker-cluster-worker.default.svc.cluster.local'
+              {{- if lt $i (sub (int ($r.Values.cluster_worker_nodes_count)) 1) }} , {{- end }}
+            {{- end }}
+        ]} 
+      ]}
+    ].
+
