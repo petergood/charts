@@ -7,7 +7,7 @@ metadata:
     chart: {{ .Chart.Name }}
     release: {{ template "releaseName" . }}
     heritage: {{ .Release.Service }}
-    component: "cluster-worker"
+    component: "cluster-manager"
   annotations:
     version: "{{ .Chart.Version }}"
 spec:
@@ -17,9 +17,8 @@ spec:
       chart: {{ .Chart.Name }}
       release: {{ template "releaseName" . }}
       heritage: {{ .Release.Service }}
-      component: "cluster-worker"
+      component: "cluster-manager"
   serviceName: {{ template "fullname" . }}
-  replicas: {{ .Values.cluster_worker_nodes_count }}
   template:
     metadata:
       labels:
@@ -27,7 +26,7 @@ spec:
         chart: {{ .Chart.Name }}
         release: {{ template "releaseName" . }}
         heritage: {{ .Release.Service }}
-        component: "cluster-worker"
+        component: "cluster-manager"
         {{- if (index .Values "deployFromSources" "enabled") }}
         sources: "{{ .Values.deployFromSources.timestamp }}"
         {{- end }}
@@ -69,7 +68,7 @@ spec:
       {{- end }}
 {{ include "imagePullSecrets" . | indent 6 }}
       containers:
-      - name: cluster-worker
+      - name: cluster-manager
         image: {{ .Values.image }}
         # imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
         imagePullPolicy: Always
@@ -98,13 +97,10 @@ spec:
         securityContext:
           privileged: true
         volumeMounts:
-          - name: cluster-worker-config
-            mountPath: /cluster_worker/rel/cluster_worker/data/app.config
+          - name: cluster-manager-config
+            mountPath: /cluster_manager/rel/cluster_manager/data/app.config
             subPath: app.config
       volumes:
-        - name: cluster-worker-config
+        - name: cluster-manager-config
           configMap:
             name: {{ template "fullname" . }}-config
-            # items:
-            #   - key: CLUSTER_WORKER_CONFIG
-            #     path: keys

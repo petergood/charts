@@ -1,0 +1,8 @@
+global: {}
+
+deployFromSources:
+  enabled: false
+
+image: petergood/cluster-manager
+imagePullPolicy: Always
+worker_num: 1

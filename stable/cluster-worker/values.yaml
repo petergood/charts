@@ -7,3 +7,6 @@ image: petergood/cluster-worker
 
 cluster_worker_nodes_count: 2
 imagePullPolicy: Always
+
+cluster-manager:
+  worker_num: 2

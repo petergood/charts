@@ -7,18 +7,18 @@ metadata:
     chart: {{ .Chart.Name }}
     release: {{ template "releaseName" .  }}
     heritage: {{ .Release.Service }}
-    component: "cluster-worker"
+    component: "cluster-manager"
   annotations:
     version: "{{ .Chart.Version }}"
 data:
-  CLUSTER-WORKER_CONFIG: |-
-    cluster-worker:
+  CLUSTER-MANAGER_CONFIG: |-
+    cluster-manager:
       domain: "{{ template "service_url" . }}"
   app.config: |-
     [
       % NOTE: this is needed to deploy oneprovider on distributed env on dockers
       % Range of ports that will be used by erlang nodes to communicate
-      {kernel, [
+      {kernel,[
           {inet_dist_listen_min, 9100},
           {inet_dist_listen_max, 9139}
       ]},
@@ -64,74 +64,49 @@ data:
                   {formatter_config, ["[", sev, " ", date, " ", time, " ", pid, "] ", message, "\n"]}
               ]}
           ]},
+          % Limit for the number of messages per second allowed from error_logger
           {error_logger_hwm, 200},
           % When lager should change mode to synchronous (log queue is longer than async_threshold)
           {async_threshold, 500},
-          % When lager should return from mode to synchronous (log queue is shorter than (async_threshold - async_threshold_window)
+          % When lager should return from synchronous mode to asynchronous (log queue is shorter than (async_threshold - async_threshold_window)
           {async_threshold_window, 50}
       ]},
 
-      {cluster_worker, [
-          {monitoring_log_file, "./log/node_manager_monitoring.log"},
-          {throttling_log_file, "./log/throttling_monitoring.log"},
+      {ctool, [
+          % Backup file that stores the information needed to restore the
+          % previous clock synchronization.
+          {clock_sync_backup_file, "./etc/time_synchronization_data.json"}
+      ]},
+
+      %% cluster_manager config
+      {cluster_manager, [
+          %% ===================================================================
+          %% GENERAL
+          %% ===================================================================
+
+          %% How many worker nodes are expected to connect to cm - configured automatically by configurator.erl lib, used in GEN_DEV script
+          {worker_num, {{ .Values.worker_num }} },
+          % How often should load balancing advices be recomputed and sent to nodes [ms].
+          {lb_advices_update_interval, 500},
 
           %% ===================================================================
-          %% VIEW TRAVERSE
+          %% CLUSTER INIT STEPS
           %% ===================================================================
-          {view_traverse_default_master_jobs_limit, 10},
-          {view_traverse_default_slave_jobs_limit, 20},
-          {view_traverse_default_parallelism_limit, 5},
+
+          {init_connection_step_timeout, 300000}, % 5 minutes
+          {start_default_workers_step_timeout, 600000}, % 10 minutes
+          {prepare_for_upgrade_step_timeout, 120000}, % 2 minutes
+          {upgrade_cluster_step_timeout, 3600000}, % 1 hour
+          {start_custom_workers_step_timeout, 300000}, % 5 minutes
+          {db_and_workers_ready_step_timeout, 300000}, % 5 minutes
+          {start_listeners_step_timeout, 120000}, % 2 minutes
+          {cluster_ready_step_timeout, 120000}, % 2 minutes
 
           %% ===================================================================
-          %% HA
+          %% CLUSTER STATUS
           %% ===================================================================
-          % Method of backup data propagation (see ha_datastore.hrl):
-          % cast - asynchronous method that give small overhead but does not provide guarantee that backup data
-          %    propagation is finished at the end of datastore operation
-          % call - synchronous method that give larger overhead but provides guarantee that backup data propagation
-          %    is finished at the end of datastore operation
-          {ha_propagation_method, cast},
 
-          {db_nodes, ['localhost:8091']},
-          {cm_nodes, ['cluster_manager@{{ .Release.Name }}-cluster-manager-0.{{ .Release.Name }}-cluster-manager.default.svc.cluster.local']},
-
-          {excluded_exometer_modules, [datastore_router]},
-          {exometer_lager_reporter, false},
-          {exometer_data_points_number, 100},
-
-          % Should couchbase pool force garbage collection (options: on, off)
-          {couchbase_pool_gc, off},
-          % Should tp force garbage collection (options: on, off)
-          {tp_gc, off},
-
-          % Number of tp subtrees
-          % (tree of tp_servers is divided into several subtrees)
-          {tp_subtrees_number, 20},
-          % Enable handling of link and doc calls in single tp proc
-          {aggregate_tp, true},
-          % Size of tp key space (0 - unlimited)
-          {tp_space_size, 2000},
-
-          {datastore_cache_size, [
-              {memory, 50000},
-              {disc, 50000}
-          ]},
-
-          {couchbase_durability_interval, 500},
-          {couchbase_pool_size, [
-              {'_', [
-                  {read, 5},
-                  {write, 20},
-                  {changes, 3}
-              ]}
-          ]},
-          {couchbase_pool_batch_size, 1000},
-          {couchbase_pool_max_batch_size, 2000},
-          {couchbase_pool_min_batch_size, 500},
-
-          %% Should cache fold link token be cached by cache writer
-          {cache_fold_token, true},
-          %% Time of fold link token caching by cache writer
-          {fold_cache_timeout, 30000}
+          {cluster_status_caching_time_seconds, 15},
+          {cluster_component_healthcheck_timeout, 10000} % 10 seconds
       ]}
     ].
