@@ -156,9 +156,11 @@ tolerations: {}
 # https://kubernetes.io/docs/concepts/configuration/assign-pod-node/#nodeselector
 nodeSelector: {}
 
+privileged: false
+
 # Generate certificates to access this onezone having trusted https connection
 # You need to add cluster root certificate to your system for this to work
-generate-certificates: 
+generate-certificates:
   enabled: false
   image: onedata/certificate-init-container:8434eb0
   imagePullPolicy: IfNotPresent
