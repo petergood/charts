@@ -34,6 +34,8 @@ luma_enabled: &luma_enabled false
 
 jupyter_notebook_enabled: &jupyter_notebook_enabled true
 
+openfaas_enabled: &openfaas_enabled false
+
 posix_enabled: &posix_enabled true
 s3_enabled: &s3_enabled false
 ceph_enabled: &ceph_enabled false
@@ -138,6 +140,10 @@ oneprovider-krakow:
   generate-certificates:
     enabled: *oneproviders_generate_certificates
 
+  openfaas:
+    enabled: *openfaas_enabled
+    suffix: *op1s
+
   luma:
     suffix: *op1s
     << : *luma_global
@@ -219,6 +225,10 @@ oneprovider-paris:
 
   generate-certificates:
     enabled: *oneproviders_generate_certificates
+
+  openfaas:
+    enabled: *openfaas_enabled
+    suffix: *op2s
 
   luma:
     suffix: *op2s
@@ -302,6 +312,10 @@ oneprovider-lisbon:
 
   generate-certificates:
     enabled: *oneproviders_generate_certificates
+
+  openfaas:
+    enabled: *openfaas_enabled
+    suffix: *op3s
 
   luma:
     suffix: *op3s
