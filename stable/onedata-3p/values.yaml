@@ -26,7 +26,7 @@ oneprovidersPanelOverlayConfig: &oneprovidersPanelOverlayConfig |-
   [].
 oneprovidersWorkerOverlayConfig: &oneprovidersPanelOverlayConfig |-
   [].
-  
+
 oneclients_enabled: &oneclients_enabled true
 onedata_cli_enabled: &onedata_cli_enabled true
 
@@ -56,7 +56,7 @@ luma: &luma_global
     enabled: &luma_enabled_posix true
     lowest_uid: 1000
     highest_uid: 65536
-    
+
   s3:
     enabled: &luma_enabled_s3 false
     access_key: accessKey
@@ -102,7 +102,7 @@ onezone:
     databases: [ ]
   saml-idp:
     enabled: &idp_enabled true
-    generate-certificates: 
+    generate-certificates:
       enabled: true
   panelOverlayConfig: |-
     [].
@@ -135,7 +135,7 @@ oneprovider-krakow:
     type: auto-generate
     disableSuffix: true
 
-  generate-certificates: 
+  generate-certificates:
     enabled: *oneproviders_generate_certificates
 
   luma:
@@ -217,7 +217,7 @@ oneprovider-paris:
     type: auto-generate
     disableSuffix: true
 
-  generate-certificates: 
+  generate-certificates:
     enabled: *oneproviders_generate_certificates
 
   luma:
@@ -226,7 +226,7 @@ oneprovider-paris:
 
   volume-data-sync:
     enabled: *volume_data_sync_enabled
-    
+
   oneclient:
     image: *oc_image
     debug_mode: *oneclients_debug_mode_enabled
@@ -300,7 +300,7 @@ oneprovider-lisbon:
     type: auto-generate
     disableSuffix: true
 
-  generate-certificates: 
+  generate-certificates:
     enabled: *oneproviders_generate_certificates
 
   luma:

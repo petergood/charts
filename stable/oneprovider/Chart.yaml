@@ -53,12 +53,12 @@ dependencies:
   version: 0.2.8
   repository: file://../volume-swift
   condition: volume-swift.enabled
-  
+
 - name: volume-webdav
   version: 0.2.2
   repository: file://../volume-webdav
   condition: volume-webdav.enabled
-  
+
 - name: volume-dcache
   version: 0.2.2
   repository: file://../volume-dcache
@@ -68,12 +68,12 @@ dependencies:
   version: 0.2.8
   repository: file://../luma
   condition: luma.enabled
-  
+
 - name: jupyter-notebook
   version: 0.2.1
   repository: file://../jupyter-notebook
   condition: jupyter-notebook.enabled
-  
+
 - name: openfaas 
   version: 7.3.1
   repository:  file://../../../onedata/faas-netes/chart/openfaas
