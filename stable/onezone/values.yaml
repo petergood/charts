@@ -84,7 +84,7 @@ onezone_nodes_count: 1
 # you can use values form the rage <0,onezone_nodes_count)
 # by default the node with the highest index (onezone_nodes_count-1)
 # is configured as a mainNode
-# If a service list is empty, all avilable nodes are assigned that service.
+# If a service list is empty, all available nodes are assigned that service.
 cluster_config:
   managers: [ ]
   workers: [ ]
