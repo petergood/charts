@@ -9,7 +9,6 @@ keywords:
 maintainers:
   - name: Michal Orzechowski
     email: orzechowski.michal@gmail.com
-engine: gotpl
 
 dependencies:
 - name: onedata-chart-utils

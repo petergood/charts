@@ -9,7 +9,6 @@ keywords:
 maintainers:
   - name: Michal Orzechowski
     email: orzechowski.michal@gmail.com
-engine: gotpl
 appVersion: latest
 
 dependencies:

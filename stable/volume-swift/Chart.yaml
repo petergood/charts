@@ -7,12 +7,11 @@ keywords:
   - volume-swift
   - storage
 home: https://www.swiftstack.com/product/openstack-swift
-source:
+sources:
   - https://github.com/onedata/docker-swift
 maintainers:
   - name: Michal Orzechowski
     email: orzechowski.michal@gmail.com
-engine: gotpl
 appVersion: 2.14.0
 
 dependencies:

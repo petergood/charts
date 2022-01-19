@@ -10,7 +10,7 @@ home: https://github.com/onedata/charts
 maintainers:
   - name: Michal Orzechowski
     email: orzechowski.michal@gmail.com
-engine: gotpl
+
 appVersion: 20.02.12
 
 dependencies:
@@ -21,7 +21,7 @@ dependencies:
 - name: onedata-3p
   version: 0.2.15
   repository: file://../onedata-3p
-  condition: onedata-3p.enabled  
+  condition: onedata-3p.enabled
   import-values:
     - child: onezone.onepanel_emergency_account
       parent: global.onepanelEmergencyAccount
