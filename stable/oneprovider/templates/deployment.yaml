@@ -210,7 +210,7 @@ spec:
               providerRegistrationTokenRequest=$(curl -k -vv -sS --tlsv1.2 -u {{ index (first .Values.onepanel_admin_users) "name" }}:{{ index (first .Values.onepanel_admin_users) "password" }} -X POST  -H 'content-type: application/json' "https://{{ template "onezone_name" . }}/api/v3/onezone/user/clusters/provider_registration_token") ;
               providerRegistrationToken=$(echo "$providerRegistrationTokenRequest" | jq -r ".token") ;
               echo "Provider registration token=$providerRegistrationToken for user user={{ index (first .Values.onepanel_admin_users) "name" }}" ;
-              echo "$providerRegistrationToken" >> /onezone-registration-token/token ;
+              echo "$providerRegistrationToken" > /onezone-registration-token/token ;
           volumeMounts:
             - mountPath: /onezone-registration-token
               name: onezone-registration-token
