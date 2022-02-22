@@ -95,7 +95,7 @@ onezone:
   onepanel_batch_mode_enabled: *onepanel_batch_mode_enabled
   onedata_anti_affinity_enabled: *onedata_anti_affinity_enabled
   log_level: *log_level
-  generate-certificates: 
+  generate-certificates:
     enabled: false
   onezone_nodes_count: 1
   cluster_config:
@@ -403,3 +403,5 @@ volume-dcache:
   enabled: *dcache_enabled
 volume-data-sync:
   enabled: *volume_data_sync_enabled
+openfaas:
+  enabled: *openfaas_enabled
