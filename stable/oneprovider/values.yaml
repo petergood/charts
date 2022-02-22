@@ -320,9 +320,15 @@ volume-data-sync:
 # Posix local storage, it will be automatically disable if you deploy multi-node oneprovider installation
 posix:
   enabled: true
-  storagePath: /volumes/persistence/storage
+  storagePath: /volumes/posix
   luma-enabled: *luma_enabled_posix
   readOnly: false
+  persistence:
+    name: posix
+    enabled: false
+    accessModes:
+      - ReadWriteOnce
+    size: 1GB
 
 # Create S3 storage server and connect with oneprovider
 volume-s3:

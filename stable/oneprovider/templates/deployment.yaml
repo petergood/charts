@@ -349,6 +349,11 @@ spec:
             value: {{ $value }}
           {{- end }}
         volumeMounts:
+    {{- if (index .Values "posix" "persistence" "enabled") }}
+          - name: persistence-posix
+            mountPath: {{ index .Values "posix" "storagePath" }}
+            subPathExpr: $(NAMESPACE)-$(POD_NAME)-posix-storage
+    {{- end }}
     {{- if .Values.persistence.enabled }}
           - name: persistence
             mountPath: /volumes/persistence
@@ -414,6 +419,10 @@ spec:
           - mountPath: /volumes/{{ $volume.name }}:shared
             name: {{ $volume.name }}
         {{- end }}
+      {{- end }}
+      {{- if (index .Values "posix" "persistence" "enabled") }}
+          - mountPath: {{ .Values.posix.storagePath }}
+            name: posix-persistence
       {{- end }}
       {{- if and (index .Values "volume-data-sync" "enabled") (eq (int .Values.oneprovider_nodes_count) 1) }}
         {{- range $volume := (index .Values "volume-data-sync" "volumes") }}
@@ -492,6 +501,11 @@ spec:
         emptyDir: {}
         {{- end }}
       {{- end }}
+    {{- if (index .Values "posix" "persistence" "enabled") }}
+      - name: posix-persistence
+        persistentVolumeClaim:
+          claimName: {{ template "fullname" $ }}-{{ index .Values "posix" "persistence" "name" }}-posix-pvc
+    {{- end }}
 {{- if or .Values.persistence.enabled (index .Values "external-persistent-volume-claims-templates") }}
   volumeClaimTemplates:
 {{- end }}
