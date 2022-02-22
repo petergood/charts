@@ -344,6 +344,10 @@ spec:
                 key: ONEPROVIDER_CONFIG
           - name: ONEPANEL_EMERGENCY_PASSPHRASE
             value:  {{ .Values.onepanel_emergency_account.password }}
+          {{- range $name, $value := .Values.env }}
+          - name: {{ $name }}
+            value: {{ $value }}
+          {{- end }}
         volumeMounts:
     {{- if .Values.persistence.enabled }}
           - name: persistence

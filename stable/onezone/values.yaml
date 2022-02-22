@@ -76,6 +76,10 @@ harversterGuiPackageVerification: true
 # debug logs to browser console.
 guiDebugMode: false
 
+# Extra environmental variables that will be injected
+# into oneprovider container.
+env: []
+
 # Number of nodes (pod replicas) for of this onezone
 # their indexes will be assigned FROM 0 (ZERO!)
 # up to, but not including the count value
