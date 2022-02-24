@@ -1,6 +1,6 @@
 apiVersion: v2
 name: elasticsearch
-version: 0.1.1
+version: 0.1.2
 description: Extension of the stable/elasticsearch chart
 home: https://github.com/onedata/charts/stable/elasticsearch
 sources:
@@ -16,5 +16,5 @@ dependencies:
   repository: "@elastic"
 
 - name: onedata-chart-utils
-  version: 0.2.14
+  version: 0.2.15
   repository: file://../onedata-chart-utils

@@ -1,6 +1,6 @@
 apiVersion: v2
 name: volume-gluster
-version: 0.2.8
+version: 0.2.9
 description: A single container gluster setup, suitable for testing purposes.
 keywords:
   - onedata
@@ -13,5 +13,5 @@ appVersion: latest
 
 dependencies:
 - name: onedata-chart-utils
-  version: 0.2.14
+  version: 0.2.15
   repository: file://../onedata-chart-utils
