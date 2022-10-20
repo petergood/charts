@@ -5,3 +5,6 @@ dependencies:
   - name: cluster-manager
     version: 0.1.0
     repository: file://../cluster-manager
+  - name: couchbase
+    version: 0.1.0
+    repository: file://../couchbase

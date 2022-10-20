@@ -1,12 +1,14 @@
-global: {}
+global:
+  region: krakow
+  tld: kube.pl
 
 deployFromSources:
   enabled: false
 
 image: petergood/cluster-worker
 
-cluster_worker_nodes_count: 2
+cluster_worker_nodes_count: 4
 imagePullPolicy: Always
 
 cluster-manager:
-  worker_num: 2
+  worker_num: 4

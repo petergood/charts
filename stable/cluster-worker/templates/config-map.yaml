@@ -92,7 +92,7 @@ data:
           %    is finished at the end of datastore operation
           {ha_propagation_method, cast},
 
-          {db_nodes, ['localhost:8091']},
+          {db_nodes, ['{{ .Release.Name }}-couchbase-0.{{ .Release.Name }}-couchbase.default.svc.cluster.local:8091']},
           {cm_nodes, ['cluster_manager@{{ .Release.Name }}-cluster-manager-0.{{ .Release.Name }}-cluster-manager.default.svc.cluster.local']},
 
           {excluded_exometer_modules, [datastore_router]},

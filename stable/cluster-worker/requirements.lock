@@ -5,5 +5,8 @@ dependencies:
 - name: cluster-manager
   repository: file://../cluster-manager
   version: 0.1.0
-digest: sha256:292aec106ae15a0f00f7804580843d49c331be68e426ae340528d115b9e15083
-generated: "2021-11-17T22:21:05.154036+01:00"
+- name: couchbase
+  repository: file://../couchbase
+  version: 0.1.0
+digest: sha256:663b312ae4dee8f7d230cbab533bd254c45446b4c0cb8c8d0ccc7dfc19ea7800
+generated: "2022-10-18T21:36:15.014412+02:00"

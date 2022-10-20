@@ -7,7 +7,7 @@ metadata:
     chart: {{ .Chart.Name }}
     release: {{ template "releaseName" . }}
     heritage: {{ .Release.Service }}
-    component: "cluster-worker"
+    component: "couchbase"
   annotations:
     version: "{{ .Chart.Version }}"
 spec:
@@ -17,9 +17,8 @@ spec:
       chart: {{ .Chart.Name }}
       release: {{ template "releaseName" . }}
       heritage: {{ .Release.Service }}
-      component: "cluster-worker"
+      component: "couchbase"
   serviceName: {{ template "fullname" . }}
-  replicas: {{ .Values.cluster_worker_nodes_count }}
   template:
     metadata:
       labels:
@@ -27,10 +26,7 @@ spec:
         chart: {{ .Chart.Name }}
         release: {{ template "releaseName" . }}
         heritage: {{ .Release.Service }}
-        component: "cluster-worker"
-        {{- if (index .Values "deployFromSources" "enabled") }}
-        sources: "{{ .Values.deployFromSources.timestamp }}"
-        {{- end }}
+        component: "couchbase"
       annotations:
         version: "{{ .Chart.Version }}"
     spec:
@@ -68,24 +64,10 @@ spec:
 {{ toYaml .Values.nodeSelector | indent 8 }}
       {{- end }}
 {{ include "imagePullSecrets" . | indent 6 }}
-      initContainers:
-        - name: wait-for-couchbase
-          image: ubuntu:18.04
-          args:
-          - /bin/bash
-          - -c
-          - >
-            set -x;
-            apt update;
-            apt install curl -y;
-            while [ $(curl -sw '%{http_code}' "http://{{ .Release.Name }}-couchbase-0.{{ .Release.Name }}-couchbase.default.svc.cluster.local:8091/pools/default/buckets" -o /dev/null) -ne 200 ]; do
-              sleep 1;
-            done
       containers:
-      - name: cluster-worker
+      - name: couchbase
         image: {{ .Values.image }}
-        # imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
-        imagePullPolicy: Always
+        imagePullPolicy: {{ template "imagePullPolicy" dict "root" . }}
         {{- if or .Values.cpu .Values.memory }}
         resources:
           requests:
@@ -97,27 +79,29 @@ spec:
           {{- end }}
         {{- end }}
         ports:
-          - containerPort: 80
-          - containerPort: 443
-          - containerPort: 6665
-          - containerPort: 9443
-        {{- range untilStep 9100 9139 1 }}
-          - containerPort: {{ . }}
-        {{- end }}
+          - containerPort: 8091
+          - containerPort: 8092
+          - containerPort: 8093
+          - containerPort: 8094
         command:
-          - "./run.sh"
+          - "/bin/bash"
+          - "-c"
+          - >
+            /entrypoint.sh couchbase-server &
+
+            until $(curl --output /dev/null --silent --head --fail http://localhost:8091/ui/index.html);
+            do
+                echo 'Waiting for Couchbase to start...'
+                sleep 1
+            done;
+
+            couchbase-cli cluster-init -c "127.0.0.1:8091" --cluster-init-username=admin --cluster-init-password=password --cluster-init-ramsize=500;
+            couchbase-cli bucket-create -c "127.0.0.1:8091" -u admin -p password --bucket=onedata --bucket-ramsize=256 --bucket-eviction-policy=fullEviction --wait;
+            couchbase-cli rebalance -c "127.0.0.1:8091" -u admin -p password;
+            echo "Initialised cluster"
+
+            sleep infinity
         stdin: true
         tty: true
         securityContext:
           privileged: true
-        volumeMounts:
-          - name: cluster-worker-config
-            mountPath: /cluster_worker/rel/cluster_worker/data/app.config
-            subPath: app.config
-      volumes:
-        - name: cluster-worker-config
-          configMap:
-            name: {{ template "fullname" . }}-config
-            # items:
-            #   - key: CLUSTER_WORKER_CONFIG
-            #     path: keys
