@@ -7,8 +7,8 @@ deployFromSources:
 
 image: petergood/cluster-worker
 
-cluster_worker_nodes_count: 4
+cluster_worker_nodes_count: 3
 imagePullPolicy: Always
 
 cluster-manager:
-  worker_num: 4
+  worker_num: 3

@@ -70,14 +70,11 @@ spec:
 {{ include "imagePullSecrets" . | indent 6 }}
       initContainers:
         - name: wait-for-couchbase
-          image: ubuntu:18.04
+          image: curlimages/curl:7.86.0
+          command: ["/bin/sh"]
           args:
-          - /bin/bash
           - -c
           - >
-            set -x;
-            apt update;
-            apt install curl -y;
             while [ $(curl -sw '%{http_code}' "http://{{ .Release.Name }}-couchbase-0.{{ .Release.Name }}-couchbase.default.svc.cluster.local:8091/pools/default/buckets" -o /dev/null) -ne 200 ]; do
               sleep 1;
             done
