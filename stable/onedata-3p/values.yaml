@@ -2,11 +2,12 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-oz_image: &oz_image onedata/onezone:18.02.1
-op_image: &op_image onedata/oneprovider:18.02.1
-oc_image: &oc_image onedata/oneclient:18.02.1
-cli_image: &cli_image onedata/rest-cli:18.02.1
-luma_image: &luma_image onedata/luma:18.02.1
+oz_image: &oz_image onedata/onezone:20.02.12
+op_image: &op_image onedata/oneprovider:20.02.12
+oc_image: &oc_image onedata/oneclient:20.02.12
+cli_image: &cli_image onedata/rest-cli:20.02.12
+luma_image: &luma_image onedata/luma:20.02.12
+odfsj_image: &odfsj_image onedata/onedatafs-jupyter:20.02.12
 
 log_level: &log_level "info"
 onepanel_batch_mode_enabled: &onepanel_batch_mode_enabled true
@@ -25,11 +26,15 @@ oneprovidersPanelOverlayConfig: &oneprovidersPanelOverlayConfig |-
   [].
 oneprovidersWorkerOverlayConfig: &oneprovidersPanelOverlayConfig |-
   [].
-  
+
 oneclients_enabled: &oneclients_enabled true
 onedata_cli_enabled: &onedata_cli_enabled true
 
 luma_enabled: &luma_enabled false 
+
+jupyter_notebook_enabled: &jupyter_notebook_enabled true
+
+openfaas_enabled: &openfaas_enabled false
 
 posix_enabled: &posix_enabled true
 s3_enabled: &s3_enabled false
@@ -38,6 +43,7 @@ nfs_enabled: &nfs_enabled false
 gluster_enabled: &gluster_enabled false
 swift_enabled: &swift_enabled false
 webdav_enabled: &webdav_enabled false
+dcache_enabled: &dcache_enabled false
 
 volume_data_sync_enabled: &volume_data_sync_enabled false
 
@@ -52,7 +58,7 @@ luma: &luma_global
     enabled: &luma_enabled_posix true
     lowest_uid: 1000
     highest_uid: 65536
-    
+
   s3:
     enabled: &luma_enabled_s3 false
     access_key: accessKey
@@ -80,13 +86,16 @@ luma: &luma_global
   webdav:
     enabled: &luma_enabled_webdav false
 
+  dcache:
+    enabled: &luma_enabled_dcache false
+
 # Onezone configuration
 onezone:
   image: *oz_image
   onepanel_batch_mode_enabled: *onepanel_batch_mode_enabled
   onedata_anti_affinity_enabled: *onedata_anti_affinity_enabled
   log_level: *log_level
-  generate-certificates: 
+  generate-certificates:
     enabled: false
   onezone_nodes_count: 1
   cluster_config:
@@ -95,7 +104,7 @@ onezone:
     databases: [ ]
   saml-idp:
     enabled: &idp_enabled true
-    generate-certificates: 
+    generate-certificates:
       enabled: true
   panelOverlayConfig: |-
     [].
@@ -128,8 +137,12 @@ oneprovider-krakow:
     type: auto-generate
     disableSuffix: true
 
-  generate-certificates: 
+  generate-certificates:
     enabled: *oneproviders_generate_certificates
+
+  openfaas:
+    enabled: *openfaas_enabled
+    suffix: *op1s
 
   luma:
     suffix: *op1s
@@ -145,6 +158,10 @@ oneprovider-krakow:
     suffix: *op1s
     onedata_cli:
       image: *cli_image
+  jupyter-notebook:
+    image: *odfsj_image
+    enabled: *jupyter_notebook_enabled
+    suffix: *op1s
   onedata-cli:
     image: *cli_image
     enabled: *onedata_cli_enabled
@@ -180,6 +197,10 @@ oneprovider-krakow:
     enabled: *webdav_enabled
     suffix: *op1s
     luma-enabled: *luma_enabled_webdav
+  volume-dcache:
+    enabled: *dcache_enabled
+    suffix: *op1s
+    luma-enabled: *luma_enabled_dcache
 
 oneprovider-paris:
   suffix: &op2s paris
@@ -202,8 +223,12 @@ oneprovider-paris:
     type: auto-generate
     disableSuffix: true
 
-  generate-certificates: 
+  generate-certificates:
     enabled: *oneproviders_generate_certificates
+
+  openfaas:
+    enabled: *openfaas_enabled
+    suffix: *op2s
 
   luma:
     suffix: *op2s
@@ -211,7 +236,7 @@ oneprovider-paris:
 
   volume-data-sync:
     enabled: *volume_data_sync_enabled
-    
+
   oneclient:
     image: *oc_image
     debug_mode: *oneclients_debug_mode_enabled
@@ -219,6 +244,10 @@ oneprovider-paris:
     suffix: *op2s
     onedata_cli:
       image: *cli_image
+  jupyter-notebook:
+    image: *odfsj_image
+    enabled: *jupyter_notebook_enabled
+    suffix: *op2s
   onedata-cli:
     image: *cli_image
     enabled: *onedata_cli_enabled
@@ -255,7 +284,10 @@ oneprovider-paris:
     enabled: *webdav_enabled
     suffix: *op2s
     luma-enabled: *luma_enabled_webdav
-
+  volume-dcache:
+    enabled: *dcache_enabled
+    suffix: *op2s
+    luma-enabled: *luma_enabled_dcache
 
 oneprovider-lisbon:
   suffix: &op3s lisbon
@@ -278,8 +310,12 @@ oneprovider-lisbon:
     type: auto-generate
     disableSuffix: true
 
-  generate-certificates: 
+  generate-certificates:
     enabled: *oneproviders_generate_certificates
+
+  openfaas:
+    enabled: *openfaas_enabled
+    suffix: *op3s
 
   luma:
     suffix: *op3s
@@ -295,6 +331,10 @@ oneprovider-lisbon:
     suffix: *op3s
     onedata_cli:
       image: *cli_image
+  jupyter-notebook:
+    image: *odfsj_image
+    enabled: *jupyter_notebook_enabled
+    suffix: *op3s
   onedata-cli:
     image: *cli_image
     enabled: *onedata_cli_enabled
@@ -330,6 +370,10 @@ oneprovider-lisbon:
     enabled: *webdav_enabled
     suffix: *op3s
     luma-enabled: *luma_enabled_webdav
+  volume-dcache:
+    enabled: *dcache_enabled
+    suffix: *op3s
+    luma-enabled: *luma_enabled_dcache
 
 # Those variables are the unfortunate necessity of an issue discussed here:
 # https://github.com/kubernetes/helm/issues/2479
@@ -355,5 +399,9 @@ volume-swift:
   enabled: *swift_enabled
 volume-webdav:
   enabled: *webdav_enabled
+volume-dcache:
+  enabled: *dcache_enabled
 volume-data-sync:
   enabled: *volume_data_sync_enabled
+openfaas:
+  enabled: *openfaas_enabled

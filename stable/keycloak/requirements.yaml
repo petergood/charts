@@ -1,8 +1,0 @@
-dependencies:
-- name: keycloak
-  version: 6.0.3
-  repository: "@codecentric"
-
-- name: onedata-chart-utils
-  version: 0.2.14
-  repository: https://onedata.github.io/charts/

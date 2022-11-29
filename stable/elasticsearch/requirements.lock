@@ -1,9 +1,0 @@
-dependencies:
-- name: elasticsearch
-  repository: https://helm.elastic.co
-  version: 7.6.2
-- name: onedata-chart-utils
-  repository: https://onedata.github.io/charts/
-  version: 0.2.14
-digest: sha256:27f28a021383280d09e7c24a35dbee128b9155b27ed51f3f8da4b569ee5b7dac
-generated: 2020-05-27T16:14:45.866905+02:00

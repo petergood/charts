@@ -68,7 +68,7 @@ spec:
 {{ toYaml .Values.nodeSelector | indent 8 }}
       {{- end }}
 {{ include "imagePullSecrets" . | indent 6 }}
-      {{- if or (eq (int .Values.oneprovider_nodes_count) 1) (or (index .Values "volume-s3" "enabled")) (or (index .Values "volume-ceph" "enabled") (or (index .Values "volume-gluster" "enabled") (or (index .Values "volume-swift" "enabled") (or (index .Values "generate-certificates" "enabled") (or (index .Values "graphite" "enabled") (index .Values "wait-for-onezone" "enabled")))))) }}
+      {{- if or (eq (int .Values.oneprovider_nodes_count) 1) (or (index .Values "volume-s3" "enabled")) (or (index .Values "volume-ceph" "enabled") (or (index .Values "volume-gluster" "enabled") (or (index .Values "volume-swift" "enabled") (or (index .Values "generate-certificates" "enabled") (or (index .Values "graphite" "enabled") (or (index .Values "wait-for-onezone" "enabled") (and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled)))))))}}
       initContainers:
       {{- end }}
       {{- if (index .Values "generate-certificates" "enabled") }}
@@ -189,10 +189,10 @@ spec:
             - "-c"
             - >
               echo "Setting a graphite prefix in a config map {{ template "fullname" . }}-config" ;
-              graphite_prefix=$(echo " {{ .Values.graphite.graphitePrefix }}") ;
+              graphite_prefix=$(echo "{{ .Values.graphite.graphitePrefix }}") ;
               kubectl get cm {{ template "fullname" . }}-config -o yaml | sed "s/GRAPHITE_PREFIX_SUPPLIED_AT_RUNTIME/$graphite_prefix/" | kubectl apply -f - ;
       {{- end }}
-    {{- if .Values.global.alpha }}
+      {{- if .Values.global }}{{- if not (index .Values "global" "v21") }}
       {{- if and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled }}
         - name: onezone-registration-token
           image: {{ .Values.onedata_cli.image }}
@@ -204,17 +204,18 @@ spec:
             - "/bin/sh"
             - "-c"
             - >
+              while [ "$deployed" != "true" ] ; do deployed="$(curl -k  -sS  -X GET 'https://{{ template "onezone_service_url" . }}:9443/configuration' | jq .'deployed')" ; echo "Waiting for https://{{ template "onezone_name" . }}:9443/configuration to return something..."  >> /onezone-registration-token/token-log ; echo "returned=$deployed"  >> /onezone-registration-token/token-log ; sleep 2 ; done ;
               userId=$(onezone-rest-cli -k -u {{ index (first .Values.onepanel_admin_users) "name" }}:{{ index (first .Values.onepanel_admin_users) "password" }} -v getCurrentUser | jq -r ".userId") ;
               echo "userId=$userId for user={{ index (first .Values.onepanel_admin_users) "name" }} with password={{ index (first .Values.onepanel_admin_users) "password" }}" ;
               providerRegistrationTokenRequest=$(curl -k -vv -sS --tlsv1.2 -u {{ index (first .Values.onepanel_admin_users) "name" }}:{{ index (first .Values.onepanel_admin_users) "password" }} -X POST  -H 'content-type: application/json' "https://{{ template "onezone_name" . }}/api/v3/onezone/user/clusters/provider_registration_token") ;
               providerRegistrationToken=$(echo "$providerRegistrationTokenRequest" | jq -r ".token") ;
               echo "Provider registration token=$providerRegistrationToken for user user={{ index (first .Values.onepanel_admin_users) "name" }}" ;
-              echo "$providerRegistrationToken" >> /onezone-registration-token/token ;
+              echo "$providerRegistrationToken" > /onezone-registration-token/token ;
           volumeMounts:
             - mountPath: /onezone-registration-token
               name: onezone-registration-token
       {{- end }}
-    {{- end }}
+      {{- end }}{{- end }}
       containers:
       - name: oneprovider
         image: {{ .Values.image }}
@@ -243,14 +244,14 @@ spec:
             echo "Creating directory for POSIX storage: {{ index .Values "posix" "storagePath" }}" ;
             mkdir -p {{ index .Values "posix" "storagePath" }} ;
           {{- end }}
-          {{- if .Values.global.alpha }}
+          {{- if .Values.global }}{{- if not (index .Values "global" "v21") }}
           {{- if and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled }}
             echo "Onezone registration token:" ;
             cat /onezone-registration-token/token ;
             ONEPROVIDER_REGISTRATION_TOKEN=$(cat /onezone-registration-token/token) ;
             export ONEPROVIDER_CONFIG=$(echo "$ONEPROVIDER_CONFIG" | sed "s/ONEPROVIDER_REGISTRATION_TOKEN_SUPPLIED_AT_RUNTIME/$ONEPROVIDER_REGISTRATION_TOKEN/g") ;
           {{- end }}
-          {{- end }}
+          {{- end }}{{- end }}
             echo {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ;
             if [[ "$HOSTNAME" != {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ]]; then export ONEPANEL_BATCH_MODE="false" ; fi ;
             env ;
@@ -258,19 +259,49 @@ spec:
             while [ ! -f /tmp/sources_ready.txt ]; do sleep 1; done ;
             export ONEPANEL_OVERRIDE=$(cat /tmp/sources_ready.txt) ;
           {{- end }}
+            getOneproviderRegistrationToken() {
+              if [ "$HOSTNAME" = "{{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }}" ]; then 
+              apt update ; apt install -y jq ;
+              deployed="";
+              mkdir -p /onezone-registration-token ;
+              while [ "$deployed" != "true" ] ; do deployed="$(curl -k  -sS  -X GET 'https://{{ template "onezone_service_url" . }}:9443/configuration' | jq .'deployed')" ; echo "Waiting for https://{{ template "onezone_name" . }}:9443/configuration to return something..."  >> /onezone-registration-token/token-log ; echo "returned=$deployed"  >> /onezone-registration-token/token-log ; sleep 2 ; done ;
+              userId=$(curl -k -sS --tlsv1.2 -u {{ index (first .Values.onepanel_admin_users) "name" }}:{{ index (first .Values.onepanel_admin_users) "password" }} "$ONEZONE_HOST/api/v3/onezone/user" | jq -r ".userId") ;
+              echo "userId=$userId for user={{ index (first .Values.onepanel_admin_users) "name" }} with password={{ index (first .Values.onepanel_admin_users) "password" }}" >> /onezone-registration-token/token-log ;
+              date="$(date +%s)" ;
+              providerRegistrationTokenRequest=$(curl -k -vvv -u {{ index (first .Values.onepanel_admin_users) "name" }}:{{ index (first .Values.onepanel_admin_users) "password" }} -H 'content-type: application/json' -X POST "$ONEZONE_HOST/api/v3/onezone/user/tokens/named" -d '{
+                "name": "prov-reg-tok-'"${POD_NAME}-${date}"'",
+                "type": {
+                  "inviteToken": {
+                    "inviteType": "registerOneprovider",
+                    "adminUserId": "'"$userId"'"
+                  }
+                }
+              }') >> /onezone-registration-token/token-log ;
+              echo "providerRegistrationTokenRequest=$providerRegistrationTokenRequest" >> /onezone-registration-token/token-log ;
+              providerRegistrationToken=$(echo "$providerRegistrationTokenRequest" | jq -r ".token") ;
+              echo "Provider registration token=$providerRegistrationToken for user user={{ index (first .Values.onepanel_admin_users) "name" }}" >> /onezone-registration-token/token-log ;
+              echo "$providerRegistrationToken" >> /onezone-registration-token/token ;
+            else
+              exit 0  ;
+            fi; } ;
+            if [ "$HOSTNAME" = "{{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }}" ]; then getOneproviderRegistrationToken & fi ;
             /root/oneprovider.sh ;
         securityContext:
-          privileged: true
-      {{- if (index .Values "volume-nfs" "enabled") }}
+          privileged: {{ .Values.privileged }}
+      {{- if or (index .Values "volume-nfs" "enabled") (and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled) }}
         lifecycle:
+      {{- end }}
+      {{- if (index .Values "volume-nfs" "enabled") }}{{- if (index .Values "volume-nfs" "exports") }}
           preStop:
             exec:
               command:
                 - "sh"
                 - "-c"
                 - >
-                  umount -f {{ index .Values "volume-nfs" "container_mount_path" }} ;
-      {{- end }}
+                  {{- range $export := (index .Values "volume-nfs" "exports" ) }}
+                  umount -f /volumes/nfs-{{ $export.name }} ;
+                  {{- end }}
+      {{- end }}{{- end }}
         readinessProbe:
           exec:
             command:
@@ -279,6 +310,10 @@ spec:
               - >
                 onepanel_ready() { sleep 5 ; exit 0 ; } ;
                 if [[ "$HOSTNAME" == {{ template "fullname" . }}-{{ sub (.Values.oneprovider_nodes_count) 1 }} ]]; then exit 0 ; else onepanel_ready ; fi ;
+          failureThreshold: 6
+          periodSeconds: 1
+          successThreshold: 1
+          timeoutSeconds: 10
         env:
           - name: NAMESPACE
             valueFrom:
@@ -288,6 +323,8 @@ spec:
             valueFrom:
               fieldRef:
                 fieldPath: metadata.name
+          - name: ONEZONE_HOST
+            value: "https://{{ template "onezone_service_url" . }}"
           - name: ONEPANEL_LOG_LEVEL
             value: {{ default "info" .Values.log_level | quote }}
           - name: ONEPANEL_DEBUG_MODE
@@ -305,11 +342,18 @@ spec:
               configMapKeyRef:
                 name: {{ template "fullname" . }}-config
                 key: ONEPROVIDER_CONFIG
-          {{- if .Values.global.alpha }}
           - name: ONEPANEL_EMERGENCY_PASSPHRASE
             value:  {{ .Values.onepanel_emergency_account.password }}
+          {{- range $name, $value := .Values.env }}
+          - name: {{ $name }}
+            value: {{ $value }}
           {{- end }}
         volumeMounts:
+    {{- if (index .Values "posix" "persistence" "enabled") }}
+          - name: persistence-posix
+            mountPath: {{ index .Values "posix" "storagePath" }}
+            subPathExpr: $(NAMESPACE)-$(POD_NAME)-posix-storage
+    {{- end }}
     {{- if .Values.persistence.enabled }}
           - name: persistence
             mountPath: /volumes/persistence
@@ -318,10 +362,20 @@ spec:
           - name: config-map
             mountPath: /etc/op_panel/overlay.config
             subPath: panel-overlay.config
+      {{- range $fileName, $config := (index .Values "panelExtraOverlayConfigs") }}
+          - name: config-map
+            mountPath: /etc/op_panel/config.d/{{ $fileName }}
+            subPath: panel-{{ $fileName }}
+      {{- end }}
           - name: config-map
             mountPath: /etc/op_worker/overlay.config
             subPath:  worker-overlay.config
-      {{- if (index .Values "generate-certificates" "enabled") }}
+      {{- range $fileName, $config := (index .Values "workerExtraOverlayConfigs") }}
+          - name: config-map
+            mountPath: /etc/op_worker/config.d/{{ $fileName }}
+            subPath: worker-{{ $fileName }}
+      {{- end }}
+      {{- if or (index .Values "generate-certificates" "enabled") (index .Values "certificates-from-a-secret" "enabled") }}
           - mountPath: /etc/op_panel/certs/web_key.pem
             subPath: tls.key
             name: tls
@@ -345,14 +399,20 @@ spec:
             name: tls
             readOnly: true
       {{- end }}
+    {{- if .Values.global }}{{- if not (index .Values "global" "v21") }}
+    {{- if and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled }}
+          - mountPath: /onezone-registration-token
+            name: onezone-registration-token
+    {{- end }}
+    {{- end }}{{- end }}
       {{- if (index .Values "volume-nfs" "enabled") }}
         {{- if (index .Values "volume-nfs" "exports") }}{{- range $export := (index .Values "volume-nfs" "exports" ) }}
           - mountPath: /volumes/nfs-{{ $export.name }}
             name: nfs-{{ $export.name }}
         {{- end }}{{- end }}
       {{- end }}
-      {{- if (index .Values "external-volumes") }}
-{{ toYaml (index .Values "external-volumes") | indent 10 }}
+      {{- if (index .Values "external-volume-mounts") }}
+{{ toYaml (index .Values "external-volume-mounts") | indent 10 }}
       {{- end }}
       {{- if and (index .Values "volume-data-sync" "enabled") (eq (int .Values.oneprovider_nodes_count) 1) }}
         {{- range $volume := (index .Values "volume-data-sync" "volumes") }}
@@ -360,12 +420,10 @@ spec:
             name: {{ $volume.name }}
         {{- end }}
       {{- end }}
-    {{- if .Values.global.alpha }}
-      {{- if (index .Values "onezone-registration-token" "enabled") }}
-          - mountPath: /onezone-registration-token
-            name: onezone-registration-token
+      {{- if (index .Values "posix" "persistence" "enabled") }}
+          - mountPath: {{ .Values.posix.storagePath }}
+            name: posix-persistence
       {{- end }}
-    {{- end }}
       {{- if and (index .Values "volume-data-sync" "enabled") (eq (int .Values.oneprovider_nodes_count) 1) }}
         {{- range $volume := (index .Values "volume-data-sync" "volumes") }}
       - name: {{ $volume.name }}
@@ -413,16 +471,16 @@ spec:
         {{- end }}
       {{- end }}
       volumes:
-  {{- if .Values.global.alpha }}
-    {{- if (index .Values "onezone-registration-token" "enabled") }}
-      - name: onezone-registration-token
-        emptyDir: {}
-    {{- end }}
-  {{- end }}
       - name: config-map
         configMap:
           name: {{ template "fullname" . }}-config
-    {{- if (index .Values "generate-certificates" "enabled") }}
+    {{- if .Values.global }}{{- if not (index .Values "global" "v21") }}
+    {{- if and (index .Values "onezone-registration-token" "enabled") .Values.onepanel_batch_mode_enabled }}
+      - name: onezone-registration-token
+        emptyDir: {}
+    {{- end }}
+    {{- end }}{{- end }}
+    {{- if or (index .Values "generate-certificates" "enabled") (index .Values "certificates-from-a-secret" "enabled") }}
       - name: tls
         secret:
           secretName: {{ template "fullname" . }}-secret-tls
@@ -434,8 +492,8 @@ spec:
           claimName: {{ template "fullname" $ }}-nfs-{{ $export.name }}-pvc
       {{- end }}{{- end }}
     {{- end }}
-    {{- if (index .Values "external-persistent-volume-claims") }}
-{{ toYaml (index .Values "external-persistent-volume-claims") | indent 6 }}
+    {{- if (index .Values "external-volumes") }}
+{{ toYaml (index .Values "external-volumes") | indent 6 }}
     {{- end }}
       {{- if and (index .Values "volume-data-sync" "enabled") (eq (int .Values.oneprovider_nodes_count) 1) }}
         {{- range $volume := (index .Values "volume-data-sync" "volumes") }}
@@ -443,8 +501,18 @@ spec:
         emptyDir: {}
         {{- end }}
       {{- end }}
-  {{- if .Values.persistence.enabled }}
+    {{- if (index .Values "posix" "persistence" "enabled") }}
+      - name: posix-persistence
+        persistentVolumeClaim:
+          claimName: {{ template "fullname" $ }}-{{ index .Values "posix" "persistence" "name" }}-posix-pvc
+    {{- end }}
+{{- if or .Values.persistence.enabled (index .Values "external-persistent-volume-claims-templates") }}
   volumeClaimTemplates:
+{{- end }}
+    {{- if (index .Values "external-persistent-volume-claims-templates") }}
+{{ toYaml (index .Values "external-persistent-volume-claims-templates") | indent 4 }}
+    {{- end }}
+  {{- if .Values.persistence.enabled }}
     - metadata:
         name: persistence
         labels:

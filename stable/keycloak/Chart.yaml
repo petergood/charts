@@ -1,5 +1,6 @@
+apiVersion: v2
 name: keycloak
-version: 0.1.5
+version: 0.1.6
 description: Extension of the incubator/keycloak chart
 home: https://github.com/onedata/keycloak
 sources:
@@ -7,5 +8,13 @@ sources:
 maintainers:
   - name: Michal Orzechowski
     email: orzechowski.michal@gmail.com
-engine: gotpl
 appVersion: 4.0.0.Final
+
+dependencies:
+- name: keycloak
+  version: 6.0.3
+  repository: "@codecentric"
+
+- name: onedata-chart-utils
+  version: 0.2.15
+  repository: file://../onedata-chart-utils

@@ -15,21 +15,41 @@ data:
   date: {{ now | date "2006-01-02_15:04:05" }}
 {{- end }}
   panel-overlay.config: {{ toYaml .Values.panelOverlayConfig | indent 2 }}
-{{- if .Values.graphite.enabled}}
-  worker-overlay.config: |-
-      [{cluster_worker, [
-        {graphite_host, "{{ .Values.graphite.host }}"},
-        {graphite_api_key, "{{ .Values.graphite.apiKey }}"},
-        {integrate_with_graphite, {{ .Values.graphite.enabled }} },
-        {graphite_prefix, "GRAPHITE_PREFIX_SUPPLIED_AT_RUNTIME"}
-      ]}
-      {{- if not (empty ( .Values.workerOverlayConfig | trimPrefix "[" | trimSuffix "." | trimSuffix "]" ) ) }}
-      ,
-      {{- end -}}
-      {{ .Values.workerOverlayConfig | trimPrefix "[" | trimSuffix "." | trimSuffix "]" | indent 2 }}
-      ].
-{{- else }}
   worker-overlay.config: {{ toYaml .Values.workerOverlayConfig | indent 2 }}
+{{- if .Values.graphite.enabled}}
+  graphite.config: |-
+    [{cluster_worker, [
+      {graphite_host, "{{ .Values.graphite.host }}"},
+      {graphite_api_key, "{{ .Values.graphite.apiKey }}"},
+      {integrate_with_graphite, {{ .Values.graphite.enabled }} },
+      {graphite_prefix, "GRAPHITE_PREFIX_SUPPLIED_AT_RUNTIME"}
+    ]}].
+{{- end }}
+{{- if .Values.openfaas.enabled}}
+  openfaas.config: |-
+    [{op_worker, [
+      {openfaas_host, <<"{{ template "openfaas_name" . }}-gateway">>},
+      {openfaas_port, 8080},
+      {openfaas_function_namespace, <<"{{ $.Release.Namespace }}">> },
+      {openfaas_oneclient_image, <<"{{ .Values.oneclient.image }}">> },
+      {openfaas_admin_username, <<"admin">> },
+      {openfaas_admin_password,<< "password">>},
+      {openfaas_function_constraints, []},
+      {openfaas_function_labels, #{}},
+      {openfaas_function_limits, #{}},
+      {openfaas_function_annotations, #{}},
+      {openfaas_function_requests, #{}},
+      {openfaas_function_env, #{"read_timeout" => "604800s",
+                                "write_timeout" => "604800s",
+                                "exec_timeout" => "604800s"}}
+      ]}
+    ].
+{{- end }}
+{{- range $fileName, $config := (index .Values "panelExtraOverlayConfigs") }}
+  panel-{{ $fileName }}: {{ toYaml $config | indent 2 }}
+{{- end }}
+{{- range $fileName, $config := (index .Values "workerExtraOverlayConfigs") }}
+  worker-{{ $fileName }}: {{ toYaml $config | indent 2 }}
 {{- end }}
   ONEPROVIDER_CONFIG: |-
     cluster:
@@ -85,7 +105,10 @@ data:
         posix:
           type: posix
           mountPoint: {{ index .Values "posix" "storagePath" }}
-          readonly: {{ index .Values "posix" "readOnly" }}
+          skipStorageDetection: {{ index .Values "posix" "readOnly" }}
+        {{- if (index .Values "posix" "importedStorage") }}
+          importedStorage: {{ index .Values "posix" "importedStorage" }}
+        {{- end }}
         {{- if (index .Values "posix" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
@@ -98,7 +121,10 @@ data:
         nfs-{{ $export.name }}:
           type: posix
           mountPoint: /volumes/nfs-{{ $export.name }}
-          readonly: {{ index $export "readOnly" }}
+          skipStorageDetection: {{ index $export "readOnly" }}
+        {{- if (index $export "image") }}
+          importedStorage: true
+        {{- end }}
         {{- if (index $export "luma-enabled") }}
           lumaEnabled: {{ $.Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" $ }}/api/v3/luma
@@ -114,8 +140,11 @@ data:
           bucketName: {{ index .Values "volume-s3" "bucketName" }}
           accessKey: {{ index .Values "volume-s3" "key_id" }}
           secretKey: {{ index .Values "volume-s3" "access_key" }}
-          readonly: {{ index .Values "volume-s3" "readOnly" }}
+          skipStorageDetection: {{ index .Values "volume-s3" "readOnly" }}
           insecure: {{ index .Values "volume-s3" "insecure" }}
+        {{- if (index .Values "volume-s3" "importedStorage") }}
+          importedStorage: {{ index .Values "volume-s3" "importedStorage" }}
+        {{- end }}
         {{- if (index .Values "volume-s3" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
@@ -131,8 +160,11 @@ data:
           monitorHostname: {{ template "volume-ceph_name" . }}.{{ $.Release.Namespace }}
           clusterName: {{ index .Values "volume-ceph" "cluster_name" }}
           poolName: {{ index .Values "volume-ceph" "pool_name" }}
-          readonly: {{ index .Values "volume-ceph" "readOnly" }}
+          skipStorageDetection: {{ index .Values "volume-ceph" "readOnly" }}
           insecure: {{ index .Values "volume-ceph" "insecure" }}
+        {{- if (index .Values "volume-ceph" "importedStorage") }}
+          importedStorage: {{ index .Values "volume-ceph" "importedStorage" }}
+        {{- end }}
         {{- if (index .Values "volume-ceph" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
@@ -146,8 +178,11 @@ data:
           hostname: {{ template "volume-gluster_name" . }}.{{ $.Release.Namespace }}
           volume: {{ index .Values "volume-gluster" "volumeName" }}
           transport: tcp
-          readonly: {{ index .Values "volume-gluster" "readOnly" }}
+          skipStorageDetection: {{ index .Values "volume-gluster" "readOnly" }}
           insecure: {{ index .Values "volume-gluster" "insecure" }}
+        {{- if (index .Values "volume-gluster" "importedStorage") }}
+          importedStorage: {{ index .Values "volume-gluster" "importedStorage" }}
+        {{- end }}
         {{- if (index .Values "volume-gluster" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
@@ -163,8 +198,11 @@ data:
           containerName: {{ index .Values "volume-swift" "containerName" }}
           username: {{ index .Values "volume-swift" "username" }}
           password: {{ index .Values "volume-swift" "password" }}
-          readonly: {{ index .Values "volume-swift" "readOnly" }}
+          skipStorageDetection: {{ index .Values "volume-swift" "readOnly" }}
           insecure: {{ index .Values "volume-swift" "insecure" }}
+        {{- if (index .Values "volume-swift" "importedStorage") }}
+          importedStorage: {{ index .Values "volume-swift" "importedStorage" }}
+        {{- end }}
         {{- if (index .Values "volume-swift" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
@@ -180,8 +218,11 @@ data:
           credentialsType: {{ index .Values "volume-webdav" "credentialsType" }}
           rangeWriteSupport: {{ index .Values "volume-webdav" "rangeWriteSupport" }}
           verifyServerCertificate: {{ index .Values "volume-webdav" "verifyServerCertificate" }}
-          readonly: {{ index .Values "volume-webdav" "readOnly" }}
+          skipStorageDetection: {{ index .Values "volume-webdav" "readOnly" }}
           insecure: {{ index .Values "volume-webdav" "insecure" }}
+        {{- if (index .Values "volume-webdav" "importedStorage") }}
+          importedStorage: {{ index .Values "volume-webdav" "importedStorage" }}
+        {{- end }}
         {{- if (index .Values "volume-swift" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
@@ -197,9 +238,12 @@ data:
           credentialsType: {{ index .Values "volume-dcache" "credentialsType" }}
           rangeWriteSupport: {{ index .Values "volume-dcache" "rangeWriteSupport" }}
           verifyServerCertificate: {{ index .Values "volume-dcache" "verifyServerCertificate" }}
-          readonly: {{ index .Values "volume-dcache" "readOnly" }}
+          skipStorageDetection: {{ index .Values "volume-dcache" "readOnly" }}
           insecure: {{ index .Values "volume-dcache" "insecure" }}
-        {{- if (index .Values "volume-swift" "luma-enabled") }}
+        {{- if (index .Values "volume-dcache" "importedStorage") }}
+          importedStorage: {{ index .Values "volume-dcache" "importedStorage" }}
+        {{- end }}
+        {{- if (index .Values "volume-dcache" "luma-enabled") }}
           lumaEnabled: {{ .Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" . }}/api/v3/luma
           lumaCacheTimeout: {{ .Values.luma.lumaCacheTimeout }}
@@ -211,7 +255,8 @@ data:
         {{ $volume.name }}:
           type: posix
           mountPoint: /volumes/{{ $volume.name }}
-          readonly: {{ $volume.readOnly }}
+          skipStorageDetection: {{ $volume.readOnly }}
+          importedStorage: true
         {{- if (index . "luma-enabled") }}
           lumaEnabled: {{ $.Values.luma.enabled }}
           lumaUrl: http://{{ template "luma_name" $ }}/api/v3/luma
@@ -233,14 +278,23 @@ data:
       # Depending on Onedata version, one of 2 keys below will be used
       redirectionPoint: https://{{ template "oneprovider_service_url" . }}
       domain: {{ template "oneprovider_service_url" . }} # OR IP ADDRESS
-{{- if .Values.global.alpha }}
+      # Oneprovider Registration token acquired in runtime from Onezone
+{{- if .Values.global }}{{- if not (index .Values "global" "v21") }}
       # Oneprovider Registration token acquired in runtime from Onezone
       {{- if (index .Values "onezone-registration-token" "enabled") }}
       token: ONEPROVIDER_REGISTRATION_TOKEN_SUPPLIED_AT_RUNTIME
       {{- else }}
       token: {{ (index $.Values "onezone-registration-token" "value") }}
       {{- end }}
-{{- end }}
+{{- end }}{{- end }}
+{{- if .Values.global }}{{- if (index .Values "global" "v21") }}
+      {{- if (index .Values "onezone-registration-token" "enabled") }}
+      tokenProvisionMethod: fromFile
+      tokenFile: /onezone-registration-token/token
+      {{- else }}
+      token: {{ (index $.Values "onezone-registration-token" "value") }}
+      {{- end }}
+{{- end }}{{- end }}
       # Subdomain feature is currently not supported in k8s
       subdomainDelegation: false
       adminEmail: {{ .Values.adminEmail }}
@@ -249,22 +303,3 @@ data:
     # TODO: make it possible for onedata services to communicate using 
     # system configured DNS. this will allow to put here just service name
     # instead of FQDN
-    onezone:
-      domainName: {{ template "onezone_service_url" . }}
-    {{- if not .Values.global.alpha }}
-    onepanel:
-      guiDebugMode: {{ .Values.guiDebugMode }}
-    {{- if or .Values.onepanel_emergency_account .Values.onepanel_users }}
-      users:
-        {{- range .Values.onepanel_admin_users }}
-        {{ .name }}:
-          password: {{ .password }}
-          userRole: admin
-        {{- end }}
-        {{- range .Values.onepanel_users }}
-        {{ .name }}:
-          password: {{ .password }}
-          userRole: regular
-        {{- end }}
-    {{- end }}
-    {{- end }}

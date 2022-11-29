@@ -8,7 +8,7 @@ imagePullPolicy: IfNotPresent
 serviceType: ClusterIP
 
 wait_for:
-  image: onedata/k8s-wait-for:v1.2
+  image: groundnuty/k8s-wait-for:v1.5.1
   imagePullPolicy: IfNotPresent
 
 # Specifies if init job should wait for s3 service to start
@@ -31,7 +31,7 @@ affinity: {}
 # List of taints which are tolerated by the pods 
 # when nodes are selected by a kubernetes scheduler
 # https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-tolerations: {}
+tolerations: []
 
 # Specify a map of key-value pairs. For the pod 
 # to be eligible to run on a node, the node 

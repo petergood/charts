@@ -121,10 +121,3 @@ spec:
         livenessProbe:
           tcpSocket:
             port: 6789
-        readinessProbe:
-          exec:
-            command:
-              - "/bin/bash"
-              - "-c"
-              - >
-                [[ $(ceph health) == "HEALTH_OK" ]];

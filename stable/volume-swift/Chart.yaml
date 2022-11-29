@@ -1,15 +1,20 @@
+apiVersion: v2
 name: volume-swift
-version: 0.2.8
+version: 0.2.9
 description: A single container swift setup, suitable for testing purposes.
 keywords:
   - onedata
   - volume-swift
   - storage
 home: https://www.swiftstack.com/product/openstack-swift
-source:
+sources:
   - https://github.com/onedata/docker-swift
 maintainers:
   - name: Michal Orzechowski
     email: orzechowski.michal@gmail.com
-engine: gotpl
 appVersion: 2.14.0
+
+dependencies:
+- name: onedata-chart-utils
+  version: 0.2.15
+  repository: file://../onedata-chart-utils

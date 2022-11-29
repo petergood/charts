@@ -69,7 +69,3 @@ spec:
         readinessProbe:
           tcpSocket:
             port: {{ .Values.port }}
-        livenessProbe:
-          exec:
-            command:
-              - "/usr/bin/healthcheck.sh"

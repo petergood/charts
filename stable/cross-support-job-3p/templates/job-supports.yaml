@@ -93,7 +93,7 @@ spec:
             echo "Storages avilable on provider=$ONEPROVIDER_HOST" ;
             onepanel-rest-cli getStorages  | jq -r '.ids[]' | xargs -I{} onepanel-rest-cli getStorageDetails id={} |  jq -rj '.name,":",.id,"\n"'  ;
             export STORAGE_ID=$(onepanel-rest-cli getStorages | jq -r '.ids[]' | xargs -I{} onepanel-rest-cli getStorageDetails id={} | jq -r 'select(.name=="{{ .storage_name }}").id') ;
-            if [ $STORAGE_ID = "" ]; then echo "ERROR: unable get storage id for storage name={{ .storage_name }} in provider={{ template "providerName" .provider }}" ; exit 1 ; fi ;
+            if [ "$STORAGE_ID" = "" ]; then echo "ERROR: unable get storage id for storage name={{ .storage_name }} in provider={{ template "providerName" .provider }}" ; exit 1 ; fi ;
             echo "Supporting space name={{ $space.name }} id=$SPACE_ID, with with storage name={{ .storage_name }}, storage_id=$STORAGE_ID, on provider=$ONEPROVIDER_HOST, using space support token token=$SPACE_TOKEN." ;
             storage_support_json=$(cat <<EEOF
 
@@ -101,24 +101,19 @@ spec:
               "token": "$SPACE_TOKEN",
               "size": {{ .size | quote }},
               "storageId": "$STORAGE_ID"
-              {{ if .mountInRoot -}} ,"mountInRoot": {{ .mountInRoot | quote }} {{- end }}
-              {{ if .import -}}
+              {{ if .import -}}{{- if or .import.mode (or .import.continuousScan (or .import.scanInterval (or .import.detectModifications .import.detectDeletions ))) -}}
                 ,"storageImport": {
-                  {{ if .import.strategy -}} "strategy": {{ .import.strategy | quote }} {{- end }}
-                  {{- if .import.maxDepth -}} ,"maxDepth": {{ .import.maxDepth | quote }} {{- end }}
-                  {{- if .import.syncAcl -}} ,"syncAcl": {{ .import.syncAcl | quote }} {{- end }}
-              }
-              {{- end }}
-              {{- if .update -}}
-                ,"storageUpdate": {
-                  {{ if .update.strategy -}} "strategy": {{ .update.strategy | quote }} {{- end }}
-                  {{- if .update.maxDepth -}} ,"maxDepth": {{ .update.maxDepth | quote }} {{- end }}
-                  {{- if .update.scanInterval -}} ,"scanInterval": {{ .update.scanInterval | quote }} {{- end }}
-                  {{- if .update.writeOnce -}} ,"writeOnce": {{ .update.writeOnce | quote }} {{- end }}
-                  {{- if .update.deleteEnable -}} ,"deleteEnable": {{ .update.deleteEnable | quote }} {{- end }}
-                  {{- if .update.syncAcl -}} ,"syncAcl": {{ .update.syncAcl | quote }} {{- end }}
-              }
-              {{- end }}
+                  {{- if .import.mode -}} "mode": {{ .import.mode | quote }} {{- end }}
+                  {{- if or .import.continuousScan (or .import.scanInterval (or .import.detectModifications .import.detectDeletions )) -}}
+                  "autoStorageImportConfig": {
+                    {{ if .import.continuousScan -}} "continuousScan": {{ .import.continuousScan | quote }} {{- end }}
+                    {{- if .import.scanInterval -}} ,"scanInterval": {{ .import.scanInterval | quote }} {{- end }}
+                    {{- if .import.detectModifications -}} ,"detectModifications": {{ .import.detectModifications | quote }} {{- end }}
+                    {{- if .import.detectDeletions -}} ,"detectDeletions": {{ .import.detectDeletions | quote }} {{- end }}
+                  }
+                  {{- end }}
+                }
+              {{- end }}{{- end }}
             }
 
             EEOF

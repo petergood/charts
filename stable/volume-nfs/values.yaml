@@ -23,7 +23,7 @@ deployAsPreInstallHook: false
 # objects 
 cleanUpJob:
   enabled: false
-  image: onedata/k8s-wait-for:v1.2
+  image: groundnuty/k8s-wait-for:v1.5.1
   imagePullPolicy: IfNotPresent
 
 # NFS cannot export default docker overlay filesystem.
@@ -56,7 +56,7 @@ affinity: {}
 # List of taints which are tolerated by the pods 
 # when nodes are selected by a kubernetes scheduler
 # https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
-tolerations: {}
+tolerations: []
 
 # Specify a map of key-value pairs. For the pod 
 # to be eligible to run on a node, the node 

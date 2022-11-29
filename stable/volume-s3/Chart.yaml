@@ -1,5 +1,6 @@
+apiVersion: v2
 name: volume-s3
-version: 0.2.10
+version: 0.2.11
 description: Minio object storage service, suitable for testing purposes.
 keywords:
   - onedata
@@ -8,4 +9,8 @@ keywords:
 maintainers:
   - name: Michal Orzechowski
     email: orzechowski.michal@gmail.com
-engine: gotpl
+
+dependencies:
+- name: onedata-chart-utils
+  version: 0.2.15
+  repository: file://../onedata-chart-utils

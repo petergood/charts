@@ -12,6 +12,7 @@ metadata:
     version: "{{ .Chart.Version }}"
 data:
   oneclient-mount.sh:
+    {{- if .Values.users }}
     {{ range $user := .Values.users }}{{ if (hasKey $user "idps"  )}}
     mount_{{ $user.name }}() {
       {{ if (hasKey $user.idps "onepanel") }}{{ if ($user.idps.onepanel.enabled) }}
@@ -28,3 +29,6 @@ data:
       echo "Mounted oneclient in '/mnt/oneclient/{{ $user.name }}' for user={{ $user.name }}, from idp=$idp, using TOKEN=$ONEZONE_API_KEY";
     }
     {{ end }}{{ end }}
+    {{- else }}
+    "  "
+    {{- end }}
