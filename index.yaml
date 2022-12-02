@@ -2,9 +2,13 @@ apiVersion: v1
 entries:
   cluster-manager:
   - apiVersion: v1
-    created: "2022-11-29T19:25:10.165789+01:00"
+    created: "2022-12-02T10:02:56.831766+01:00"
+    dependencies:
+    - name: onedata-chart-utils
+      repository: https://onedata.github.io/charts/
+      version: 0.2.14
     description: Stand-alone deployment of cluster-manager.
-    digest: a29ba72fd795c65b7fa8186e093642ec1d71d446e3867d000d9047e30b89f2cf
+    digest: d4718360eac68a8b81646588ecab24214ef4679bd8cbd82d2ec1e63543182d71
     home: https://www.onedata.org
     keywords:
     - onedata
@@ -19,10 +23,20 @@ entries:
     version: 0.1.0
   cluster-worker:
   - apiVersion: v1
-    created: "2022-11-29T19:25:10.167147+01:00"
+    created: "2022-12-02T10:02:56.833564+01:00"
+    dependencies:
+    - name: onedata-chart-utils
+      repository: https://onedata.github.io/charts/
+      version: 0.2.14
+    - name: cluster-manager
+      repository: file://../cluster-manager
+      version: 0.1.0
+    - name: couchbase
+      repository: file://../couchbase
+      version: 0.1.0
     description: Stand-alone deployment of cluster-worker. Meant only for running
       E2E tests on Kubernetes.
-    digest: eaf314f9e01c0780f66d47c51332fce93d9664f935170c6d8d81c4b6bec3f5e9
+    digest: ead20a1e551c6bd449bc45865519f0adbce5733a24756dc0fb9351a3ab0cbee1
     home: https://www.onedata.org
     keywords:
     - onedata
@@ -35,22 +49,4 @@ entries:
     urls:
     - https://petergood.github.io/charts/cluster-worker-0.1.0.tgz
     version: 0.1.0
-  couchbase:
-  - apiVersion: v1
-    created: "2022-11-29T19:25:10.167762+01:00"
-    description: Stand-alone deployment of couchbase. Meant only for running E2E tests
-      on Kubernetes.
-    digest: f0421b4230c7ed2522df2af96ee5fa82e50e41d8337f24dff205841c1d361f7c
-    home: https://www.onedata.org
-    keywords:
-    - onedata
-    maintainers:
-    - email: orzechowski.michal@gmail.com
-      name: Michal Orzechowski
-    name: couchbase
-    sources:
-    - https://github.com/onedata/onedata
-    urls:
-    - https://petergood.github.io/charts/couchbase-0.1.0.tgz
-    version: 0.1.0
-generated: "2022-11-29T19:25:10.16415+01:00"
+generated: "2022-12-02T10:02:56.830865+01:00"
