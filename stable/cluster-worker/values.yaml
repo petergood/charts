@@ -10,5 +10,9 @@ image: petergood/cluster-worker
 cluster_worker_nodes_count: 3
 imagePullPolicy: Always
 
+# below 2 lines regarding external volumes are modified using sed by onenv and MUST be kept in one line format
+external-volumes: []
+external-volume-mounts: []
+
 cluster-manager:
   worker_num: 3

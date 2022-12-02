@@ -1,7 +1,11 @@
 global: {}
 
 deployFromSources:
-  enabled: false
+  enabled: true
+
+# below 2 lines regarding external volumes are modified using sed by onenv and MUST be kept in one line format
+external-volumes: []
+external-volume-mounts: []
 
 image: petergood/cluster-manager
 imagePullPolicy: Always

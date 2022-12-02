@@ -91,16 +91,34 @@ spec:
           - containerPort: {{ . }}
         {{- end }}
         command:
-          - "./run.sh"
+          - /bin/bash
+          - -c
+          - >
+          {{- if (index .Values "deployFromSources" "enabled") }}
+            echo "Waiting for sources";
+            while [ ! -f /tmp/sources_ready.txt ]; do sleep 1; done ;
+            export SOURCES_OVERRIDE=$(cat /tmp/sources_ready.txt) ;
+            echo $SOURCES_OVERRIDE ;
+          {{- end }}
+            /run.sh
         stdin: true
         tty: true
         securityContext:
           privileged: true
         volumeMounts:
           - name: cluster-manager-config
-            mountPath: /cluster_manager/rel/cluster_manager/data/app.config
-            subPath: app.config
+            mountPath: /app.config.template
+            subPath: app.config.template
+          - name: cluster-manager-config
+            mountPath: /vm.args.template
+            subPath: vm.args.template
+          {{- if (index .Values "external-volume-mounts") }}
+{{ toYaml (index .Values "external-volume-mounts") | indent 10 }}
+          {{- end }}
       volumes:
         - name: cluster-manager-config
           configMap:
             name: {{ template "fullname" . }}-config
+        {{- if (index .Values "external-volumes") }}
+{{ toYaml (index .Values "external-volumes") | indent 8 }}
+        {{- end }}
