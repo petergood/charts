@@ -148,7 +148,7 @@ data:
           % Enable handling of link and doc calls in single tp proc
           {aggregate_tp, true},
           % Size of tp key space (0 - unlimited)
-          {tp_space_size, 2000},
+          {tp_space_size, {{ .Values.tp_space_size | default 2000 }}},
 
           {datastore_cache_size, [
               {memory, 50000},

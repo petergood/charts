@@ -1,7 +1,7 @@
 global: {}
 
 deployFromSources:
-  enabled: true
+  enabled: false
 
 # below 2 lines regarding external volumes are modified using sed by onenv and MUST be kept in one line format
 external-volumes: []
