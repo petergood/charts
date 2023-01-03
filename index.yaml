@@ -2,13 +2,13 @@ apiVersion: v1
 entries:
   cluster-manager:
   - apiVersion: v1
-    created: "2022-12-02T10:02:56.831766+01:00"
+    created: "2023-01-04T00:11:23.262048+01:00"
     dependencies:
     - name: onedata-chart-utils
       repository: https://onedata.github.io/charts/
       version: 0.2.14
     description: Stand-alone deployment of cluster-manager.
-    digest: d4718360eac68a8b81646588ecab24214ef4679bd8cbd82d2ec1e63543182d71
+    digest: e12519751a248000977427591b1ecb6fe837667448370c39874efa203d406aef
     home: https://www.onedata.org
     keywords:
     - onedata
@@ -23,7 +23,7 @@ entries:
     version: 0.1.0
   cluster-worker:
   - apiVersion: v1
-    created: "2022-12-02T10:02:56.833564+01:00"
+    created: "2023-01-04T00:11:23.264+01:00"
     dependencies:
     - name: onedata-chart-utils
       repository: https://onedata.github.io/charts/
@@ -36,7 +36,7 @@ entries:
       version: 0.1.0
     description: Stand-alone deployment of cluster-worker. Meant only for running
       E2E tests on Kubernetes.
-    digest: ead20a1e551c6bd449bc45865519f0adbce5733a24756dc0fb9351a3ab0cbee1
+    digest: 4c1b70d6e0eee8a875325083925b62eb525ea45bd1d15bae3a02a2f14691f4be
     home: https://www.onedata.org
     keywords:
     - onedata
@@ -49,4 +49,4 @@ entries:
     urls:
     - https://petergood.github.io/charts/cluster-worker-0.1.0.tgz
     version: 0.1.0
-generated: "2022-12-02T10:02:56.830865+01:00"
+generated: "2023-01-04T00:11:23.261101+01:00"
