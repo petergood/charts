@@ -2,13 +2,13 @@ apiVersion: v1
 entries:
   cluster-manager:
   - apiVersion: v1
-    created: "2023-01-04T00:11:23.262048+01:00"
+    created: "2023-01-04T22:18:58.75086+01:00"
     dependencies:
     - name: onedata-chart-utils
       repository: https://onedata.github.io/charts/
       version: 0.2.14
     description: Stand-alone deployment of cluster-manager.
-    digest: e12519751a248000977427591b1ecb6fe837667448370c39874efa203d406aef
+    digest: 886632a0fa58d3111b4af488070e20fac1d17f076657b77e54cff307b607ac8a
     home: https://www.onedata.org
     keywords:
     - onedata
@@ -19,24 +19,24 @@ entries:
     sources:
     - https://github.com/onedata/onedata
     urls:
-    - https://petergood.github.io/charts/cluster-manager-0.1.0.tgz
-    version: 0.1.0
+    - https://petergood.github.io/charts/cluster-manager-0.2.18.tgz
+    version: 0.2.18
   cluster-worker:
   - apiVersion: v1
-    created: "2023-01-04T00:11:23.264+01:00"
+    created: "2023-01-04T22:18:58.752493+01:00"
     dependencies:
     - name: onedata-chart-utils
       repository: https://onedata.github.io/charts/
       version: 0.2.14
     - name: cluster-manager
       repository: file://../cluster-manager
-      version: 0.1.0
+      version: 0.2.18
     - name: couchbase
       repository: file://../couchbase
       version: 0.1.0
     description: Stand-alone deployment of cluster-worker. Meant only for running
       E2E tests on Kubernetes.
-    digest: 4c1b70d6e0eee8a875325083925b62eb525ea45bd1d15bae3a02a2f14691f4be
+    digest: fe481cc94dd631006800f9a11558339dfb9fb78bddd9b2d14ebc9f7356df9c08
     home: https://www.onedata.org
     keywords:
     - onedata
@@ -47,6 +47,6 @@ entries:
     sources:
     - https://github.com/onedata/onedata
     urls:
-    - https://petergood.github.io/charts/cluster-worker-0.1.0.tgz
-    version: 0.1.0
-generated: "2023-01-04T00:11:23.261101+01:00"
+    - https://petergood.github.io/charts/cluster-worker-0.2.18.tgz
+    version: 0.2.18
+generated: "2023-01-04T22:18:58.749927+01:00"
