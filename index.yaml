@@ -2,13 +2,13 @@ apiVersion: v1
 entries:
   cluster-manager:
   - apiVersion: v1
-    created: "2023-01-04T22:18:58.75086+01:00"
+    created: "2023-01-09T00:30:11.188908+01:00"
     dependencies:
     - name: onedata-chart-utils
       repository: https://onedata.github.io/charts/
       version: 0.2.14
     description: Stand-alone deployment of cluster-manager.
-    digest: 886632a0fa58d3111b4af488070e20fac1d17f076657b77e54cff307b607ac8a
+    digest: 8579333b13af31aca601f153ddbe0f1801a719a063a01be5f0960a9493346d02
     home: https://www.onedata.org
     keywords:
     - onedata
@@ -19,24 +19,24 @@ entries:
     sources:
     - https://github.com/onedata/onedata
     urls:
-    - https://petergood.github.io/charts/cluster-manager-0.2.18.tgz
-    version: 0.2.18
+    - https://petergood.github.io/charts/cluster-manager-0.2.18-rc21.tgz
+    version: 0.2.18-rc21
   cluster-worker:
   - apiVersion: v1
-    created: "2023-01-04T22:18:58.752493+01:00"
+    created: "2023-01-09T00:30:11.191583+01:00"
     dependencies:
     - name: onedata-chart-utils
       repository: https://onedata.github.io/charts/
       version: 0.2.14
     - name: cluster-manager
       repository: file://../cluster-manager
-      version: 0.2.18
+      version: 0.2.18-rc21
     - name: couchbase
       repository: file://../couchbase
       version: 0.1.0
     description: Stand-alone deployment of cluster-worker. Meant only for running
       E2E tests on Kubernetes.
-    digest: fe481cc94dd631006800f9a11558339dfb9fb78bddd9b2d14ebc9f7356df9c08
+    digest: ca8e0ed659417151b3dd25b0eafe37981e11265083c45050d61e9f01fd4365a6
     home: https://www.onedata.org
     keywords:
     - onedata
@@ -47,6 +47,6 @@ entries:
     sources:
     - https://github.com/onedata/onedata
     urls:
-    - https://petergood.github.io/charts/cluster-worker-0.2.18.tgz
-    version: 0.2.18
-generated: "2023-01-04T22:18:58.749927+01:00"
+    - https://petergood.github.io/charts/cluster-worker-0.2.18-rc21.tgz
+    version: 0.2.18-rc21
+generated: "2023-01-09T00:30:11.187167+01:00"
